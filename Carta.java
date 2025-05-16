@@ -4,16 +4,18 @@ public class Carta {
     private int valor;
     private String figura;
     private String color;
+    private String nombreArchivo;
 
     public Carta() {
         // Crea una carta aleatoria
         Random rnd = new Random();
         valor = rnd.nextInt(14) + 1;
         makeRandomFigure();
-        if (valor==14) {
-            figura = "joker";
-            color = "transparente";
-        }
+        // Como aqui no usaremos Jokers, no es necesario tener esto
+//        if (valor==14) {
+//            figura = "joker";
+//            color = "transparente";
+//        }
     }
 
     private void makeRandomFigure() {
@@ -47,28 +49,49 @@ public class Carta {
         this.color = color;
     }
 
-    public String toString() {
-        String laCarta;
+    public String toString(int valor, String figura) {
         switch (valor) {
-            case 1:
-                laCarta = figura + "A";
-                break;
             case 11:
-                laCarta = figura + "J";
-                break;
+                return "J" + figura;
             case 12:
-                laCarta = figura + "Q";
-                break;
+                return "Q" + figura;
             case 13:
-                laCarta = figura + "K";
-                break;
+                return "K"  + figura;
+            case 1:
             case 14:
-                laCarta = "Joker";
-                break;
-            default:
-                laCarta = figura + valor;
+                return "As" + figura;
         }
-        return laCarta;
+        return valor + figura;
+    }
+
+//    @Override
+//    public String toString() {
+//        String laCarta;
+//        switch (valor) {
+//            case 1:
+//                laCarta = figura + "A";
+//                break;
+//            case 11:
+//                laCarta = figura + "J";
+//                break;
+//            case 12:
+//                laCarta = figura + "Q";
+//                break;
+//            case 13:
+//                laCarta = figura + "K";
+//                break;
+////            case 14:
+////                laCarta = "Joker";
+////                break;
+//            default:
+//                laCarta = figura + valor;
+//        }
+//        return laCarta;
+//    }
+
+    public String obtenerImagenCarta(String nombreArchivo) {
+        // Idea: Vamos a obtener los valores de las cartas, y dependiendo de que carta es, se va a obtener una imagen de la carta correspondiente para el gamePanel
+        return "hi";
     }
 
     public int getValor() {
