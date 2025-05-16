@@ -1,3 +1,4 @@
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class Jugador {
@@ -30,7 +31,7 @@ public class Jugador {
 
     }
 
-    public void apostar(){
+    public void apostar(ArrayList<Integer> ficha){
 
     }
 

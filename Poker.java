@@ -1,12 +1,15 @@
 import java.util.ArrayList;
 import java.util.Collections;
 
+//QUIZAS HACERLA ABSTRACTAAA 0.0
 public class Poker {
     private ArrayList<Carta> mazo;
     private ArrayList<Jugador> jugadores;
+    private ArrayList<Integer> apuestas;
     private int puntuacion;
 
-    public void determinarGanador(){
+    public boolean determinarGanador(){
+        return false;
     }
 
     //reparte N cartas

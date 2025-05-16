@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 public class Jugador5CardDraw extends Jugador{
 
     public Jugador5CardDraw(String nombre, int fichas) {
@@ -8,7 +10,7 @@ public class Jugador5CardDraw extends Jugador{
 
     }
 
-    public void igualar(){
+    public void igualar(ArrayList<Integer> ficha){
 
     }
 
@@ -16,7 +18,7 @@ public class Jugador5CardDraw extends Jugador{
 
     }
 
-    public void subir(){
+    public void subir(ArrayList<Integer> ficha){
 
     }
 

@@ -6,13 +6,6 @@ public class Carta {
     private String color;
     private String nombreArchivo;
 
-    public Carta() {
-        // Crea una carta aleatoria
-        Random rnd = new Random();
-        valor = rnd.nextInt(13) + 1;
-        figuraRandom();
-    }
-
     private void figuraRandom() {
         Random rnd = new Random();
         int numberFigure = rnd.nextInt(4);
@@ -57,11 +50,6 @@ public class Carta {
         return valor + figura;
     }
 
-    public String obtenerImagenCarta(String nombreArchivo) {
-        // Idea: Vamos a obtener los valores de las cartas, y dependiendo de que carta es, se va a obtener una imagen de la carta correspondiente para el gamePanel
-        return "hi";
-    }
-
     public int getValor() {
         return valor;
     }
@@ -70,11 +58,12 @@ public class Carta {
         return figura;
     }
 
-    public String getColor() {
-        return color;
-    }
-
     public void voltearCarta(){
 
+    }
+
+    public String obtenerImagenCarta(String nombreArchivo) {
+        // Idea: Vamos a obtener los valores de las cartas, y dependiendo de que carta es, se va a obtener una imagen de la carta correspondiente para el gamePanel
+        return "hi";
     }
 }
