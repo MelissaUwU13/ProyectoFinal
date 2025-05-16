@@ -1,4 +1,8 @@
-public class Jugador5CardDraw {
+public class Jugador5CardDraw extends Jugador{
+
+    public Jugador5CardDraw(String nombre, int fichas) {
+        super(nombre, fichas);
+    }
 
     public void retirarse(){
 

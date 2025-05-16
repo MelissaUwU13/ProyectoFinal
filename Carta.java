@@ -9,17 +9,11 @@ public class Carta {
     public Carta() {
         // Crea una carta aleatoria
         Random rnd = new Random();
-        valor = rnd.nextInt(14) + 1;
-        makeRandomFigure();
-        // Como aqui no usaremos Jokers, no es necesario tener esto
-//        if (valor==14) {
-//            figura = "joker";
-//            color = "transparente";
-//        }
+        valor = rnd.nextInt(13) + 1;
+        figuraRandom();
     }
 
-    private void makeRandomFigure() {
-
+    private void figuraRandom() {
         Random rnd = new Random();
         int numberFigure = rnd.nextInt(4);
         switch (numberFigure) {
@@ -43,13 +37,13 @@ public class Carta {
 
     }
 
-    public Carta(int valor, String figura, String color) {
+    public Carta(int valor, String figura, String color){
         this.valor = valor;
         this.figura = figura;
         this.color = color;
     }
 
-    public String toString(int valor, String figura) {
+    public String toString(int valor, String figura){
         switch (valor) {
             case 11:
                 return "J" + figura;
@@ -57,37 +51,11 @@ public class Carta {
                 return "Q" + figura;
             case 13:
                 return "K"  + figura;
-            case 1:
             case 14:
                 return "As" + figura;
         }
         return valor + figura;
     }
-
-//    @Override
-//    public String toString() {
-//        String laCarta;
-//        switch (valor) {
-//            case 1:
-//                laCarta = figura + "A";
-//                break;
-//            case 11:
-//                laCarta = figura + "J";
-//                break;
-//            case 12:
-//                laCarta = figura + "Q";
-//                break;
-//            case 13:
-//                laCarta = figura + "K";
-//                break;
-////            case 14:
-////                laCarta = "Joker";
-////                break;
-//            default:
-//                laCarta = figura + valor;
-//        }
-//        return laCarta;
-//    }
 
     public String obtenerImagenCarta(String nombreArchivo) {
         // Idea: Vamos a obtener los valores de las cartas, y dependiendo de que carta es, se va a obtener una imagen de la carta correspondiente para el gamePanel

@@ -1,4 +1,8 @@
-public class Jugador7CardStud {
+public class Jugador7CardStud extends Jugador {
+
+    public Jugador7CardStud(String nombre, int fichas) {
+        super(nombre, fichas);
+    }
 
     public void completar(){
 

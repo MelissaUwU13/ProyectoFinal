@@ -1,2 +1,2 @@
-public class Poker7CardStud {
+public class Poker7CardStud extends Poker{
 }

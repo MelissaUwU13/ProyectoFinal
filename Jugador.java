@@ -1,14 +1,25 @@
+import java.util.ArrayList;
+
 public class Jugador {
     private String nombre;
     private int fichas;
-    //atributo mano
+    private ArrayList<Carta> mano = new ArrayList<>();
 
-    public Jugador(String nombre, int fichas){
-
+    public Jugador(String nombre, int fichas) {
+        this.nombre = nombre;
+        this.fichas = fichas;
     }
 
-    public void sacarMano(){
+    public void recibirCarta(Carta c) {
+        mano.add(c);
+    }
 
+    public ArrayList<Carta> getMano() {
+        return mano;
+    }
+
+    public String getNombre() {
+        return nombre;
     }
 
     public void tirarCarta(){

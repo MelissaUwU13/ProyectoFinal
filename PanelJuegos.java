@@ -7,7 +7,7 @@ public class PanelJuegos extends JPanel {
     private Image fondoPantalla;
     private String nombreCarta;
     public PanelJuegos() {
-        setPreferredSize(new Dimension(800, 600));
+        setPreferredSize(new Dimension(1000, 600));
         setLayout(null);
         setBackground(Color.WHITE);
         setFocusable(true);
@@ -15,7 +15,7 @@ public class PanelJuegos extends JPanel {
         ImageIcon imagen = new ImageIcon(obtenerNombreCarta(carta) + ".PNG");
 
         // Fondo de la pantalla
-        fondoPantalla = new ImageIcon("sale Balatrito.PNG").getImage();
+        fondoPantalla = new ImageIcon("recursos/Portada.png").getImage();
 
         JButton botonDePrueba = new JButton(imagen);
         botonDePrueba.setContentAreaFilled(false);
