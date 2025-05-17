@@ -36,18 +36,15 @@ public class Carta {
         this.color = color;
     }
 
-    public String toString(int valor, String figura){
-        switch (valor) {
-            case 11:
-                return "J" + figura;
-            case 12:
-                return "Q" + figura;
-            case 13:
-                return "K"  + figura;
-            case 14:
-                return "As" + figura;
-        }
-        return valor + figura;
+    public String toString() {
+        String nombre = switch (valor) {
+            case 1 -> "As";
+            case 11 -> "J";
+            case 12 -> "Q";
+            case 13 -> "K";
+            default -> String.valueOf(valor);
+        };
+        return nombre + figura;
     }
 
     public int getValor() {

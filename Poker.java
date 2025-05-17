@@ -1,12 +1,13 @@
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 //QUIZAS HACERLA ABSTRACTAAA 0.0
 public class Poker {
-    private ArrayList<Carta> mazo;
-    private ArrayList<Jugador> jugadores;
-    private ArrayList<Integer> apuestas;
-    private int puntuacion;
+    protected ArrayList<Carta> mazo;
+    protected ArrayList<Jugador> jugadores;
+    protected ArrayList<Integer> apuestas;
+    protected int puntuacion;
 
     public boolean determinarGanador(){
         return false;
@@ -21,6 +22,29 @@ public class Poker {
         }
     }
 
+    public List<Jugador> getJugadores() {
+        return jugadores;
+    }
+
+    public void mostrarManos() {
+        int num = 1;
+        for (Jugador j : jugadores) {
+            System.out.println("Mano del " + j.getNombre() + ":");
+            for (Carta c : j.getMano()) {
+                System.out.println("- " + c); // Asegúrate de que Carta tenga un buen toString()
+            }
+            System.out.println(); // Espacio entre jugadores
+            num++;
+        }
+    }
+
+    public void mostrarMano(Jugador jugador) {
+        for (int i = 0; i < jugador.getMano().size(); i++) {
+            System.out.println(i + ": " + jugador.getMano().get(i));
+        }
+    }
+
+
     public void generarBaraja(){
         mazo= new ArrayList<>();
 
@@ -32,12 +56,6 @@ public class Poker {
         }
         Collections.shuffle(mazo);
     }
-
-
-
-
-
-
 
 
     public void tablaDePuntuaciones(ArrayList<Carta> mano){
@@ -73,6 +91,45 @@ public class Poker {
         //else if(sonDelMismoPalo()==true){
           //  puntuacion=1;
         //}
+    }
+
+    public void analizarMano(ArrayList<Carta> mano){
+        if(esEscaleraReal(mano)==true){
+            puntuacion=10;
+            System.out.println("Es una escalera real!!!!");
+        }
+        else if(sonDelMismoPalo(mano)==true && esEscalera(mano)==true){
+            puntuacion=9;
+            System.out.println("Es una escalera corrida!!");
+        }
+        else if(hayNRepetidas(mano,4)==true){
+            puntuacion=8;
+            System.out.println("Hay 4 repetidas!!");
+        }
+        else if(hayNRepetidas(mano,3)==true && hayUnPar(mano)==true){
+            puntuacion=7;
+            System.out.println("Es un full house!!");
+        }
+        else if(sonDelMismoPalo(mano)==true){
+            puntuacion=6;
+            System.out.println("Es un flush!!!");
+        }
+        else if(esEscalera(mano)==true){
+            puntuacion=5;
+            System.out.println("Es una escalera!!");
+        }
+        else if(hayNRepetidas(mano,3)==true){
+            puntuacion=4;
+            System.out.println("Hay 3 repetidas!!");
+        }
+        else if(doblePar(mano)==true){
+            puntuacion=3;
+            System.out.println("Hay dos pares!!");
+        }
+        else if(hayUnPar(mano)==true){
+            puntuacion=2;
+            if(hayUnPar(mano)) System.out.println("Hay un par!!");
+        } else System.out.println("Carta Alta!!");
     }
 
 
@@ -192,9 +249,6 @@ public class Poker {
             }
         }
     }
-
-
-
 
 
 }
