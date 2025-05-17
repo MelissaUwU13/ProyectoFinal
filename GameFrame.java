@@ -10,5 +10,7 @@ public class GameFrame extends JFrame {
     }
     public static void main(String[] args) {
         new GameFrame();
+//        Poker5CardDraw juego = new Poker5CardDraw(1);  // Un jugador
+//        juego.jugarTurnoConsola(0);  // Juega turno del jugador 0 (el único)
     }
 }

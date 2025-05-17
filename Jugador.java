@@ -1,5 +1,6 @@
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class Jugador {
     private String nombre;
@@ -10,6 +11,8 @@ public class Jugador {
         this.nombre = nombre;
         this.fichas = fichas;
     }
+
+
 
     public void recibirCarta(Carta c) {
         mano.add(c);
@@ -34,5 +37,6 @@ public class Jugador {
     public void apostar(ArrayList<Integer> ficha){
 
     }
+
 
 }
