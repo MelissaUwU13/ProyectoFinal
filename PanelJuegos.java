@@ -6,17 +6,26 @@ public class PanelJuegos extends JPanel {
     private Image fondoPantalla;
     private String nombreCarta;
     private Poker5CardDraw juego;
+    private ArrayList<Boolean> cartasSeleccionadas;
+    private ArrayList<JButton> botonesCartas;
 
     public PanelJuegos() {
+        cartasSeleccionadas = new ArrayList<>();
+        botonesCartas = new ArrayList<>();
         setPreferredSize(new Dimension(1000, 600));
         setLayout(null);
         setBackground(Color.WHITE);
         setFocusable(true);
-        ImageIcon imagen = new ImageIcon("boton5CardPoker.png");
-        Image imagenEscalada = imagen.getImage().getScaledInstance(256, 128, Image.SCALE_SMOOTH);
-        ImageIcon imagenBoton5CardPoker = new ImageIcon(imagenEscalada);
+        ImageIcon imagen5Card = new ImageIcon("boton5CardPoker.png");
+        Image imagenEscalada5Card = imagen5Card.getImage().getScaledInstance(256, 128, Image.SCALE_SMOOTH);
+        ImageIcon imagenBoton5CardPoker = new ImageIcon(imagenEscalada5Card);
+
+        ImageIcon imagen7Card = new ImageIcon("boton7CardStud.png");
+        Image imagenEscalada7Card = imagen7Card.getImage().getScaledInstance(256, 128, Image.SCALE_SMOOTH);
+        ImageIcon imagenBoton7CardStud = new ImageIcon(imagenEscalada7Card);
         // Fondo de la pantalla
         fondoPantalla = new ImageIcon("Portada.png").getImage();
+
 
         JButton botonPoker5Hands = new JButton(imagenBoton5CardPoker);
         botonPoker5Hands.addActionListener(e -> {
@@ -32,6 +41,7 @@ public class PanelJuegos extends JPanel {
                     cantidadDeJugadores = Integer.parseInt(entrada);
                     if (cantidadDeJugadores >= 2 && cantidadDeJugadores <= 7) {
                         entradaValida = true;
+                        fondoPantalla = new ImageIcon("fondoPantallaPoker.jpg").getImage();
                     } else {
                         JOptionPane.showMessageDialog(
                                 this,
@@ -52,38 +62,32 @@ public class PanelJuegos extends JPanel {
             // Ocultamos el botón una vez haya sido exitosamente usado
             botonPoker5Hands.setVisible(false);
             // Iniciamos el juego y mostrar manos en consola (por ahora)
-            Poker5CardDraw juego = new Poker5CardDraw(cantidadDeJugadores);
+            this.juego = new Poker5CardDraw(cantidadDeJugadores);
             juego.mostrarManos();
             ArrayList<Carta> manoJugador = juego.getJugadores().get(0).getMano(); // solo primer jugador
-
-            for (int i = 0; i < manoJugador.size(); i++) {
-                Carta carta = manoJugador.get(i);
-                String nombreArchivo = obtenerNombreArchivoCarta(carta);
-
-                ImageIcon iconoCarta = new ImageIcon(nombreArchivo);
-                Image imagenCartaEscalada = iconoCarta.getImage().getScaledInstance(100, 150, Image.SCALE_SMOOTH);
-                ImageIcon iconoCartaEscalado = new ImageIcon(imagenCartaEscalada);
-
-                JButton cartaBtn = new JButton(iconoCartaEscalado);
-                cartaBtn.setBounds(100 + (i * 120), 100, 100, 150); // Posición separada
-                cartaBtn.setOpaque(true);
-                cartaBtn.setBackground(Color.WHITE);
-                cartaBtn.setContentAreaFilled(true); // para que se pinte el fondo blanco
-                cartaBtn.setBorderPainted(false);
-                cartaBtn.setFocusPainted(false);
-                add(cartaBtn);
-            }
+            inicializarBotonesCartas(manoJugador);
 
             // Refrescar el panel para que se muestren los nuevos botones, asi como que se oculte el original
             revalidate();
             repaint();
         });
+        JButton botonPoker7CardStud = new JButton(imagenBoton7CardStud);
+        botonPoker7CardStud.addActionListener(e -> {
+            int cantidadDeJugadores = 0;
+            System.out.println(cantidadDeJugadores + "Funciona bien!!");
+        });
         botonPoker5Hands.setContentAreaFilled(false);
         botonPoker5Hands.setBorderPainted(false);
         botonPoker5Hands.setFocusPainted(false);
         botonPoker5Hands.setBounds(200, 400, 256, 128);
-        botonPoker5Hands.setVisible(true);
+        botonPoker7CardStud.setVisible(true);
+        botonPoker7CardStud.setContentAreaFilled(false);
+        botonPoker7CardStud.setBorderPainted(false);
+        botonPoker7CardStud.setFocusPainted(false);
+        botonPoker7CardStud.setBounds(500, 400, 256, 128);
+        botonPoker7CardStud.setVisible(true);
         add(botonPoker5Hands);
+        add(botonPoker7CardStud);
     }
     private String obtenerNombreArchivoCarta(Carta carta) {
         String valorEnString;
@@ -99,6 +103,70 @@ public class PanelJuegos extends JPanel {
         String figura = carta.getFigura().toLowerCase(); // ejemplo: "corazon"
         System.out.println(valorEnString + figura + ".png");
         return "cartas/" + valorEnString + figura + ".png";
+    }
+    private void inicializarBotonesCartas(ArrayList<Carta> manoJugador) {
+        cartasSeleccionadas.clear();
+        botonesCartas.clear();
+        for (int i = 0; i < manoJugador.size(); i++) {
+            Carta carta = manoJugador.get(i);
+            String nombreArchivo = obtenerNombreArchivoCarta(carta);
+
+            ImageIcon iconoCarta = new ImageIcon(nombreArchivo);
+            Image imagenCartaEscalada = iconoCarta.getImage().getScaledInstance(100, 150, Image.SCALE_SMOOTH);
+            ImageIcon iconoCartaEscalado = new ImageIcon(imagenCartaEscalada);
+
+            JButton cartaBtn = new JButton(iconoCartaEscalado);
+            cartaBtn.setBounds(200 + (i * 120), 400, 100, 150); // Posición separada
+            cartaBtn.setOpaque(true);
+            cartaBtn.setBackground(Color.WHITE);
+            cartaBtn.setContentAreaFilled(true); // para que se pinte el fondo blanco
+            cartaBtn.setBorderPainted(false);
+            cartaBtn.setFocusPainted(false);
+            cartasSeleccionadas.add(false);
+            // como vamos a usar una lambda y no se permite usar valores locales, vamos a crear un valor entero final para encargarnos de las cartas seleccionadas
+            int finalI = i;
+            botonesCartas.add(cartaBtn);
+
+            cartaBtn.addActionListener(e -> {
+                boolean seleccionado = !cartasSeleccionadas.get(finalI);
+                cartasSeleccionadas.set(finalI, seleccionado);
+
+                if (seleccionado) {
+                    cartaBtn.setBorder(BorderFactory.createLineBorder(Color.GREEN, 3));
+                    // Subir la carta 20 pixeles si la seleccionamos
+                    Rectangle bounds = cartaBtn.getBounds();
+                    cartaBtn.setBounds(bounds.x, bounds.y - 20, bounds.width, bounds.height);
+                } else {
+                    cartaBtn.setBorder(BorderFactory.createEmptyBorder());
+                    // Bajarla de nuevo 20 píxeles cuando ya no este seleccionada
+                    Rectangle bounds = cartaBtn.getBounds();
+                    cartaBtn.setBounds(bounds.x, bounds.y + 20, bounds.width, bounds.height);
+                }
+            });
+            add(cartaBtn);
+        }
+        // Botón de confirmar selección
+        JButton confirmarBtn = new JButton("Confirmar selección");
+        confirmarBtn.setBounds(400, 300, 200, 40);
+        confirmarBtn.addActionListener(e -> {
+            ArrayList<Carta> cartasSeleccionadasParaAnalizar = new ArrayList<>();
+            for (int i = 0; i < cartasSeleccionadas.size(); i++) {
+                if (cartasSeleccionadas.get(i)) {
+                    cartasSeleccionadasParaAnalizar.add(manoJugador.get(i));
+                }
+            }
+            if (cartasSeleccionadasParaAnalizar.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "No seleccionaste ninguna carta", "Aviso", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            // Llamas a analizarMano con solo las cartas seleccionadas
+            juego.analizarMano(cartasSeleccionadasParaAnalizar);
+
+            // Puedes mostrar la puntuación o lo que haga analizarMano
+            JOptionPane.showMessageDialog(this, "Mano analizada con las cartas seleccionadas.");
+        });
+        add(confirmarBtn);
     }
     @Override
     public void paintComponent(Graphics g) {

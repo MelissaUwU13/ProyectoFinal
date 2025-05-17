@@ -151,17 +151,17 @@ public class Poker {
    }
 
     public boolean esEscalera(ArrayList<Carta> mano) {
+        if (mano.size() < 5) return false; // mínimo 5 cartas para escalera
         boolean hayEscalera = true;
         ordenar(mano);
 
-        for (int i=0; i<mano.size()-1; i++) {
+        for (int i = 0; i < mano.size() - 1; i++) {
             Carta carta1 = mano.get(i);
-            Carta carta2 = mano.get(i+1);
-            if (carta1.getValor() != carta2.getValor()-1) {
+            Carta carta2 = mano.get(i + 1);
+            if (carta1.getValor() != carta2.getValor() - 1) {
                 return false;
             }
         }
-
         return hayEscalera;
     }
 
@@ -201,16 +201,16 @@ public class Poker {
         return false;
     }
 
-    public boolean sonDelMismoPalo(ArrayList<Carta> mano){
+    public boolean sonDelMismoPalo(ArrayList<Carta> mano) {
+        if (mano.size() < 5) return false; // mínimo 5 cartas para flush
         boolean mismoPalo = true;
-        for (int i=0; i<mano.size()-1; i++) {
+        for (int i = 0; i < mano.size() - 1; i++) {
             Carta carta1 = mano.get(i);
-            Carta carta2 = mano.get(i+1);
+            Carta carta2 = mano.get(i + 1);
             if (!carta1.getFigura().equals(carta2.getFigura())) {
                 return false;
             }
         }
-
         return mismoPalo;
     }
 
@@ -250,5 +250,7 @@ public class Poker {
         }
     }
 
-
+    public int getPuntuacion() {
+        return puntuacion;
+    }
 }

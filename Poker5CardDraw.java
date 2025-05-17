@@ -47,36 +47,6 @@ public class Poker5CardDraw extends Poker{
         repartirCartas(5);
     }
 
-    public void jugarTurnoConsola(int jugadorIndex) {
-        Scanner sc = new Scanner(System.in);
-        Jugador5CardDraw jugador = (Jugador5CardDraw) jugadores.get(jugadorIndex);
-
-        System.out.println("Mano actual del " + jugador.getNombre() + ":");
-        mostrarMano(jugador);
-
-        // Evaluar la mano
-        tablaDePuntuaciones(jugador.getMano());
-        analizarMano(jugador.getMano());
-        System.out.println("Puntuación: " + puntuacion);
-    }
 
 
-    public void jugarCartas(int jugadorIndex, ArrayList<Integer> indicesATirar) {
-        Jugador5CardDraw jugador = (Jugador5CardDraw) jugadores.get(jugadorIndex);
-
-        // El jugador tira las cartas seleccionadas
-        jugador.tirarCartas(indicesATirar);
-
-        // Repartir cartas nuevas para reponer hasta 5 cartas
-        int cartasFaltantes = 5 - jugador.getMano().size();
-        for (int i = 0; i < cartasFaltantes; i++) {
-            if (!mazo.isEmpty()) {
-                jugador.recibirCarta(mazo.remove(0));
-            }
-        }
-
-        // Evaluar la mano actualizada usando la tabla de puntuaciones
-        tablaDePuntuaciones(jugador.getMano());
-        System.out.println("Puntuación del jugador " + jugador.getNombre() + ": " + puntuacion);
-    }
 }
