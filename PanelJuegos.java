@@ -28,6 +28,7 @@ public class PanelJuegos extends JPanel {
 
 
         JButton botonPoker5Hands = new JButton(imagenBoton5CardPoker);
+        JButton botonPoker7CardStud = new JButton(imagenBoton7CardStud);
         botonPoker5Hands.addActionListener(e -> {
             int cantidadDeJugadores = 0;
             boolean entradaValida = false;
@@ -61,6 +62,7 @@ public class PanelJuegos extends JPanel {
             }
             // Ocultamos el botón una vez haya sido exitosamente usado
             botonPoker5Hands.setVisible(false);
+            botonPoker7CardStud.setVisible(false);
             // Iniciamos el juego y mostrar manos en consola (por ahora)
             this.juego = new Poker5CardDraw(cantidadDeJugadores);
             juego.mostrarManos();
@@ -71,7 +73,6 @@ public class PanelJuegos extends JPanel {
             revalidate();
             repaint();
         });
-        JButton botonPoker7CardStud = new JButton(imagenBoton7CardStud);
         botonPoker7CardStud.addActionListener(e -> {
             int cantidadDeJugadores = 0;
             System.out.println(cantidadDeJugadores + "Funciona bien!!");

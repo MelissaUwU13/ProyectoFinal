@@ -106,7 +106,7 @@ public class Poker {
             puntuacion=8;
             System.out.println("Hay 4 repetidas!!");
         }
-        else if(hayNRepetidas(mano,3)==true && hayUnPar(mano)==true){
+        else if(esFullHouse(mano)==true){
             puntuacion=7;
             System.out.println("Es un full house!!");
         }
@@ -130,6 +130,26 @@ public class Poker {
             puntuacion=2;
             if(hayUnPar(mano)) System.out.println("Hay un par!!");
         } else System.out.println("Carta Alta!!");
+    }
+
+    public boolean esFullHouse(ArrayList<Carta> mano) {
+        int[] conteo = new int[14]; // índices del 1 al 13
+        for (Carta c : mano) {
+            conteo[c.getValor()]++;
+        }
+
+        boolean tieneTrio = false;
+        boolean tienePar = false;
+
+        for (int i = 1; i <= 13; i++) {
+            if (conteo[i] == 3) {
+                tieneTrio = true;
+            } else if (conteo[i] == 2) {
+                tienePar = true;
+            }
+        }
+
+        return tieneTrio && tienePar;
     }
 
 
