@@ -56,4 +56,17 @@ public class Jugador {
     public void setMano(ArrayList<Carta> manoActual) {
         this.mano = manoActual;
     }
+
+
+    //NO NECESITO ESTO, DEREK TU SI??
+    //modificar este apostar
+    public void apostar(int cantidad) {
+        if (cantidad <= fichas) {
+            fichas -= cantidad;
+            System.out.println(noJugador + " apuesta " + cantidad + " fichas. Fichas restantes: " + fichas);
+        } else {
+            System.out.println(noJugador + " no tiene suficientes fichas para apostar " + cantidad);
+        }
+    }
+
 }
