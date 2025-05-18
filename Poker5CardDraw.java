@@ -1,10 +1,11 @@
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Scanner;
-public class Poker5CardDraw extends Poker{
+public class Poker5CardDraw extends Poker {
+
     public Poker5CardDraw(){
         super();
-
+        evaluador = new Evaluador5CardDraw();
         Scanner sc = new Scanner(System.in);
         int cantidadDeJugadores = 0;
         boolean error=false;
@@ -34,11 +35,11 @@ public class Poker5CardDraw extends Poker{
         generarBaraja();
         // Repartimos 5 cartas para cada jugador debido a las reglas del juego
         repartirCartas(5);
-        mostrarManos();
     }
 
     public Poker5CardDraw(int cantJugadores) {
         super();
+        evaluador = new Evaluador5CardDraw();
         jugadores = new ArrayList<>();
         for (int i = 1; i <= cantJugadores; i++) {
             jugadores.add(new Jugador5CardDraw(  i, 1000));

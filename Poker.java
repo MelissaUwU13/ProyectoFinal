@@ -3,10 +3,12 @@ import java.util.Collections;
 import java.util.List;
 
 public class Poker extends EvaluarMano{
+    private int poker;
     protected ArrayList<Carta> mazo;
     protected ArrayList<Jugador> jugadores;
     protected ArrayList<Integer> apuestas;
     protected int puntuacion;
+    protected EvaluarMano evaluador;
 
     //checar pq es de chat
     public boolean determinarGanador(){
@@ -30,6 +32,11 @@ public class Poker extends EvaluarMano{
         }
 
         return false;
+    }
+
+    public String evaluarMano(ArrayList<Carta> mano) {
+        int puntuacion = evaluador.analizarMano(mano);
+        return evaluador.interpretarPuntuación(puntuacion);
     }
 
     //reparte N cartas

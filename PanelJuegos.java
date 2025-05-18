@@ -1,5 +1,9 @@
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
 import java.util.ArrayList;
 
 public class PanelJuegos extends JPanel {
@@ -8,6 +12,8 @@ public class PanelJuegos extends JPanel {
     private Poker5CardDraw juego;
     private ArrayList<Boolean> cartasSeleccionadas;
     private ArrayList<JButton> botonesCartas;
+    private int turnoActualDeJugador = 0;
+    private Clip musica;
 
     public PanelJuegos() {
         cartasSeleccionadas = new ArrayList<>();
@@ -19,13 +25,13 @@ public class PanelJuegos extends JPanel {
         ImageIcon imagen5Card = new ImageIcon("cartas/boton5CardPoker.png");
         Image imagenEscalada5Card = imagen5Card.getImage().getScaledInstance(256, 128, Image.SCALE_SMOOTH);
         ImageIcon imagenBoton5CardPoker = new ImageIcon(imagenEscalada5Card);
+        reproducirMusica("musica.wav");
 
         ImageIcon imagen7Card = new ImageIcon("cartas/boton7CardStud.png");
         Image imagenEscalada7Card = imagen7Card.getImage().getScaledInstance(256, 128, Image.SCALE_SMOOTH);
         ImageIcon imagenBoton7CardStud = new ImageIcon(imagenEscalada7Card);
         // Fondo de la pantalla
         fondoPantalla = new ImageIcon("cartas/Portada.png").getImage();
-
 
         JButton botonPoker5Hands = new JButton(imagenBoton5CardPoker);
         JButton botonPoker7CardStud = new JButton(imagenBoton7CardStud);
@@ -65,9 +71,17 @@ public class PanelJuegos extends JPanel {
             botonPoker7CardStud.setVisible(false);
             // Iniciamos el juego y mostrar manos en consola (por ahora)
             this.juego = new Poker5CardDraw(cantidadDeJugadores);
-            juego.mostrarManos();
-            ArrayList<Carta> manoJugador = juego.getJugadores().get(0).getMano(); // solo primer jugador
-            inicializarBotonesCartas(manoJugador);
+            ArrayList<Carta> manoActual = juego.getJugadores().get(turnoActualDeJugador).getMano();
+            // solo primer jugador
+            inicializarBotonesCartas(manoActual);
+            JButton botonSiguienteJugador = new JButton("Siguiente jugador");
+            botonSiguienteJugador.setBounds(800, 20, 160, 40);
+            botonSiguienteJugador.addActionListener(ev -> {
+                turnoActualDeJugador = (turnoActualDeJugador + 1) % juego.getJugadores().size();
+                ArrayList<Carta> nuevaMano = juego.getJugadores().get(turnoActualDeJugador).getMano();
+                inicializarBotonesCartas(nuevaMano);
+            });
+            add(botonSiguienteJugador);
 
             // Refrescar el panel para que se muestren los nuevos botones, asi como que se oculte el original
             revalidate();
@@ -77,6 +91,7 @@ public class PanelJuegos extends JPanel {
             int cantidadDeJugadores = 0;
             System.out.println(cantidadDeJugadores + "Funciona bien!!");
         });
+
         botonPoker5Hands.setContentAreaFilled(false);
         botonPoker5Hands.setBorderPainted(false);
         botonPoker5Hands.setFocusPainted(false);
@@ -102,12 +117,14 @@ public class PanelJuegos extends JPanel {
         }
 
         String figura = carta.getFigura().toLowerCase(); // ejemplo: "corazon"
-        System.out.println(valorEnString + figura + ".png");
         return "cartas/" + valorEnString + figura + ".png";
     }
     private void inicializarBotonesCartas(ArrayList<Carta> manoJugador) {
-        cartasSeleccionadas.clear();
+        for (JButton btn : botonesCartas) {
+            remove(btn);
+        }
         botonesCartas.clear();
+        cartasSeleccionadas.clear();
         for (int i = 0; i < manoJugador.size(); i++) {
             Carta carta = manoJugador.get(i);
             String nombreArchivo = obtenerNombreArchivoCarta(carta);
@@ -136,7 +153,7 @@ public class PanelJuegos extends JPanel {
                     cartaBtn.setBorder(BorderFactory.createLineBorder(Color.GREEN, 3));
                     // Subir la carta 20 pixeles si la seleccionamos
                     Rectangle bounds = cartaBtn.getBounds();
-                    cartaBtn.setBounds(bounds.x, bounds.y - 20, bounds.width, bounds.height);
+                    cartaBtn.setBounds(cartaBtn.getX(), cartaBtn.getY() - 20, cartaBtn.getWidth(), cartaBtn.getHeight());
                 } else {
                     cartaBtn.setBorder(BorderFactory.createEmptyBorder());
                     // Bajarla de nuevo 20 píxeles cuando ya no este seleccionada
@@ -145,27 +162,29 @@ public class PanelJuegos extends JPanel {
                 }
             });
             add(cartaBtn);
+            revalidate();
+            repaint();
         }
-        // Botón de confirmar selección
+        // Botón para confirmar las cartas seleccionadas, luego vamos a borrar o cambiar todo esto por que nomas es para pruebas
         JButton confirmarBtn = new JButton("Confirmar selección");
         confirmarBtn.setBounds(400, 300, 200, 40);
         confirmarBtn.addActionListener(e -> {
+            ArrayList<Carta> manoActual = juego.getJugadores().get(turnoActualDeJugador).getMano();
             ArrayList<Carta> cartasSeleccionadasParaAnalizar = new ArrayList<>();
             for (int i = 0; i < cartasSeleccionadas.size(); i++) {
                 if (cartasSeleccionadas.get(i)) {
-                    cartasSeleccionadasParaAnalizar.add(manoJugador.get(i));
+                    cartasSeleccionadasParaAnalizar.add(manoActual.get(i));
                 }
             }
+
             if (cartasSeleccionadasParaAnalizar.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "No seleccionaste ninguna carta", "Aviso", JOptionPane.WARNING_MESSAGE);
                 return;
             }
 
-            // Llamas a analizarMano con solo las cartas seleccionadas
-            juego.analizarMano(cartasSeleccionadasParaAnalizar);
-
-            // Puedes mostrar la puntuación o lo que haga analizarMano
-            JOptionPane.showMessageDialog(this, "Mano analizada con las cartas seleccionadas.");
+            String resultado = juego.evaluarMano(cartasSeleccionadasParaAnalizar); // o cartasSeleccionadasParaAnalizar si evalúas solo las seleccionadas
+            System.out.println(cartasSeleccionadasParaAnalizar);
+            JOptionPane.showMessageDialog(this, resultado);
         });
         add(confirmarBtn);
     }
@@ -174,5 +193,16 @@ public class PanelJuegos extends JPanel {
         super.paintComponent(g); // Esto limpia el fondo bien
 
         g.drawImage(fondoPantalla, 0, 0, getWidth(), getHeight(), this); // Dibuja fondo
+    }
+    private void reproducirMusica(String rutaArchivo) {
+        try {
+            AudioInputStream audio = AudioSystem.getAudioInputStream(new File(rutaArchivo));
+            musica = AudioSystem.getClip();
+            musica.stop();
+            musica.open(audio);
+            musica.loop(Clip.LOOP_CONTINUOUSLY); // Repite infinitamente
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
