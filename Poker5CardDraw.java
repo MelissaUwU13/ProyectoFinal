@@ -2,7 +2,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Scanner;
 public class Poker5CardDraw extends Poker {
-    private ArrayList<Jugador5CardDraw> jugadores;
     private ArrayList<Integer> apuestasRonda;
 
     public Poker5CardDraw(){
@@ -53,7 +52,7 @@ public class Poker5CardDraw extends Poker {
         this.jugadores = new ArrayList<>();
         this.apuestasRonda = new ArrayList<>();
         for (int i = 1; i <= cantidadDeJugadores; i++) {
-            jugadores.add(new Jugador5CardDraw( i, fichasTotales));
+            super.jugadores.add(new Jugador5CardDraw(i, fichasTotales));
         }
 
         generarBaraja();
@@ -66,10 +65,21 @@ public class Poker5CardDraw extends Poker {
         evaluador = new Evaluador5CardDraw();
         jugadores = new ArrayList<>();
         for (int i = 1; i <= cantJugadores; i++) {
-            jugadores.add(new Jugador5CardDraw(  i, 1000));
+            jugadores.add(new Jugador5CardDraw( i, 1000));
         }
         jugar();
     }
+
+    public void imprimirFichasJugadores() {
+        for (int i = 0; i < jugadores.size(); i++) {
+            /* El parentesis es para algo llamado "casting", en este caso, le indicamos a Java que queremos obtener
+               los metodos y atributos de Jugador5CardDraw, y esto para verificar que todos los jugadores tengan la cantidad de fichas correctas
+             */
+            Jugador5CardDraw jugador =  (Jugador5CardDraw) jugadores.get(i);
+            System.out.println("Jugador " + (i + 1) + " tiene " + jugador.getFichas() + " fichas.");
+        }
+    }
+
 
     public Carta sacarCarta() {
         if (!mazo.isEmpty()) {
@@ -86,19 +96,5 @@ public class Poker5CardDraw extends Poker {
     public void jugar() {
         generarBaraja();
         repartirCartas(5,true);
-//        System.out.println("\n--- Manos iniciales ---");
-//        mostrarManos();
-//        System.out.println("\n--- Fase de Apuestas ---");
-//        //Primera Ronda de apuestas
-//        faseDeApuestas();
-//        //Fase de descarte
-//
-//        //Segunda ronda de descarte
-//        faseDeApuestas();
-//        //Ultima fase donde tiramos las cartas y decidimos un ganador
-//        System.out.println("\n--- Manos Finales (jugadores restantes) ---");
-//        mostrarManos();
-//
-//        determinarGanador();
     }
 }

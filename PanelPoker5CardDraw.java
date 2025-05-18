@@ -19,16 +19,73 @@ public class PanelPoker5CardDraw extends JPanel {
 
         inicializarBotonesCartas(juego.getJugadores().get(turnoActualDeJugador).getMano());
 
-
-        JButton botonSiguienteJugador = new JButton("Siguiente jugador");
-        botonSiguienteJugador.setBounds(800, 20, 160, 40);
+        JButton botonCheck, botonBet, botonCall, botonRaise, botonFold;
+        ImageIcon imagenBotonTerminarTurno = redimensionarImagen("cartas/botonFinalizarTurno.png", 128, 64);
+        JButton botonSiguienteJugador = new JButton(imagenBotonTerminarTurno);
+        botonSiguienteJugador.setBounds(800, 20, 128, 64);
+        inicializarBotonConImagen(botonSiguienteJugador);
         botonSiguienteJugador.addActionListener(e -> {
-            turnoActualDeJugador = (turnoActualDeJugador + 1) % juego.getJugadores().size();
-            actualizarMano(juego.getJugadores().get(turnoActualDeJugador).getMano());
+            pasarAlSiguienteJugador();
+            juego.imprimirFichasJugadores();
         });
+        botonCheck = new JButton("Pasar");
+        botonCheck.setBounds(50, 50, 100, 40);
+        botonCheck.addActionListener(e -> {
+            System.out.println("Jugador pasó");
+            // Aquí va la lógica de pasar turno sin apostar
+        });
+
+        botonBet = new JButton("Apostar");
+        botonBet.setBounds(160, 50, 100, 40);
+        botonBet.addActionListener(e -> {
+            System.out.println("Jugador apostó");
+            // Aquí va la lógica para iniciar una apuesta
+        });
+
+        botonCall = new JButton("Igualar");
+        botonCall.setBounds(270, 50, 100, 40);
+        botonCall.addActionListener(e -> {
+            System.out.println("Jugador igualó");
+            // Aquí igualas la apuesta actual
+        });
+
+        botonRaise = new JButton("Subir");
+        botonRaise.setBounds(380, 50, 100, 40);
+        botonRaise.addActionListener(e -> {
+            System.out.println("Jugador subió");
+            // Aquí subes la apuesta actual
+        });
+        ImageIcon imagenBotonFold = redimensionarImagen("cartas/botonRetirarse.png", 128, 64);
+        botonFold = new JButton(imagenBotonFold);
+        inicializarBotonConImagen(botonFold);
+        botonFold.setBounds(800, 100, 128, 64); // Mismo tamaño que "Analizar Cartas"
+        botonFold.addActionListener(e -> {
+                System.out.println("Jugador se retiró");
+                // otro casting para poder retirar a los jugadores
+            ((Jugador5CardDraw) juego.getJugadores().get(turnoActualDeJugador)).retirarse();
+
+                pasarAlSiguienteJugador(); // evitamos que el retirado vuelva a jugar
+        });
+        add(botonCheck);
+        add(botonBet);
+        add(botonCall);
+        add(botonRaise);
+        add(botonFold);
         add(botonSiguienteJugador);
     }
 
+    private void pasarAlSiguienteJugador() {
+        int totalJugadores = juego.getJugadores().size();
+        int intentos = 0;
+
+        do {
+            turnoActualDeJugador = (turnoActualDeJugador + 1) % totalJugadores;
+            intentos++;
+        } while (((Jugador5CardDraw) juego.getJugadores().get(turnoActualDeJugador)).estaRetirado() && intentos < totalJugadores);
+
+        // Si todos se retiraron menos uno, ahí podrías declarar ganador
+        actualizarMano(juego.getJugadores().get(turnoActualDeJugador).getMano());
+    }
 
     private void inicializarBotonesCartas(ArrayList<Carta> manoJugador) {
         for (JButton btn : botonesCartas) {
@@ -38,7 +95,7 @@ public class PanelPoker5CardDraw extends JPanel {
         ImageIcon imagenBotonCambiarCartas = redimensionarImagen("cartas/botonCambiarCartas.png", 200, 128);
         JButton botonCambiarCartas = new JButton(imagenBotonCambiarCartas);
         inicializarBotonConImagen(botonCambiarCartas);
-        botonCambiarCartas.setBounds(400, 250, 256, 128);
+        botonCambiarCartas.setBounds(500, 250, 200, 128);
         JButton botonAnalizarCartas = new JButton("Analizar Cartas");
         botonAnalizarCartas.setBounds(200, 250, 256, 128);
 

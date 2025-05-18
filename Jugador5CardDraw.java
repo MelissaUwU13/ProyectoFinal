@@ -3,9 +3,21 @@ import java.util.Collections;
 
 public class Jugador5CardDraw extends Jugador{
     private ArrayList<Carta> mano = new ArrayList<>();
+    int fichas;
 
     public Jugador5CardDraw(int noJugador, int fichas) {
         super(noJugador, fichas);
+    }
+
+
+    private boolean retirado = false;
+
+    public boolean estaRetirado() {
+        return retirado;
+    }
+
+    public void retirarse() {
+        this.retirado = true;
     }
 
     public void tirarCartas(ArrayList<Integer> indices) {
@@ -18,10 +30,6 @@ public class Jugador5CardDraw extends Jugador{
         }
     }
 
-
-    public void retirarse(){
-
-    }
 
     public void igualar(ArrayList<Integer> ficha){
 
