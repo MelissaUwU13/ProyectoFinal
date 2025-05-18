@@ -4,8 +4,8 @@ import java.util.Collections;
 public class Jugador5CardDraw extends Jugador{
     private ArrayList<Carta> mano = new ArrayList<>();
 
-    public Jugador5CardDraw(String nombre, int fichas) {
-        super(nombre, fichas);
+    public Jugador5CardDraw(int noJugador, int fichas) {
+        super(noJugador, fichas);
     }
 
     public void tirarCartas(ArrayList<Integer> indices) {

@@ -28,7 +28,7 @@ public class Poker5CardDraw extends Poker{
         // Creamos la cantidad de jugadores dada por el usuario
         jugadores = new ArrayList<>();
         for (int i = 1; i <= cantidadDeJugadores; i++) {
-            jugadores.add(new Jugador5CardDraw("Jugador " + i, 1000));
+            jugadores.add(new Jugador5CardDraw( i, 1000));
         }
 
         generarBaraja();
@@ -41,12 +41,10 @@ public class Poker5CardDraw extends Poker{
         super();
         jugadores = new ArrayList<>();
         for (int i = 1; i <= cantJugadores; i++) {
-            jugadores.add(new Jugador5CardDraw("Jugador " + i, 1000));
+            jugadores.add(new Jugador5CardDraw(  i, 1000));
         }
         generarBaraja();
         repartirCartas(5);
     }
-
-
 
 }

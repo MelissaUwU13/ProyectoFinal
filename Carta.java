@@ -5,6 +5,7 @@ public class Carta {
     private String figura;
     private String color;
     private String nombreArchivo;
+    private boolean visible = false;
 
     private void figuraRandom() {
         Random rnd = new Random();
@@ -55,12 +56,22 @@ public class Carta {
         return figura;
     }
 
-    public void voltearCarta(){
+    public boolean isVisible() {
+        return visible;
+    }
 
+    public void setVisible(boolean visible) {
+        this.visible = visible;
+    }
+
+
+    public void voltearCarta(){
+        this.visible = !this.visible;
     }
 
     public String obtenerImagenCarta(String nombreArchivo) {
         // Idea: Vamos a obtener los valores de las cartas, y dependiendo de que carta es, se va a obtener una imagen de la carta correspondiente para el gamePanel
         return "hi";
     }
+
 }

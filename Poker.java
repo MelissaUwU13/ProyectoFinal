@@ -2,14 +2,33 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-//QUIZAS HACERLA ABSTRACTAAA 0.0
-public class Poker {
+public class Poker extends EvaluarMano{
     protected ArrayList<Carta> mazo;
     protected ArrayList<Jugador> jugadores;
     protected ArrayList<Integer> apuestas;
     protected int puntuacion;
 
+    //checar pq es de chat
     public boolean determinarGanador(){
+        // Lógica para decidir el ganador
+        // Por ejemplo, comparar las puntuaciones y mostrar el ganador
+        int mejorPuntuacion = -1;
+        Jugador ganador = null;
+
+        for (Jugador j : jugadores) {
+            ArrayList<Carta> mano = j.getMano();
+            analizarMano(mano);
+            if (puntuacion > mejorPuntuacion) {
+                mejorPuntuacion = puntuacion;
+                ganador = j;
+            }
+        }
+
+        if (ganador != null) {
+            System.out.println("¡El ganador es: " + ganador.getNombre() + " con puntuación: " + mejorPuntuacion + "!");
+            return true;
+        }
+
         return false;
     }
 
@@ -44,7 +63,6 @@ public class Poker {
         }
     }
 
-
     public void generarBaraja(){
         mazo= new ArrayList<>();
 
@@ -57,220 +75,4 @@ public class Poker {
         Collections.shuffle(mazo);
     }
 
-
-    public void tablaDePuntuaciones(ArrayList<Carta> mano){
-        if(esEscaleraReal(mano)==true){
-            puntuacion=10;
-        }
-        else if(sonDelMismoPalo(mano)==true && esEscalera(mano)==true){
-                puntuacion=9;
-
-        }
-        else if(hayNRepetidas(mano,4)==true){
-            puntuacion=8;
-        }
-        else if(hayNRepetidas(mano,3)==true && hayUnPar(mano)==true){
-            puntuacion=7;
-        }
-        else if(sonDelMismoPalo(mano)==true){
-            puntuacion=6;
-        }
-        else if(esEscalera(mano)==true){
-            puntuacion=5;
-        }
-        else if(hayNRepetidas(mano,3)==true){
-            puntuacion=4;
-        }
-        else if(doblePar(mano)==true){
-            puntuacion=3;
-        }
-        else if(hayUnPar(mano)==true){
-            puntuacion=2;
-        }
-        //EN CASO DE QUE NO SEA NINGUN, GANA EL JUGADOR CON LA CARTA MAS ALTA, OSEA CON A,REY, REINA, etc....
-        //else if(sonDelMismoPalo()==true){
-          //  puntuacion=1;
-        //}
-    }
-
-    public void analizarMano(ArrayList<Carta> mano){
-        if(esEscaleraReal(mano)==true){
-            puntuacion=10;
-            System.out.println("Es una escalera real!!!!");
-        }
-        else if(sonDelMismoPalo(mano)==true && esEscalera(mano)==true){
-            puntuacion=9;
-            System.out.println("Es una escalera corrida!!");
-        }
-        else if(hayNRepetidas(mano,4)==true){
-            puntuacion=8;
-            System.out.println("Hay 4 repetidas!!");
-        }
-        else if(esFullHouse(mano)==true){
-            puntuacion=7;
-            System.out.println("Es un full house!!");
-        }
-        else if(sonDelMismoPalo(mano)==true){
-            puntuacion=6;
-            System.out.println("Es un flush!!!");
-        }
-        else if(esEscalera(mano)==true){
-            puntuacion=5;
-            System.out.println("Es una escalera!!");
-        }
-        else if(hayNRepetidas(mano,3)==true){
-            puntuacion=4;
-            System.out.println("Hay 3 repetidas!!");
-        }
-        else if(doblePar(mano)==true){
-            puntuacion=3;
-            System.out.println("Hay dos pares!!");
-        }
-        else if(hayUnPar(mano)==true){
-            puntuacion=2;
-            if(hayUnPar(mano)) System.out.println("Hay un par!!");
-        } else System.out.println("Carta Alta!!");
-    }
-
-    public boolean esFullHouse(ArrayList<Carta> mano) {
-        int[] conteo = new int[14]; // índices del 1 al 13
-        for (Carta c : mano) {
-            conteo[c.getValor()]++;
-        }
-
-        boolean tieneTrio = false;
-        boolean tienePar = false;
-
-        for (int i = 1; i <= 13; i++) {
-            if (conteo[i] == 3) {
-                tieneTrio = true;
-            } else if (conteo[i] == 2) {
-                tienePar = true;
-            }
-        }
-
-        return tieneTrio && tienePar;
-    }
-
-
-   public boolean esEscaleraReal(ArrayList<Carta> mano) {
-       ordenar(mano);
-       String palo = mano.get(0).getFigura();
-       int[] valores = {10, 11, 12, 13, 1};
-
-       for (int i = 0; i < mano.size(); i++) {
-           if (mano.get(i).getValor() != valores[i]){
-               return false;
-           }
-
-           if (!mano.get(i).getFigura().equals(palo)){
-               return false;
-           }
-       }
-       return true;
-   }
-
-    public boolean esEscalera(ArrayList<Carta> mano) {
-        if (mano.size() < 5) return false; // mínimo 5 cartas para escalera
-        boolean hayEscalera = true;
-        ordenar(mano);
-
-        for (int i = 0; i < mano.size() - 1; i++) {
-            Carta carta1 = mano.get(i);
-            Carta carta2 = mano.get(i + 1);
-            if (carta1.getValor() != carta2.getValor() - 1) {
-                return false;
-            }
-        }
-        return hayEscalera;
-    }
-
-    public boolean hayUnPar(ArrayList<Carta> mano) {
-        boolean hayUnPar = false;
-
-        for (int i=0; i<mano.size()-1; i++) {
-            for (int j=i+1; j<mano.size(); j++) {
-                Carta carta1 = mano.get(i);
-                Carta carta2 = mano.get(j);
-                if (carta1.getValor() == carta2.getValor()) {
-                    return true;
-                }
-            }
-        }
-        return hayUnPar;
-    }
-
-    public boolean doblePar(ArrayList<Carta> mano) {
-        int pares = 0;
-        ArrayList<Integer> yaContados = new ArrayList<>();
-
-        for (int i = 0; i < mano.size(); i++) {
-            for (int j = i + 1; j < mano.size(); j++) {
-                if (mano.get(i).getValor() == mano.get(j).getValor() &&
-                        !yaContados.contains(mano.get(i).getValor())) {
-                    pares++;
-                    yaContados.add(mano.get(i).getValor());
-                }
-            }
-        }
-
-        if(pares == 2){
-            return true;
-        }
-
-        return false;
-    }
-
-    public boolean sonDelMismoPalo(ArrayList<Carta> mano) {
-        if (mano.size() < 5) return false; // mínimo 5 cartas para flush
-        boolean mismoPalo = true;
-        for (int i = 0; i < mano.size() - 1; i++) {
-            Carta carta1 = mano.get(i);
-            Carta carta2 = mano.get(i + 1);
-            if (!carta1.getFigura().equals(carta2.getFigura())) {
-                return false;
-            }
-        }
-        return mismoPalo;
-    }
-
-    //sirve para 3 o 4 iguales
-    public boolean hayNRepetidas(ArrayList<Carta> mano,int n) {
-        for (int i = 0; i < mano.size(); i++) {
-            int contador = 1;
-            for (int j = 0; j < mano.size(); j++) {
-                if (i != j && mano.get(i).getValor() == mano.get(j).getValor()) {
-                    contador++;
-                }
-            }
-            if (contador == n) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public void ordenar(ArrayList<Carta> mano) { // Bubble sort
-        for (int i=0; i<mano.size()-1; i++) {
-            for (int j=i+1; j<mano.size(); j++) {
-
-                Carta cartaA = mano.get(i);
-                Carta cartaB = mano.get(j);
-
-                // if (cartas.get(i).getValor() > cartas.get(j).getValor() )
-                if (cartaA.getValor() > cartaB.getValor()) {
-                    // intercambio
-                    Carta temp;
-
-                    temp = mano.get(i);
-                    mano.set(i, mano.get(j));
-                    mano.set(j, temp);
-                }
-            }
-        }
-    }
-
-    public int getPuntuacion() {
-        return puntuacion;
-    }
 }

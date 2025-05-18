@@ -16,15 +16,15 @@ public class PanelJuegos extends JPanel {
         setLayout(null);
         setBackground(Color.WHITE);
         setFocusable(true);
-        ImageIcon imagen5Card = new ImageIcon("boton5CardPoker.png");
+        ImageIcon imagen5Card = new ImageIcon("cartas/boton5CardPoker.png");
         Image imagenEscalada5Card = imagen5Card.getImage().getScaledInstance(256, 128, Image.SCALE_SMOOTH);
         ImageIcon imagenBoton5CardPoker = new ImageIcon(imagenEscalada5Card);
 
-        ImageIcon imagen7Card = new ImageIcon("boton7CardStud.png");
+        ImageIcon imagen7Card = new ImageIcon("cartas/boton7CardStud.png");
         Image imagenEscalada7Card = imagen7Card.getImage().getScaledInstance(256, 128, Image.SCALE_SMOOTH);
         ImageIcon imagenBoton7CardStud = new ImageIcon(imagenEscalada7Card);
         // Fondo de la pantalla
-        fondoPantalla = new ImageIcon("Portada.png").getImage();
+        fondoPantalla = new ImageIcon("cartas/Portada.png").getImage();
 
 
         JButton botonPoker5Hands = new JButton(imagenBoton5CardPoker);
@@ -42,7 +42,7 @@ public class PanelJuegos extends JPanel {
                     cantidadDeJugadores = Integer.parseInt(entrada);
                     if (cantidadDeJugadores >= 2 && cantidadDeJugadores <= 7) {
                         entradaValida = true;
-                        fondoPantalla = new ImageIcon("fondoPantallaPoker.jpg").getImage();
+                        fondoPantalla = new ImageIcon("cartas/fondoPantallaPoker.jpg").getImage();
                     } else {
                         JOptionPane.showMessageDialog(
                                 this,
