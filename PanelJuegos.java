@@ -18,7 +18,7 @@ public class PanelJuegos extends JPanel {
         ImageIcon imagenBoton5CardPoker = redimensionarImagen("cartas/boton5CardPoker.png", 256, 128);
         ImageIcon imagenBoton7CardStud = redimensionarImagen("cartas/boton7CardStud.png", 256, 128);
 
-        reproducirMusica("musica.wav");
+        reproducirMusica("cartas/musica.wav");
 
         // Fondo de la pantalla
         fondoPantalla = new ImageIcon("cartas/Portada.png").getImage();
