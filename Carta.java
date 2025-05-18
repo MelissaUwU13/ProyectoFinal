@@ -31,10 +31,10 @@ public class Carta {
 
     }
 
-    public Carta(int valor, String figura, String color){
+    public Carta(int valor, String figura, boolean visible){
         this.valor = valor;
         this.figura = figura;
-        this.color = color;
+        this.visible = false;
     }
 
     public String toString() {
@@ -63,7 +63,6 @@ public class Carta {
     public void setVisible(boolean visible) {
         this.visible = visible;
     }
-
 
     public void voltearCarta(){
         this.visible = !this.visible;

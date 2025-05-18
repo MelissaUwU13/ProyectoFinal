@@ -9,16 +9,12 @@ public class Jugador {
 
     public Jugador(int noJugador, int fichas) {
         this.noJugador = noJugador;
+        this.mano = new ArrayList<>();
         this.fichas = fichas;
     }
 
-    public Jugador(int noJugador) {
-        this.noJugador = noJugador;
-        this.mano = new ArrayList<>();
-        this.fichas = fichas; // Para fines de este codigo, usaremos 50 fichas como la base
-    }
-
-    public void recibirCarta(Carta c) {
+    public void recibirCarta(Carta c, boolean visible) {
+        c.setVisible(visible);
         mano.add(c);
     }
 
@@ -55,27 +51,6 @@ public class Jugador {
             }
         }
         System.out.println();
-    }
-
-    //lo queremos para baja
-    protected int obtenerCartaAlta(ArrayList<Carta> mano) {
-        int max = 0;
-        for (Carta c : mano) {
-            if (c.getValor() > max) {
-                max = c.getValor();
-            }
-        }
-        return max;
-    }
-
-    //modificar este apostar
-    public void apostar(int cantidad) {
-        if (cantidad <= fichas) {
-            fichas -= cantidad;
-            System.out.println(noJugador + " apuesta " + cantidad + " fichas. Fichas restantes: " + fichas);
-        } else {
-            System.out.println(noJugador + " no tiene suficientes fichas para apostar " + cantidad);
-        }
     }
 
     public void setMano(ArrayList<Carta> manoActual) {

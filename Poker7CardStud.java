@@ -5,6 +5,7 @@ import java.util.Scanner;
 public class Poker7CardStud extends Poker {
     private ArrayList<Jugador7CardStud> jugadores;
     private ArrayList<Integer> apuestasRonda;
+    private int apuestaActual = 5;
 
     public Poker7CardStud() {
         boolean error=false, ganador=false;
@@ -49,18 +50,24 @@ public class Poker7CardStud extends Poker {
             }
         }
 
+        System.out.println("Antes de iniciar tenemos nuestra primera apuesta obligatoria!");
+        System.out.println("La apuesta inicial es de 5 fichas!");
+        fichasTotales=fichasTotales-5;
+
+
         for (int i = 1; i <= cantJugadores; i++) {
             jugadores.add(new Jugador7CardStud(i, fichasTotales));  // ejemplo fichas iniciales
             apuestasRonda.add(0);
         }
 
-        System.out.println("Antes de iniciar tenemos nuestra primera apuesta obligatoria!");
-        System.out.println("La apuesta inicial es de 5 fichas!");
-
+        //repartir las primeras cartas
         for (int i = 1; i <= cantJugadores; i++) {
-            //quitar a los jugadores 5 fichas
+            repartirCartas(1,true);
+            repartirCartas(2,false);
         }
 
+
+        //yo me encargo
         //iterator=???
         int m = 1;
         while (!ganador && m <= 6) {
@@ -81,56 +88,85 @@ public class Poker7CardStud extends Poker {
                 // if(//aqui iria carta mas baja){
                 //solo se revisan las cartas visibles
 
-                //}
-                //Fourth Street
+                //aqui se analiza el brig-in y empiezan los que estan a su lado hasta que todos los jugadores hayan jugado
+
+            //Fourth Street
             case 2:
                 //Aqui se aplicaria un for donde revise las cartas de todos los jugadores para comprobar quien empieza
+                //Aqui inicia el jugador con la mejor combinacion/puntaje de dos cartas mostradas, no cuentan las invisibles
+                //en caso de empate de puntaje, inicia el jugador 1
+                //una idea base?? no se si funcione
+                int mejorPuntuacion = -1;
+                Jugador ganador = null;
+
+                for (Jugador j : jugadores) {
+                    ArrayList<Carta> mano = j.getMano();
+                    int puntuacion=analizarMano(mano);
+                    if (puntuacion > mejorPuntuacion) {
+                        mejorPuntuacion = puntuacion;
+                        ganador = j;
+                    }
+                }
 
 
-                //Fifth Street
+            //Fifth Street
             case 3:
+                //Aqui se aplicaria un for donde revise las cartas de todos los jugadores para comprobar quien empieza
+                //Aqui inicia el jugador con la mejor combinacion/puntaje de tres cartas mostradas, no cuentan las invisibles
+                //en caso de empate de puntaje, inicia el jugador 1
 
-                //Sixth Street
+
+            //Sixth Street
             case 4:
                 //Aqui se aplicaria un for donde revise las cartas de todos los jugadores para comprobar quien empieza
+                //Aqui inicia el jugador con la mejor combinacion/puntaje de 4 cartas mostradas, no cuentan las invisibles
+                //en caso de empate de puntaje, inicia el jugador 1
 
-                //Seventh Street
+
+            //Seventh Street
             case 5:
                 //Aqui se aplicaria un for donde revise las cartas de todos los jugadores para comprobar quien empieza
-
-                //Fase final
-            case 6:
-                //Aqui se aplicaria un for donde revise las cartas de todos los jugadores para comprobar quien empieza
-
+                //Aqui inicia el jugador con la mejor combinacion/puntaje de 4 cartas mostradas, osea la misma que el caso 4 o Sixth Street
+                //en caso de empate de puntaje, inicia el jugador 1
         }
     }
 
     public void calles(int ronda) {
         switch (ronda) {
+            //Third Street
             case 1:
-                repartirCartas(2);
-                turnoCalles(1);
-                faseApuestas(5);  // apuesta mínima (bring-in)
+                faseApuestas(apuestaActual,1);  // apuesta mínima de 5 (bring-in)
                 break;
+            //Fourth Street
             case 2:
-                repartirCartas(1);
-                turnoCalles(2);
-                faseApuestas(0);
+                repartirCartas(1,true);
+                faseApuestas(apuestaActual,2);
                 break;
+            //Fifth Street
             case 3:
-                repartirCartas(1);
-                turnoCalles(3);
-                faseApuestas(0);
+                repartirCartas(1,true);
+                faseApuestas(apuestaActual,3);
                 break;
+            //Sixth Street
             case 4:
-                repartirCartas(1);
-                turnoCalles(4);
-                faseApuestas(0);
+                repartirCartas(1,true);
+                faseApuestas(apuestaActual,4);
                 break;
+            //Seventh Street
             case 5:
-                repartirCartas(1);
-                turnoCalles(5);
-                faseApuestas(0);
+                //debe estar boca abajo
+                repartirCartas(1,false);
+                faseApuestas(apuestaActual,5);
+                break;
+            //The Showdown
+            case 6:
+                if(jugadores.size()>1){
+                    //TIENE QUE ANALIZAR TODAS LAS MANOS Y RECOPILAR LOS PUNTAJES
+                    determinarGanador(); //ver si funciona
+                }
+                else{
+                    System.out.println("Gana el jugador "+jugadores.getFirst().getNoJugador());
+                }
                 break;
             default:
                 System.out.println("Ronda inválida");
@@ -138,9 +174,7 @@ public class Poker7CardStud extends Poker {
     }
 
 
-
-
-    public void faseApuestas(int apuestaMinima) {
+    public void faseApuestas(int apuestaMinima, int ronda) {
         Scanner sc = new Scanner(System.in);
         ArrayList<Jugador7CardStud> jugadoresActivos = new ArrayList<>(jugadores);
 
@@ -150,15 +184,19 @@ public class Poker7CardStud extends Poker {
         }
 
         int apuestaMaxima = apuestaMinima;
+        int rondaActual= ronda;
         boolean apuestasPendientes = true;
 
         while (apuestasPendientes && jugadoresActivos.size() > 1) {
             apuestasPendientes = false;
 
+            //FASE DE APUESTAS DEBE PEDIR EL NIVEL PARA APLICAR TURNO DE JUGADORES!!
+            turnoCalles(rondaActual);
+
             for (Jugador7CardStud jugador : new ArrayList<>(jugadoresActivos)) {
-                System.out.println("\nJugador " + jugador.getNoJugador() + ", tu turno.");
+                System.out.println("\nJugador " + jugador.getNoJugador());
                 System.out.println("Apuesta máxima actual: " + apuestaMaxima);
-                System.out.println("Tus fichas: " + jugador.getFichas());
+                System.out.println("Cantidad de fichas disponibles: " + jugador.getFichas());
                 System.out.println("Opciones:");
                 System.out.println("1. Pasar");
                 System.out.println("2. Igualar");
@@ -168,45 +206,61 @@ public class Poker7CardStud extends Poker {
                 }
 
                 int opcion = sc.nextInt();
+                boolean errorOpcion=false;
 
-                switch (opcion) {
-                    case 1:
-                        jugador.pasar(jugadoresActivos);
-                        break;
-                    case 2:
-                        jugador.igualar(apuestaMaxima, apuestasRonda);
-                        break;
-                    case 3:
-                        System.out.println("Ingresa la nueva apuesta (debe ser mayor que " + apuestaMaxima + "):");
-                        int nuevaApuesta = sc.nextInt();
-                        jugador.subir(nuevaApuesta, apuestasRonda);
-                        if (nuevaApuesta > apuestaMaxima) {
-                            apuestaMaxima = nuevaApuesta;
-                            apuestasPendientes = true;
-                        }
-                        break;
-                    case 4:
-                        if (apuestaMinima > 0) {
-                            jugador.completar(apuestaMinima);
-                            apuestasRonda.set(jugador.getNoJugador() - 1, apuestaMinima);
-                            if (apuestaMinima > apuestaMaxima) {
-                                apuestaMaxima = apuestaMinima;
-                                apuestasPendientes = true;
+                while(errorOpcion==false){
+                    switch (opcion) {
+                        case 1:
+                            jugador.pasar(jugadoresActivos);
+                            errorOpcion=true;
+                            break;
+                        case 2:
+                            jugador.igualar(apuestaMaxima, apuestasRonda);
+                            errorOpcion=true;
+                            break;
+                        case 3:
+                            boolean errorApuesta = false;
+
+                            while (errorApuesta == false) {
+                                System.out.println("\nIngresa la nueva apuesta (debe ser mayor que " + apuestaMaxima + "):");
+                                int nuevaApuesta = sc.nextInt();
+                                if (nuevaApuesta > apuestaMaxima) {
+                                    jugador.subir(nuevaApuesta, apuestasRonda);
+
+                                    apuestaMaxima = nuevaApuesta;
+                                    apuestaActual = nuevaApuesta;
+                                    apuestasPendientes = true;
+                                    errorApuesta = true;
+                                } else {
+                                    System.out.println("Debe ser mayor a la apuesta actual!");
+                                    errorApuesta = false;
+                                }
                             }
-                        } else {
-                            System.out.println("Opción inválida.");
-                        }
-                        break;
-                    default:
-                        System.out.println("Opción inválida.");
-                }
 
-                if (jugadoresActivos.size() == 1) {
-                    System.out.println("Solo queda un jugador, ronda terminada.");
-                    return;
+                            errorOpcion=true;
+                            break;
+                        case 4:
+                            if (apuestaMinima > 0) {
+                                jugador.completar(apuestaMinima);
+                                apuestasRonda.set(jugador.getNoJugador() - 1, apuestaMinima);
+                                if (apuestaMinima > apuestaMaxima) {
+                                    apuestaMaxima = apuestaMinima;
+                                    apuestasPendientes = true;
+                                }
+                                errorOpcion=true;
+                            } else {
+                                System.out.println("Opción inválida, vuelvelo a intentar");
+                                errorOpcion = false;
+                            }
+                            break;
+                        default:
+                            System.out.println("Opción inválida, vuelvelo a intentar");
+                            errorOpcion=false;
+                    }
                 }
             }
         }
         System.out.println("Fase de apuestas terminada.\n");
     }
+
 }

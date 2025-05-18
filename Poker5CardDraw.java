@@ -58,7 +58,7 @@ public class Poker5CardDraw extends Poker {
 
         generarBaraja();
         // Repartimos 5 cartas para cada jugador debido a las reglas del juego
-        repartirCartas(5);
+        repartirCartas(5,true);
     }
 
     public Poker5CardDraw(int cantJugadores) {
@@ -85,7 +85,7 @@ public class Poker5CardDraw extends Poker {
 
     public void jugar() {
         generarBaraja();
-        repartirCartas(5);
+        repartirCartas(5,true);
 //        System.out.println("\n--- Manos iniciales ---");
 //        mostrarManos();
 //        System.out.println("\n--- Fase de Apuestas ---");

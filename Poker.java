@@ -5,11 +5,10 @@ public class Poker extends EvaluarMano{
     protected ArrayList<Carta> mazo;
     protected ArrayList<Jugador> jugadores;
     protected ArrayList<Integer> apuestas;
-    protected int puntuacion;
     protected EvaluarMano evaluador;
 
     //checar pq es de chat
-    public boolean determinarGanador(){
+    public void determinarGanador(){
         // Lógica para decidir el ganador
         // Por ejemplo, comparar las puntuaciones y mostrar el ganador
         Jugador mejorJugador = null;
@@ -18,7 +17,7 @@ public class Poker extends EvaluarMano{
 
         for (Jugador j : jugadores) {
             ArrayList<Carta> mano = j.getMano();
-            analizarMano(mano);
+            int puntuacion= analizarMano(mano);
             if (puntuacion > mejorPuntuacion) {
                 mejorPuntuacion = puntuacion;
                 ganador = j;
@@ -26,11 +25,8 @@ public class Poker extends EvaluarMano{
         }
 
         if (ganador != null) {
-            System.out.println("¡El ganador es: " + ganador.getNoJugador() + " con puntuación: " + mejorPuntuacion + "!");
-            return true;
+            System.out.println("¡El ganador es: " + ganador.getNoJugador());
         }
-
-        return false;
     }
 
     public String evaluarMano(ArrayList<Carta> mano) {
@@ -38,11 +34,11 @@ public class Poker extends EvaluarMano{
         return evaluador.interpretarPuntuación(puntuacion);
     }
 
-    //reparte N cartas
-    public void repartirCartas(int N){
+    public void repartirCartas(int N, boolean visible) {
         for (Jugador j : jugadores) {
             for (int i = 0; i < N; i++) {
-                j.recibirCarta(mazo.remove(0));
+                Carta c = mazo.remove(0);
+                j.recibirCarta(c, visible);
             }
         }
     }
@@ -75,12 +71,14 @@ public class Poker extends EvaluarMano{
         String[] figuras = {"corazon", "trebol", "diamante", "pica"};
         for (String figura : figuras) {
             for (int j = 1; j <= 13; j++) {
-                mazo.add(new Carta(j, figura, "transparente"));
+                mazo.add(new Carta(j, figura, true));
             }
         }
         Collections.shuffle(mazo);
     }
 
+
+//QUIEN HIZO ESTO??
     public void faseDeApuestas() {
         Scanner sc = new Scanner(System.in);
         int apuestaActual = 0;
