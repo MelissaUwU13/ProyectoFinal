@@ -165,7 +165,7 @@ public class PanelJuegos extends JPanel {
             revalidate();
             repaint();
         }
-        // Botón para confirmar las cartas seleccionadas, luego vamos a borrar o cambiar todo esto por que nomas es para pruebas
+        // Botón para confirmar las cartas seleccionadas, luego vamos a borrar o cambiar esto
         JButton confirmarBtn = new JButton("Confirmar selección");
         confirmarBtn.setBounds(400, 300, 200, 40);
         confirmarBtn.addActionListener(e -> {
