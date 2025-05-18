@@ -3,17 +3,73 @@ import java.util.Collections;
 import java.util.Scanner;
 
 public class Poker7CardStud extends Poker {
-    private int cantJugadores;
     private ArrayList<Jugador7CardStud> jugadores;
     private ArrayList<Integer> apuestasRonda;
 
-    public Poker7CardStud(int cantJugadores) {
-        this.cantJugadores = cantJugadores;
+    public Poker7CardStud() {
+        boolean error=false, ganador=false;
+        Scanner sc = new Scanner(System.in);
+        int cantJugadores = 0;
+
+        while(error=false) {
+            System.out.println("Ingrese la cantidad de jugadores: ");
+            try {
+                cantJugadores = sc.nextInt();
+                if (cantJugadores < 2 || cantJugadores > 8) {
+                    System.out.println("Cantidad erronea, vuelvelo a intentar ");
+                    error = false;
+                } else {
+                    error = true;
+                }
+            }
+            catch (Exception e) {
+                System.out.println("Error: Entrada no valida");
+            }
+        }
+
+        error=false;
+
         this.jugadores = new ArrayList<>();
         this.apuestasRonda = new ArrayList<>();
+        int fichasTotales=0;
+
+        while(error=false){
+            System.out.println("Con cuantas fichas quieres iniciar para cada jugador? MAX 50");
+            try {
+                fichasTotales = sc.nextInt();
+                if (fichasTotales < 0 || fichasTotales > 50) {
+                    System.out.println("Cantidad erronea, vuelvelo a intentar ");
+                    error = false;
+                } else {
+                    error = true;
+                }
+            }
+            catch (Exception e) {
+                System.out.println("Error: Entrada no valida");
+            }
+        }
+
         for (int i = 1; i <= cantJugadores; i++) {
-            jugadores.add(new Jugador7CardStud(i, 100));  // ejemplo fichas iniciales
+            jugadores.add(new Jugador7CardStud(i, fichasTotales));  // ejemplo fichas iniciales
             apuestasRonda.add(0);
+        }
+
+        System.out.println("Antes de iniciar tenemos nuestra primera apuesta obligatoria!");
+        System.out.println("La apuesta inicial es de 5 fichas!");
+
+        for (int i = 1; i <= cantJugadores; i++) {
+            //quitar a los jugadores 5 fichas
+        }
+
+        //iterator=???
+        int m = 1;
+        while (!ganador && m <= 6) {
+            System.out.println("Ronda " + m);
+            calles(m);
+            if (m == 6) {
+                ganador = true;
+            }
+            m++;
         }
     }
 
@@ -52,7 +108,7 @@ public class Poker7CardStud extends Poker {
     public void calles(int ronda) {
         switch (ronda) {
             case 1:
-                repartirCartas(2); // por ejemplo 2 cartas iniciales
+                repartirCartas(2);
                 turnoCalles(1);
                 faseApuestas(5);  // apuesta mínima (bring-in)
                 break;
@@ -81,6 +137,9 @@ public class Poker7CardStud extends Poker {
         }
     }
 
+
+
+
     public void faseApuestas(int apuestaMinima) {
         Scanner sc = new Scanner(System.in);
         ArrayList<Jugador7CardStud> jugadoresActivos = new ArrayList<>(jugadores);
@@ -97,7 +156,7 @@ public class Poker7CardStud extends Poker {
             apuestasPendientes = false;
 
             for (Jugador7CardStud jugador : new ArrayList<>(jugadoresActivos)) {
-                System.out.println("\nJugador " + jugador.getNombre() + ", tu turno.");
+                System.out.println("\nJugador " + jugador.getNoJugador() + ", tu turno.");
                 System.out.println("Apuesta máxima actual: " + apuestaMaxima);
                 System.out.println("Tus fichas: " + jugador.getFichas());
                 System.out.println("Opciones:");
@@ -129,7 +188,7 @@ public class Poker7CardStud extends Poker {
                     case 4:
                         if (apuestaMinima > 0) {
                             jugador.completar(apuestaMinima);
-                            apuestasRonda.set(jugador.getNombre() - 1, apuestaMinima);
+                            apuestasRonda.set(jugador.getNoJugador() - 1, apuestaMinima);
                             if (apuestaMinima > apuestaMaxima) {
                                 apuestaMaxima = apuestaMinima;
                                 apuestasPendientes = true;

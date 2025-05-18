@@ -2,13 +2,15 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Scanner;
 public class Poker5CardDraw extends Poker {
+    private ArrayList<Jugador5CardDraw> jugadores;
+    private ArrayList<Integer> apuestasRonda;
 
     public Poker5CardDraw(){
         super();
         evaluador = new Evaluador5CardDraw();
         Scanner sc = new Scanner(System.in);
         int cantidadDeJugadores = 0;
-        boolean error=false;
+        boolean error=false, ganador=false;
 
         // Creamos un ciclo en el que haremos que el usuario defina la cantidad de jugadores
         while(!error) {
@@ -21,21 +23,44 @@ public class Poker5CardDraw extends Poker {
                 else {
                     error = true;
                 }
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
                 System.out.println("Error: Entrada no valida");
             }
         }
 
+        error=false;
+        int fichasTotales=0;
+
+        while(error=false) {
+            System.out.println("Con cuantas fichas quieres iniciar para cada jugador? MAX 50");
+            try {
+                fichasTotales = sc.nextInt();
+                if (fichasTotales < 0 || fichasTotales > 50) {
+                    System.out.println("Cantidad erronea, vuelvelo a intentar ");
+                    error = false;
+                } else {
+                    error = true;
+                }
+            }
+            catch (Exception e) {
+            System.out.println("Error: Entrada no valida");
+        }
+
+        }
+
         // Creamos la cantidad de jugadores dada por el usuario
-        jugadores = new ArrayList<>();
+        this.jugadores = new ArrayList<>();
+        this.apuestasRonda = new ArrayList<>();
         for (int i = 1; i <= cantidadDeJugadores; i++) {
-            jugadores.add(new Jugador5CardDraw( i, 1000));
+            jugadores.add(new Jugador5CardDraw( i, fichasTotales));
         }
 
         generarBaraja();
         // Repartimos 5 cartas para cada jugador debido a las reglas del juego
         repartirCartas(5);
     }
+
     public Poker5CardDraw(int cantJugadores) {
         super();
         evaluador = new Evaluador5CardDraw();

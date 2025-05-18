@@ -26,31 +26,31 @@ public class Jugador7CardStud extends Jugador {
     }
 
     public void igualar(int apuestaMaxima, ArrayList<Integer> apuestasRonda) {
-        int apuestaActual = apuestasRonda.get(getNombre() - 1); // índice 0-based
+        int apuestaActual = apuestasRonda.get(getNoJugador() - 1); // índice 0-based
         int diferencia = apuestaMaxima - apuestaActual;
         if (diferencia > 0 && getFichas() >= diferencia) {
             apostar(diferencia);
-            apuestasRonda.set(getNombre() - 1, apuestaMaxima);
-            System.out.println("Jugador " + getNombre() + " iguala con " + diferencia + " fichas.");
+            apuestasRonda.set(getNoJugador() - 1, apuestaMaxima);
+            System.out.println("Jugador " + getNoJugador() + " iguala con " + diferencia + " fichas.");
         } else {
-            System.out.println("Jugador " + getNombre() + " no puede igualar.");
+            System.out.println("Jugador " + getNoJugador() + " no puede igualar.");
         }
     }
 
     public void subir(int nuevaApuesta, ArrayList<Integer> apuestasRonda) {
-        int apuestaActual = apuestasRonda.get(getNombre() - 1);
+        int apuestaActual = apuestasRonda.get(getNoJugador() - 1);
         int diferencia = nuevaApuesta - apuestaActual;
         if (diferencia > 0 && getFichas() >= diferencia) {
             apostar(diferencia);
-            apuestasRonda.set(getNombre() - 1, nuevaApuesta);
-            System.out.println("Jugador " + getNombre() + " sube a " + nuevaApuesta + " fichas.");
+            apuestasRonda.set(getNoJugador() - 1, nuevaApuesta);
+            System.out.println("Jugador " + getNoJugador() + " sube a " + nuevaApuesta + " fichas.");
         } else {
             System.out.println("No puedes subir con esa cantidad.");
         }
     }
 
     public void pasar(ArrayList<Jugador7CardStud> jugadoresActivos) {
-        jugadoresActivos.removeIf(j -> j.getNombre() == getNombre());
-        System.out.println("Jugador " + getNombre() + " se retira de la ronda.");
+        jugadoresActivos.removeIf(j -> j.getNoJugador() == getNoJugador());
+        System.out.println("Jugador " + getNoJugador() + " se retira de la ronda.");
     }
 }

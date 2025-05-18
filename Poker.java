@@ -26,7 +26,7 @@ public class Poker extends EvaluarMano{
         }
 
         if (ganador != null) {
-            System.out.println("¡El ganador es: " + ganador.getNombre() + " con puntuación: " + mejorPuntuacion + "!");
+            System.out.println("¡El ganador es: " + ganador.getNoJugador() + " con puntuación: " + mejorPuntuacion + "!");
             return true;
         }
 
@@ -54,7 +54,7 @@ public class Poker extends EvaluarMano{
     public void mostrarManos() {
         int num = 1;
         for (Jugador j : jugadores) {
-            System.out.println("Mano del " + j.getNombre() + ":");
+            System.out.println("Mano del " + j.getNoJugador() + ":");
             for (Carta c : j.getMano()) {
                 System.out.println("- " + c); // Asegúrate de que Carta tenga un buen toString()
             }
@@ -96,7 +96,7 @@ public class Poker extends EvaluarMano{
             while (it.hasNext()) {
                 Jugador jugador = it.next();
 
-                System.out.println("\nJugador " + jugador.getNombre() + " (Fichas: " + jugador.getFichas() + ")");
+                System.out.println("\nJugador " + jugador.getNoJugador() + " (Fichas: " + jugador.getFichas() + ")");
                 System.out.println("Mano:");
                 mostrarMano(jugador);  // Esto puedes moverlo a Poker5CardDraw si quieres
 
@@ -126,12 +126,12 @@ public class Poker extends EvaluarMano{
                 switch (opcion) {
                     case 1:
                         if (apuestaActual == 0) {
-                            System.out.println(jugador.getNombre() + " hace check.");
+                            System.out.println(jugador.getNoJugador() + " hace check.");
                         } else {
                             int cantidadCall = apuestaActual;
                             if (cantidadCall > jugador.getFichas()) cantidadCall = jugador.getFichas();
                             jugador.apostar(cantidadCall);
-                            System.out.println(jugador.getNombre() + " iguala la apuesta.");
+                            System.out.println(jugador.getNoJugador() + " iguala la apuesta.");
                         }
                         break;
                     case 2:
@@ -155,12 +155,12 @@ public class Poker extends EvaluarMano{
                             }
                             apuestaActual = total;
                             jugador.apostar(total);
-                            System.out.println(jugador.getNombre() + " sube la apuesta a " + total);
+                            System.out.println(jugador.getNoJugador() + " sube la apuesta a " + total);
                             rondaActiva = true;
                         }
                         break;
                     case 3:
-                        System.out.println(jugador.getNombre() + " se retira.");
+                        System.out.println(jugador.getNoJugador() + " se retira.");
                         it.remove();
                         break;
                 }

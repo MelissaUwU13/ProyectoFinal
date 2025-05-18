@@ -5,7 +5,6 @@ import java.util.Collections;
 public class Jugador {
     private int noJugador;
     private int fichas;
-    private String nombre;
     private ArrayList<Carta> mano = new ArrayList<>();
 
     public Jugador(int noJugador, int fichas) {
@@ -13,10 +12,10 @@ public class Jugador {
         this.fichas = fichas;
     }
 
-    public Jugador(String nombre) {
-        this.nombre = nombre;
+    public Jugador(int noJugador) {
+        this.noJugador = noJugador;
         this.mano = new ArrayList<>();
-        this.fichas = fichas; // Para fines de este codigo, usaremos 1000 fichas como la base
+        this.fichas = fichas; // Para fines de este codigo, usaremos 50 fichas como la base
     }
 
     public void recibirCarta(Carta c) {
@@ -27,7 +26,7 @@ public class Jugador {
         return mano;
     }
 
-    public int getNombre() {
+    public int getNoJugador() {
         return noJugador;
     }
 
@@ -47,7 +46,6 @@ public class Jugador {
         this.fichas = fichas;
     }
 
-
     // Muestra solo las cartas visibles (para otras personas)
     public void mostrarCartasVisibles() {
         System.out.print(noJugador + " muestra: ");
@@ -59,6 +57,7 @@ public class Jugador {
         System.out.println();
     }
 
+    //lo queremos para baja
     protected int obtenerCartaAlta(ArrayList<Carta> mano) {
         int max = 0;
         for (Carta c : mano) {
@@ -69,6 +68,7 @@ public class Jugador {
         return max;
     }
 
+    //modificar este apostar
     public void apostar(int cantidad) {
         if (cantidad <= fichas) {
             fichas -= cantidad;
