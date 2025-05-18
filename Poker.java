@@ -1,6 +1,4 @@
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class Poker extends EvaluarMano{
     private int poker;
@@ -14,6 +12,7 @@ public class Poker extends EvaluarMano{
     public boolean determinarGanador(){
         // Lógica para decidir el ganador
         // Por ejemplo, comparar las puntuaciones y mostrar el ganador
+        Jugador mejorJugador = null;
         int mejorPuntuacion = -1;
         Jugador ganador = null;
 
@@ -82,4 +81,92 @@ public class Poker extends EvaluarMano{
         Collections.shuffle(mazo);
     }
 
+    public void faseDeApuestas() {
+        Scanner sc = new Scanner(System.in);
+        int apuestaActual = 0;
+        boolean rondaActiva = true;
+
+        // Copia para no modificar la lista original si alguien hace fold
+        ArrayList<Jugador> jugadoresActivos = new ArrayList<>(jugadores);
+
+        while (rondaActiva) {
+            rondaActiva = false;
+
+            Iterator<Jugador> it = jugadoresActivos.iterator();
+            while (it.hasNext()) {
+                Jugador jugador = it.next();
+
+                System.out.println("\nJugador " + jugador.getNombre() + " (Fichas: " + jugador.getFichas() + ")");
+                System.out.println("Mano:");
+                mostrarMano(jugador);  // Esto puedes moverlo a Poker5CardDraw si quieres
+
+                System.out.println("Apuesta actual: " + apuestaActual);
+
+                if (apuestaActual == 0) {
+                    System.out.println("1. Check");
+                    System.out.println("2. Bet");
+                    System.out.println("3. Fold");
+                } else {
+                    System.out.println("1. Call");
+                    System.out.println("2. Raise");
+                    System.out.println("3. Fold");
+                }
+
+                int opcion;
+                while (true) {
+                    try {
+                        opcion = Integer.parseInt(sc.nextLine());
+                        if (opcion >= 1 && opcion <= 3) break;
+                        System.out.println("Opción inválida. Intenta de nuevo:");
+                    } catch (Exception e) {
+                        System.out.println("Entrada inválida. Ingresa un número:");
+                    }
+                }
+
+                switch (opcion) {
+                    case 1:
+                        if (apuestaActual == 0) {
+                            System.out.println(jugador.getNombre() + " hace check.");
+                        } else {
+                            int cantidadCall = apuestaActual;
+                            if (cantidadCall > jugador.getFichas()) cantidadCall = jugador.getFichas();
+                            jugador.apostar(cantidadCall);
+                            System.out.println(jugador.getNombre() + " iguala la apuesta.");
+                        }
+                        break;
+                    case 2:
+                        if (apuestaActual == 0) {
+                            System.out.print("¿Cuántas fichas apuestas? ");
+                            int cantidadBet = Integer.parseInt(sc.nextLine());
+                            if (cantidadBet > jugador.getFichas()) {
+                                System.out.println("No tienes suficientes fichas.");
+                                continue;
+                            }
+                            apuestaActual = cantidadBet;
+                            jugador.apostar(cantidadBet);
+                            rondaActiva = true;
+                        } else {
+                            System.out.print("¿Cuánto deseas subir? ");
+                            int cantidadRaise = Integer.parseInt(sc.nextLine());
+                            int total = apuestaActual + cantidadRaise;
+                            if (total > jugador.getFichas()) {
+                                System.out.println("No tienes suficientes fichas.");
+                                continue;
+                            }
+                            apuestaActual = total;
+                            jugador.apostar(total);
+                            System.out.println(jugador.getNombre() + " sube la apuesta a " + total);
+                            rondaActiva = true;
+                        }
+                        break;
+                    case 3:
+                        System.out.println(jugador.getNombre() + " se retira.");
+                        it.remove();
+                        break;
+                }
+            }
+        }
+
+        jugadores = jugadoresActivos;
+    }
 }

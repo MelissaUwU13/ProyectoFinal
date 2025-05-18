@@ -36,7 +36,6 @@ public class Poker5CardDraw extends Poker {
         // Repartimos 5 cartas para cada jugador debido a las reglas del juego
         repartirCartas(5);
     }
-
     public Poker5CardDraw(int cantJugadores) {
         super();
         evaluador = new Evaluador5CardDraw();
@@ -44,8 +43,37 @@ public class Poker5CardDraw extends Poker {
         for (int i = 1; i <= cantJugadores; i++) {
             jugadores.add(new Jugador5CardDraw(  i, 1000));
         }
-        generarBaraja();
-        repartirCartas(5);
+        jugar();
     }
 
+    public Carta sacarCarta() {
+        if (!mazo.isEmpty()) {
+            return mazo.remove(0); // Saca la primera carta (el mazo debe estar barajado)
+        } else {
+            throw new IllegalStateException("El mazo está vacío");
+        }
+    }
+    public ArrayList<Carta> getMazo() {
+        return mazo;
+    }
+
+
+    public void jugar() {
+        generarBaraja();
+        repartirCartas(5);
+//        System.out.println("\n--- Manos iniciales ---");
+//        mostrarManos();
+//        System.out.println("\n--- Fase de Apuestas ---");
+//        //Primera Ronda de apuestas
+//        faseDeApuestas();
+//        //Fase de descarte
+//
+//        //Segunda ronda de descarte
+//        faseDeApuestas();
+//        //Ultima fase donde tiramos las cartas y decidimos un ganador
+//        System.out.println("\n--- Manos Finales (jugadores restantes) ---");
+//        mostrarManos();
+//
+//        determinarGanador();
+    }
 }
