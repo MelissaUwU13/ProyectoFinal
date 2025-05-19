@@ -1,9 +1,12 @@
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Poker5CardDraw extends Poker {
     private ArrayList<Integer> apuestasRonda;
-    private int apuestaActual = 0;
-    private int jugadoresQueHicieronCheck = 0, jugadoresQueDescartaron = 0, jugadoresQueHicieronCall = 0;
+    private int apuestaActual = 0, pozo = 0;
+    private int jugadoresQueHicieronCheck = 0, jugadoresQueDescartaron = 0, jugadoresQueHicieronCall = 0, jugadoresQueYaJugaron = 0;
+    private Map<Jugador, Integer> puntuaciones = new HashMap<>();
 
     public Poker5CardDraw(int cantidadDeJugadores, ArrayList<String> nombresJugadores) {
         super();
@@ -11,7 +14,7 @@ public class Poker5CardDraw extends Poker {
         jugadores = new ArrayList<>();
         for (int i = 0; i < cantidadDeJugadores; i++) {
             String nombre = nombresJugadores.get(i);
-            jugadores.add(new Jugador5CardDraw(nombre,i, 1000)); // Aquí le pasas el nombre
+            jugadores.add(new Jugador5CardDraw(nombre,i, 500)); // Aquí le pasas el nombre
         }
         jugar();
     }
@@ -56,12 +59,50 @@ public class Poker5CardDraw extends Poker {
         return jugadoresQueHicieronCall;
     }
 
+    public int getJugadoresQueYaJugaron() {
+        return jugadoresQueYaJugaron;
+    }
+
+    public void reiniciarPartida() {
+        // Limpiar y reiniciar variables del juego
+        apuestaActual = 0;
+        pozo = 0;
+        jugadoresQueHicieronCheck = 0;
+        jugadoresQueDescartaron = 0;
+        jugadoresQueHicieronCall = 0;
+        jugadoresQueYaJugaron = 0;
+        puntuaciones.clear();
+
+        // Reiniciar estado de cada jugador
+        for (Jugador jugador : jugadores) {
+            jugador.setRetirado(false);
+            jugador.getMano().clear();  // limpia la mano actual
+            System.out.println("Reiniciando estado de " + jugador.getNombre());
+            System.out.println("¿Está retirado?: " + jugador.estaRetirado());
+        }
+        System.out.println("Mano del jugador b (desde lista): " + jugadores.get(1).getMano());
+        System.out.println("¿Retirado b desde lista?: " + jugadores.get(1).estaRetirado());
+
+        // Volver a barajar y repartir nuevas cartas
+        generarBaraja();
+        repartirCartas(5, true);
+    }
+
     public void reiniciarCalls() {
         jugadoresQueHicieronCall = 0;
     }
 
+    public void guardarPuntuacion(Jugador jugador) {
+        int puntaje = evaluador.analizarMano(jugador.getMano());
+        puntuaciones.put(jugador, puntaje);
+    }
+
     public void incrementarDescartes() {
         jugadoresQueDescartaron++;
+    }
+
+    public void incrementarJugadas() {
+        jugadoresQueYaJugaron++;
     }
 
     public int getJugadoresQueDescartaron() {
@@ -82,11 +123,48 @@ public class Poker5CardDraw extends Poker {
         return count;
     }
 
+    public Jugador compararPuntuaciones() {
+        Jugador ganador = null;
+        int mejorPuntuacion = -1;
+
+        for (Map.Entry<Jugador, Integer> entry : puntuaciones.entrySet()) {
+            Jugador j = entry.getKey();
+            int puntaje = entry.getValue();
+
+            if (puntaje > mejorPuntuacion) {
+                mejorPuntuacion = puntaje;
+                ganador = j;
+            }
+        }
+
+        if (ganador != null) {
+            // Sumar el pozo a sus fichas
+            ((Jugador) ganador).sumarFichas(pozo);
+            return ganador;
+        }
+
+        puntuaciones.clear(); // limpio el mapa después de usarlo
+        return ganador;
+    }
+
+
     public Jugador getJugadorActivoRestante() {
         for (Jugador j : jugadores) {
             if (!j.estaRetirado()) return j;
         }
         return null;
+    }
+
+    public void agregarAlPozo(int cantidad) {
+        pozo += cantidad;
+    }
+
+    public void reiniciarPozo() {
+        pozo = 0;
+    }
+
+    public int getPozo() {
+        return pozo;
     }
 
 
@@ -98,6 +176,9 @@ public class Poker5CardDraw extends Poker {
         this.apuestaActual = apuesta;
     }
 
+    public void setJugadoresQueYaJugaron(int jugador) {
+        this.jugadoresQueYaJugaron = jugador;
+    }
     public void jugar() {
         generarBaraja();
         repartirCartas(5,true);

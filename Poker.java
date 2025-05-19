@@ -1,7 +1,6 @@
 import java.util.*;
 
 public class Poker extends EvaluarMano{
-    private int poker;
     protected ArrayList<Carta> mazo;
     protected ArrayList<Jugador> jugadores;
     protected ArrayList<Integer> apuestas;

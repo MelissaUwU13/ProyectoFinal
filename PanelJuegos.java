@@ -19,7 +19,6 @@ public class PanelJuegos extends JPanel {
 
         ImageIcon imagenBoton5CardPoker = redimensionarImagen("cartas/boton5CardPoker.png", 256, 128);
         ImageIcon imagenBoton7CardStud = redimensionarImagen("cartas/boton7CardStud.png", 256, 128);
-
         reproducirMusica("cartas/musica.wav");
 
         // Fondo de la pantalla
@@ -27,11 +26,6 @@ public class PanelJuegos extends JPanel {
 
         JButton botonPoker5Hands = new JButton(imagenBoton5CardPoker);
         JButton botonPoker7CardStud = new JButton(imagenBoton7CardStud);
-
-
-
-
-
         botonPoker5Hands.addActionListener(e -> {
             int cantidadDeJugadores = 0;
             boolean entradaValida = false;
@@ -85,7 +79,7 @@ public class PanelJuegos extends JPanel {
             repaint();
 
             // Agregar el panel especializado para jugar 5 Card Draw
-            PanelPoker5CardDraw panelPoker5 = new PanelPoker5CardDraw(cantidadDeJugadores, nombresJugadores);
+            PanelPoker5CardDraw panelPoker5 = new PanelPoker5CardDraw(cantidadDeJugadores, nombresJugadores, this);
             panelPoker5.setBounds(0, 0, 1000, 600);
             add(panelPoker5);
 
@@ -204,6 +198,33 @@ public class PanelJuegos extends JPanel {
         add(botonPoker7CardStud);
     }
 
+    public void regresarAlMenuPrincipal() {
+        removeAll(); // Quitar panel de juego actual
+
+        // Restaurar fondo
+        fondoPantalla = new ImageIcon("cartas/Portada.png").getImage();
+
+        // Restaurar botones
+        ImageIcon imagenBoton5CardPoker = redimensionarImagen("cartas/boton5CardPoker.png", 256, 128);
+        ImageIcon imagenBoton7CardStud = redimensionarImagen("cartas/boton7CardStud.png", 256, 128);
+
+        JButton botonPoker5Hands = new JButton(imagenBoton5CardPoker);
+        JButton botonPoker7CardStud = new JButton(imagenBoton7CardStud);
+
+        botonPoker5Hands.setBounds(200, 400, 256, 128);
+        botonPoker7CardStud.setBounds(500, 400, 256, 128);
+
+        inicializarBotonConImagen(botonPoker5Hands);
+        inicializarBotonConImagen(botonPoker7CardStud);
+
+        // Reagregar listeners si es necesario, o puedes mover los botones originales a atributos de clase si prefieres.
+        add(botonPoker5Hands);
+        add(botonPoker7CardStud);
+
+        revalidate();
+        repaint();
+    }
+
     private ImageIcon redimensionarImagen(String rutaImagen, int ancho, int alto) {
         ImageIcon original = new ImageIcon(rutaImagen);
         Image escalada = original.getImage().getScaledInstance(ancho, alto, Image.SCALE_SMOOTH);
@@ -223,11 +244,17 @@ public class PanelJuegos extends JPanel {
         g.drawImage(fondoPantalla, 0, 0, getWidth(), getHeight(), this);
     }
 
+
     private void reproducirMusica(String rutaArchivo) {
         try {
+            if (musica != null) {
+                if (musica.isRunning()) {
+                    musica.stop();  // Para la música si está sonando
+                }
+                musica.close();  // Libera recursos del clip anterior
+            }
             AudioInputStream audio = AudioSystem.getAudioInputStream(new File(rutaArchivo));
             musica = AudioSystem.getClip();
-            musica.stop();
             musica.open(audio);
             musica.loop(Clip.LOOP_CONTINUOUSLY);
         } catch (Exception e) {

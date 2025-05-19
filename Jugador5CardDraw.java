@@ -28,11 +28,4 @@ public class Jugador5CardDraw extends Jugador{
         return nombre;
     }
 
-    public boolean getJugadorTiroCarta() {
-        return jugadorDescartoCarta;
-    }
-
-    public void setApuestaActual(int apuestaActual) {
-        this.apuestaActual = apuestaActual;
-    }
 }

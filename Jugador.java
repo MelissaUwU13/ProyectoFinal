@@ -1,9 +1,7 @@
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Collections;
 
 public class Jugador {
-    private int fichas, noJugador;
+    private int fichas, noJugador, apuestaActual;
     private String nombre;
     private boolean retirado = false, huboCambioDeCartas = false;
     private ArrayList<Carta> mano = new ArrayList<>();
@@ -44,6 +42,10 @@ public class Jugador {
         return retirado;
     }
 
+    public void setRetirado(boolean retirado) {
+        this.retirado = retirado;
+    }
+
     public void retirarse() {
         this.retirado = true;
     }
@@ -71,14 +73,43 @@ public class Jugador {
         this.mano = manoActual;
     }
 
+    public int getApuestaRondaActual() {
+        return apuestaActual;
+    }
+
+    public void setApuestaRondaActual(int cantidad) {
+        this.apuestaActual = cantidad;
+    }
+
+    public void reiniciarApuestaRonda() {
+        this.apuestaActual = 0;
+    }
+
     //si me sirve qwq
     public void apostar(int cantidad) {
         if (cantidad <= fichas) {
             fichas -= cantidad;
-            System.out.println("Jugador"+nombre + " apuesta " + cantidad + " fichas. Fichas restantes: " + fichas);
+            System.out.println("Jugador "+nombre + " apuesta " + cantidad + " fichas. Fichas restantes: " + fichas);
         }
         else{
-            System.out.println("Jugador"+nombre + " no tiene suficientes fichas para apostar " + cantidad);
+            System.out.println("Jugador "+nombre + " no tiene suficientes fichas para apostar " + cantidad);
+        }
+    }
+
+    public void subirYApostar(int cantidad, int apuestaActual) {
+        int diferencia = cantidad - this.apuestaActual;
+        if (diferencia > 0 && diferencia <= fichas) {
+            this.fichas -= diferencia;
+            this.apuestaActual += diferencia;
+        }
+    }
+
+    public void sumarFichas(int cantidad) {
+        if (cantidad > 0) {
+            fichas += cantidad;
+            System.out.println("Jugador " + nombre + " recibe " + cantidad + " fichas. Total ahora: " + fichas);
+        } else {
+            System.out.println("No se puede sumar una cantidad negativa o cero de fichas.");
         }
     }
 
