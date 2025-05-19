@@ -37,9 +37,11 @@ public class PanelPoker5CardDraw extends JPanel {
         botonTerminarTurno = new JButton(imagenBotonTerminarTurno);
         botonTerminarTurno.setBounds(800, 20, 128, 64);
         inicializarBotonConImagen(botonTerminarTurno);
+
         botonTerminarTurno.addActionListener(e -> {
             pasarAlSiguienteJugador();
         });
+
         ImageIcon imagenBotonPasar = redimensionarImagen("cartas/botonCheck.png", 128, 64);
         botonCheck = new JButton(imagenBotonPasar);
         botonCheck.setBounds(200, 300, 128, 64);

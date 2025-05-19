@@ -6,6 +6,8 @@ import java.util.Scanner;
 public class Poker7CardStud extends Poker {
     private ArrayList<Integer> apuestasRonda;
     private int apuestaActual, apuestaMinima = 5;
+    private int jugadoresQueHicieronCheck = 0, jugadoresQueDescartaron = 0, jugadoresQueHicieronCall = 0;
+
     int jugadaBring=1;
 
     public Poker7CardStud(int cantJugadores, int fichasTotales) {
@@ -458,4 +460,76 @@ public class Poker7CardStud extends Poker {
         }
     }
 
+
+
+    //GRAFICOS
+
+    public void incrementarChecks() {
+        jugadoresQueHicieronCheck++;
+    }
+
+    public int getJugadoresQueHicieronCheck() {
+        return jugadoresQueHicieronCheck;
+    }
+
+    public void reiniciarChecks() {
+        jugadoresQueHicieronCheck = 0;
+    }
+    public void incrementarCalls() {
+        jugadoresQueHicieronCall++;
+    }
+
+    public int getJugadoresQueHicieronCall() {
+        return jugadoresQueHicieronCall;
+    }
+
+    public void reiniciarCalls() {
+        jugadoresQueHicieronCall = 0;
+    }
+
+    public void incrementarDescartes() {
+        jugadoresQueDescartaron++;
+    }
+
+    public int getJugadoresQueDescartaron() {
+        return jugadoresQueDescartaron;
+    }
+
+    public void reiniciarDescartes() {
+        jugadoresQueDescartaron = 0;
+    }
+
+    public int getJugadoresActivos() {
+        int count = 0;
+        for (Jugador jugador : jugadores) {
+            if (!jugador.estaRetirado()) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    public Jugador getJugadorActivoRestante() {
+        for (Jugador j : jugadores) {
+            if (!j.estaRetirado()) return j;
+        }
+        return null;
+    }
+
+
+    public int getApuestaActual() {
+        return apuestaActual;
+    }
+
+    public void setApuestaActual(int apuesta) {
+        this.apuestaActual = apuesta;
+    }
+
+    public Carta sacarCarta() {
+        if (!mazo.isEmpty()) {
+            return mazo.remove(0); // Saca la primera carta (el mazo debe estar barajado)
+        } else {
+            throw new IllegalStateException("El mazo está vacío");
+        }
+    }
 }
