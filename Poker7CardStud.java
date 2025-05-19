@@ -1,77 +1,37 @@
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Scanner;
 
 public class Poker7CardStud extends Poker {
-    private ArrayList<Jugador7CardStud> jugadores;
     private ArrayList<Integer> apuestasRonda;
-    private int apuestaActual = 5;
+    private int apuestaActual, apuestaMinima = 5;
+    int jugadaBring=1;
 
-    public Poker7CardStud() {
-        boolean error=false, ganador=false;
-        Scanner sc = new Scanner(System.in);
-        int cantJugadores = 0;
-
-        while(error=false) {
-            System.out.println("Ingrese la cantidad de jugadores: ");
-            try {
-                cantJugadores = sc.nextInt();
-                if (cantJugadores < 2 || cantJugadores > 8) {
-                    System.out.println("Cantidad erronea, vuelvelo a intentar ");
-                    error = false;
-                } else {
-                    error = true;
-                }
-            }
-            catch (Exception e) {
-                System.out.println("Error: Entrada no valida");
-            }
-        }
-
-        error=false;
-
+    public Poker7CardStud(int cantJugadores, int fichasTotales) {
+        super();
         this.jugadores = new ArrayList<>();
         this.apuestasRonda = new ArrayList<>();
-        int fichasTotales=0;
-
-        while(error=false){
-            System.out.println("Con cuantas fichas quieres iniciar para cada jugador? MAX 50");
-            try {
-                fichasTotales = sc.nextInt();
-                if (fichasTotales < 0 || fichasTotales > 50) {
-                    System.out.println("Cantidad erronea, vuelvelo a intentar ");
-                    error = false;
-                } else {
-                    error = true;
-                }
-            }
-            catch (Exception e) {
-                System.out.println("Error: Entrada no valida");
-            }
-        }
-
-        System.out.println("Antes de iniciar tenemos nuestra primera apuesta obligatoria!");
-        System.out.println("La apuesta inicial es de 5 fichas!");
-        fichasTotales=fichasTotales-5;
-
+        this.mazo=generarBaraja();
 
         for (int i = 1; i <= cantJugadores; i++) {
-            jugadores.add(new Jugador7CardStud(i, fichasTotales));  // ejemplo fichas iniciales
+            jugadores.add(new Jugador7CardStud("Jugador",i, fichasTotales));  // ejemplo fichas iniciales
             apuestasRonda.add(0);
         }
 
         //repartir las primeras cartas
-        for (int i = 1; i <= cantJugadores; i++) {
-            repartirCartas(1,true);
-            repartirCartas(2,false);
-        }
+        repartirNCartas(2,false);
+        repartirNCartas(1,true);
 
+        IniciarJuego();
+    }
 
-        //yo me encargo
-        //iterator=???
+    public void IniciarJuego() {
+        boolean ganador = false;
+
         int m = 1;
         while (!ganador && m <= 6) {
-            System.out.println("Ronda " + m);
+            System.out.println("\nRonda " + m);
             calles(m);
             if (m == 6) {
                 ganador = true;
@@ -80,92 +40,278 @@ public class Poker7CardStud extends Poker {
         }
     }
 
+    public void repartirNCartas(int N, boolean visible) {
+        int totalCartas = N * jugadores.size();
+        if (mazo.size() < totalCartas) {
+            System.out.println("No hay suficientes cartas en el mazo para repartir.");
+            return;
+        }
+
+        for (Jugador j : jugadores) {
+            if (j instanceof Jugador7CardStud) {
+                Jugador7CardStud js = (Jugador7CardStud) j;
+                for (int i = 0; i < N; i++) {
+                    Carta c = mazo.remove(0);
+                    js.recibirCarta(c, visible);
+                }
+            }
+        }
+    }
+
     public void turnoCalles(int ronda){
         switch (ronda){
             //Third Street
             case 1:
-                //Aqui se aplicaria un for donde revise las cartas de todos los jugadores para comprobar quien empieza
-                // if(//aqui iria carta mas baja){
-                //solo se revisan las cartas visibles
-
-                //aqui se analiza el brig-in y empiezan los que estan a su lado hasta que todos los jugadores hayan jugado
-
+                Jugador7CardStud jugadorBringIn = obtenerJugadorConCartaVisibleMasBaja(); // ronda 3
+                reorganizarOrdenDesde(jugadorBringIn);
+                break;
             //Fourth Street
             case 2:
-                //Aqui se aplicaria un for donde revise las cartas de todos los jugadores para comprobar quien empieza
-                //Aqui inicia el jugador con la mejor combinacion/puntaje de dos cartas mostradas, no cuentan las invisibles
-                //en caso de empate de puntaje, inicia el jugador 1
-                //una idea base?? no se si funcione
-                int mejorPuntuacion = -1;
-                Jugador ganador = null;
-
-                for (Jugador j : jugadores) {
-                    ArrayList<Carta> mano = j.getMano();
-                    int puntuacion=analizarMano(mano);
-                    if (puntuacion > mejorPuntuacion) {
-                        mejorPuntuacion = puntuacion;
-                        ganador = j;
-                    }
-                }
-
+                Jugador7CardStud inicial2 = obtenerJugadorInicial(2);
+                reorganizarOrdenDesde(inicial2);
+                break;
 
             //Fifth Street
             case 3:
-                //Aqui se aplicaria un for donde revise las cartas de todos los jugadores para comprobar quien empieza
-                //Aqui inicia el jugador con la mejor combinacion/puntaje de tres cartas mostradas, no cuentan las invisibles
-                //en caso de empate de puntaje, inicia el jugador 1
-
+                Jugador7CardStud inicial3 = obtenerJugadorInicial(3);
+                reorganizarOrdenDesde(inicial3);
+                break;
 
             //Sixth Street
             case 4:
-                //Aqui se aplicaria un for donde revise las cartas de todos los jugadores para comprobar quien empieza
-                //Aqui inicia el jugador con la mejor combinacion/puntaje de 4 cartas mostradas, no cuentan las invisibles
-                //en caso de empate de puntaje, inicia el jugador 1
-
-
+                Jugador7CardStud inicial4 = obtenerJugadorInicial(4);
+                reorganizarOrdenDesde(inicial4);
+                break;
             //Seventh Street
             case 5:
-                //Aqui se aplicaria un for donde revise las cartas de todos los jugadores para comprobar quien empieza
-                //Aqui inicia el jugador con la mejor combinacion/puntaje de 4 cartas mostradas, osea la misma que el caso 4 o Sixth Street
-                //en caso de empate de puntaje, inicia el jugador 1
+                Jugador7CardStud inicial5 = obtenerJugadorInicial(5);
+                reorganizarOrdenDesde(inicial5);
+                break;
         }
+    }
+
+    public void faseApuestas(int apuestaMinima, int ronda) {
+        Scanner sc = new Scanner(System.in);
+        ArrayList<Jugador7CardStud> jugadoresActivos = new ArrayList<>();
+        apuestaActual = apuestaMinima;
+        boolean apuestasPendientes = true;
+
+        for (Jugador j : jugadores) {
+            Jugador7CardStud jug = (Jugador7CardStud) j;
+            if (jug.isActivo()) {
+                jugadoresActivos.add(jug);
+            }
+        }
+
+        // Reiniciar apuestas por ronda
+        for (int i = 0; i < apuestasRonda.size(); i++) {
+            apuestasRonda.set(i, 0);
+        }
+
+        HashMap<Jugador7CardStud, Boolean> yaIgualo = new HashMap<>();
+        for (Jugador7CardStud j : jugadoresActivos) {
+            yaIgualo.put(j, false);
+        }
+
+        while (apuestasPendientes) {
+            // Limpiar jugadores inactivos
+            jugadoresActivos.removeIf(j -> !j.isActivo());
+
+            if (jugadoresActivos.size() <= 1) {
+                apuestasPendientes = false;
+                break;
+            }
+
+            apuestasPendientes = false;
+
+            for (Jugador7CardStud jugador : jugadoresActivos) {
+                Boolean haIgualado = yaIgualo.get(jugador);
+                if (haIgualado != null && haIgualado) {
+                    // No usar continue, simplemente saltamos a siguiente iteración con control manual
+                } else {
+                    System.out.println("\nJugador " + jugador.getNombre());
+                    System.out.println("Apuesta máxima actual: " + apuestaActual);
+                    System.out.println("Cantidad de fichas disponibles: " + jugador.getFichas());
+                    System.out.println("Opciones:");
+                    System.out.println("1. Pasar");
+                    System.out.println("2. Igualar");
+                    System.out.println("3. Subir");
+
+                    boolean puedeCompletar = jugador.equals(obtenerJugadorConCartaVisibleMasBaja()) && ronda == 1;
+                    if (puedeCompletar) {
+                        System.out.println("4. Completar - BRING IN");
+                    }
+
+                    boolean accionValida = false;
+                    while (!accionValida) {
+                        int opcion = sc.nextInt();
+
+                        switch (opcion) {
+                            case 1: // Pasar
+                                jugador.pasar();
+                                yaIgualo.put(jugador, true);
+                                accionValida = true;
+                                break;
+
+                            case 2: // Igualar
+                                jugador.igualar(apuestaActual, apuestasRonda);
+                                yaIgualo.put(jugador, true);
+                                accionValida = true;
+                                break;
+
+                            case 3: // Subir
+                                System.out.println("Ingresa la nueva apuesta (debe ser mayor que " + apuestaActual + "):");
+                                int nuevaApuesta = sc.nextInt();
+                                int actualJugador = apuestasRonda.get(jugador.getNoJugador() - 1);
+                                int diferencia = nuevaApuesta - actualJugador;
+
+                                if (nuevaApuesta > apuestaActual && jugador.getFichas() >= diferencia) {
+                                    jugador.subir(nuevaApuesta, apuestasRonda); // <-- este metodo no debe modificar el mapa
+                                    apuestaActual = nuevaApuesta;
+
+                                    // Reiniciar el HashMap
+                                    for (Jugador7CardStud j : jugadoresActivos) {
+                                        if (j.equals(jugador)) {
+                                            yaIgualo.put(j, true); // él ya igualó porque subió
+                                        } else {
+                                            yaIgualo.put(j, false); // todos los demás deben igualar
+                                        }
+                                    }
+
+                                    apuestasPendientes = true;
+                                    accionValida = true;
+                                } else {
+                                    System.out.println("Apuesta inválida. Debe ser mayor y tener suficientes fichas.");
+                                }
+                                break;
+
+                            case 4:
+                                if (puedeCompletar) {
+                                    jugador.completar(apuestaMinima);
+                                    apuestasRonda.set(jugador.getNoJugador() - 1, apuestaMinima);
+                                    yaIgualo.put(jugador, true);
+                                    accionValida = true;
+                                } else {
+                                    System.out.println("No puedes usar esa opción.");
+                                }
+                                break;
+
+                            default:
+                                System.out.println("Opción inválida.");
+                                break;
+                        }
+                    }
+                }
+            }
+
+            // Revisar si todos ya igualaron
+            boolean todosIgualaron = true;
+            for (Jugador7CardStud j : jugadoresActivos) {
+                Boolean estado = yaIgualo.get(j);
+                if (estado == null || !estado) {
+                    todosIgualaron = false;
+                    break;
+                }
+            }
+
+            if (!todosIgualaron) {
+                apuestasPendientes = true;
+            }
+        }
+
+        System.out.println("Fase de apuestas terminada.");
     }
 
     public void calles(int ronda) {
         switch (ronda) {
             //Third Street
             case 1:
-                faseApuestas(apuestaActual,1);  // apuesta mínima de 5 (bring-in)
+                turnoCalles(1);
+                apuestaActual=5;
+                faseApuestas(apuestaActual,1);// apuesta mínima de 5 (bring-in)
+
+                System.out.println("\nEstado tras la calle 1:");
+                for (Jugador j : jugadores) {
+                    Jugador7CardStud j7 = (Jugador7CardStud) j;
+                    System.out.println("Jugador " + j7.getNombre() + " tiene " + j7.getFichas() + " fichas.");
+                    System.out.println("Cartas visibles: ");
+                    for (Carta c : j7.getCartasVisibles(1)) {
+                        System.out.println("- " + c);
+                    }
+                }
                 break;
             //Fourth Street
             case 2:
-                repartirCartas(1,true);
+                repartirNCartas(1,true);
+                turnoCalles(2);
                 faseApuestas(apuestaActual,2);
+
+                System.out.println("\nEstado tras la calle 2 :");
+                for (Jugador j : jugadores) {
+                    Jugador7CardStud j7 = (Jugador7CardStud) j;
+                    System.out.println("Jugador " + j7.getNombre() + " tiene " + j7.getFichas() + " fichas.");
+                    System.out.println("Cartas visibles: ");
+                    for (Carta c : j7.getCartasVisibles(2)) {
+                        System.out.println("- " + c);
+                    }
+                }
                 break;
             //Fifth Street
             case 3:
-                repartirCartas(1,true);
+                repartirNCartas(1,true);
+                turnoCalles(3);
                 faseApuestas(apuestaActual,3);
+
+                System.out.println("\nEstado tras la calle 3 :");
+                for (Jugador j : jugadores) {
+                    Jugador7CardStud j7 = (Jugador7CardStud) j;
+                    System.out.println("Jugador " + j7.getNombre() + " tiene " + j7.getFichas() + " fichas.");
+                    System.out.println("Cartas visibles: ");
+                    for (Carta c : j7.getCartasVisibles(3)) {
+                        System.out.println("- " + c);
+                    }
+                }
                 break;
             //Sixth Street
             case 4:
-                repartirCartas(1,true);
+                repartirNCartas(1,true);
+                turnoCalles(4);
                 faseApuestas(apuestaActual,4);
+
+                System.out.println("\nEstado tras la calle 4 :");
+                for (Jugador j : jugadores) {
+                    Jugador7CardStud j7 = (Jugador7CardStud) j;
+                    System.out.println("Jugador " + j7.getNombre() + " tiene " + j7.getFichas() + " fichas.");
+                    System.out.println("Cartas visibles: ");
+                    for (Carta c : j7.getCartasVisibles(4)) {
+                        System.out.println("- " + c);
+                    }
+                }
                 break;
             //Seventh Street
             case 5:
                 //debe estar boca abajo
-                repartirCartas(1,false);
+                repartirNCartas(1,false);
+                turnoCalles(5);
                 faseApuestas(apuestaActual,5);
+
+                System.out.println("\nEstado tras la calle 5 :");
+                for (Jugador j : jugadores) {
+                    Jugador7CardStud j7 = (Jugador7CardStud) j;
+                    System.out.println("Jugador " + j7.getNombre() + " tiene " + j7.getFichas() + " fichas.");
+                    System.out.println("Cartas visibles: ");
+                    for (Carta c : j7.getCartasVisibles(5)) {
+                        System.out.println("- " + c);
+                    }
+                }
                 break;
             //The Showdown
             case 6:
                 if(jugadores.size()>1){
-                    //TIENE QUE ANALIZAR TODAS LAS MANOS Y RECOPILAR LOS PUNTAJES
-                    determinarGanador(); //ver si funciona
+                    determinarGanador();
                 }
                 else{
-                    System.out.println("Gana el jugador "+jugadores.getFirst().getNoJugador());
+                    System.out.println("Gana el jugador "+jugadores.getFirst().getNombre());
                 }
                 break;
             default:
@@ -173,94 +319,143 @@ public class Poker7CardStud extends Poker {
         }
     }
 
+    public Jugador7CardStud obtenerJugadorInicial(int ronda) {
+        Jugador7CardStud mejor = null;
+        int mejorPuntuacion = -1;
 
-    public void faseApuestas(int apuestaMinima, int ronda) {
-        Scanner sc = new Scanner(System.in);
-        ArrayList<Jugador7CardStud> jugadoresActivos = new ArrayList<>(jugadores);
+        for (Jugador j : jugadores) {
+            Jugador7CardStud jugador = (Jugador7CardStud) j; // cast aquí
 
-        // Reiniciar apuestasRonda para jugadores activos
-        for (int i = 0; i < apuestasRonda.size(); i++) {
-            apuestasRonda.set(i, 0);
+            ArrayList<Carta> visibles = jugador.getCartasVisibles(ronda);
+            int puntuacion = evaluarCartas(visibles); // tú debes definir esta función según reglas de póker
+            if (puntuacion > mejorPuntuacion) {
+                mejorPuntuacion = puntuacion;
+                mejor = jugador;
+            } else if (puntuacion == mejorPuntuacion) {
+                // desempate: gana jugador de menor número
+                if (j.getNoJugador() < mejor.getNoJugador()) {
+                    mejor = jugador;
+                }
+            }
         }
 
-        int apuestaMaxima = apuestaMinima;
-        int rondaActual= ronda;
-        boolean apuestasPendientes = true;
+        return mejor;
+    }
 
-        while (apuestasPendientes && jugadoresActivos.size() > 1) {
-            apuestasPendientes = false;
+    //cambiar name
+    public Jugador7CardStud obtenerJugadorConCartaVisibleMasBaja(){
+        Jugador7CardStud peor = null;
+        Carta cartaPeor = null;
 
-            //FASE DE APUESTAS DEBE PEDIR EL NIVEL PARA APLICAR TURNO DE JUGADORES!!
-            turnoCalles(rondaActual);
+        for (Jugador j : jugadores) {
+            Jugador7CardStud jugador = (Jugador7CardStud) j;
 
-            for (Jugador7CardStud jugador : new ArrayList<>(jugadoresActivos)) {
-                System.out.println("\nJugador " + jugador.getNoJugador());
-                System.out.println("Apuesta máxima actual: " + apuestaMaxima);
-                System.out.println("Cantidad de fichas disponibles: " + jugador.getFichas());
-                System.out.println("Opciones:");
-                System.out.println("1. Pasar");
-                System.out.println("2. Igualar");
-                System.out.println("3. Subir");
-                if (apuestaMinima > 0) {
-                    System.out.println("4. Completar (bring-in)");
-                }
+            ArrayList<Carta> mano = j.getMano();
 
-                int opcion = sc.nextInt();
-                boolean errorOpcion=false;
+            if (mano.size() >= 3) {
+                Carta visible = mano.get(2); // tercera carta
 
-                while(errorOpcion==false){
-                    switch (opcion) {
-                        case 1:
-                            jugador.pasar(jugadoresActivos);
-                            errorOpcion=true;
-                            break;
-                        case 2:
-                            jugador.igualar(apuestaMaxima, apuestasRonda);
-                            errorOpcion=true;
-                            break;
-                        case 3:
-                            boolean errorApuesta = false;
+                if (visible.isVisible()) {
+                    if (cartaPeor == null) {
+                        cartaPeor = visible;
+                        peor = jugador;
+                    } else {
+                        int valorVisible = visible.getValor();
+                        int valorPeor = cartaPeor.getValor();
 
-                            while (errorApuesta == false) {
-                                System.out.println("\nIngresa la nueva apuesta (debe ser mayor que " + apuestaMaxima + "):");
-                                int nuevaApuesta = sc.nextInt();
-                                if (nuevaApuesta > apuestaMaxima) {
-                                    jugador.subir(nuevaApuesta, apuestasRonda);
-
-                                    apuestaMaxima = nuevaApuesta;
-                                    apuestaActual = nuevaApuesta;
-                                    apuestasPendientes = true;
-                                    errorApuesta = true;
-                                } else {
-                                    System.out.println("Debe ser mayor a la apuesta actual!");
-                                    errorApuesta = false;
-                                }
-                            }
-
-                            errorOpcion=true;
-                            break;
-                        case 4:
-                            if (apuestaMinima > 0) {
-                                jugador.completar(apuestaMinima);
-                                apuestasRonda.set(jugador.getNoJugador() - 1, apuestaMinima);
-                                if (apuestaMinima > apuestaMaxima) {
-                                    apuestaMaxima = apuestaMinima;
-                                    apuestasPendientes = true;
-                                }
-                                errorOpcion=true;
-                            } else {
-                                System.out.println("Opción inválida, vuelvelo a intentar");
-                                errorOpcion = false;
-                            }
-                            break;
-                        default:
-                            System.out.println("Opción inválida, vuelvelo a intentar");
-                            errorOpcion=false;
+                        if (valorVisible < valorPeor ||
+                                (valorVisible == valorPeor && j.getNoJugador() > peor.getNoJugador())) {
+                            cartaPeor = visible;
+                            peor = jugador;
+                        }
                     }
                 }
             }
         }
-        System.out.println("Fase de apuestas terminada.\n");
+
+        return peor;
+    }
+
+    public void reorganizarOrdenDesde(Jugador7CardStud primero) {
+        int index = jugadores.indexOf(primero);
+        if (index > 0) {
+            ArrayList<Jugador7CardStud> nuevoOrden = new ArrayList<>();
+
+            for (Jugador j : jugadores.subList(index, jugadores.size())) {
+                nuevoOrden.add((Jugador7CardStud) j); // cast necesario
+            }
+            for (Jugador j : jugadores.subList(0, index)) {
+                nuevoOrden.add((Jugador7CardStud) j); // cast necesario
+            }
+
+            jugadores = new ArrayList<>(nuevoOrden); // esto es seguro porque los elementos casteados lo permiten
+        }
+    }
+
+    public void determinarGanador() {
+        Scanner sc = new Scanner(System.in);
+
+        // Filtrar jugadores activos
+        ArrayList<Jugador7CardStud> jugadoresActivos = new ArrayList<>();
+        for (Jugador j : jugadores) {
+            Jugador7CardStud jugador = (Jugador7CardStud) j;
+            if (jugador.isActivo()) {
+                jugadoresActivos.add(jugador);
+            }
+        }
+
+        if (jugadoresActivos.size() == 0) {
+            System.out.println("\nNingún jugador llegó al final... ");
+            return;
+        } else if (jugadoresActivos.size() == 1) {
+            Jugador7CardStud ganadorUnico = jugadoresActivos.get(0);
+            System.out.println("\n¡El único jugador activo es el Jugador " + ganadorUnico.getNombre() + ", gana automáticamente!");
+            return;
+        }
+        else {
+
+            // Comparación entre jugadores activos
+            int mejorPuntaje = -1;
+            Jugador7CardStud ganador = null;
+
+            for (Jugador7CardStud jugador : jugadoresActivos) {
+                ArrayList<Carta> mano = jugador.getMano();
+                System.out.println("\nJugador " + jugador.getNombre() + ", estas son tus 7 cartas:");
+
+                for (int i = 0; i < mano.size(); i++) {
+                    System.out.println((i + 1) + ". " + mano.get(i));
+                }
+
+                ArrayList<Carta> seleccionadas = new ArrayList<>();
+                while (seleccionadas.size() < 5) {
+                    System.out.println("Elige la carta #" + (seleccionadas.size() + 1) + " (1-7):");
+                    int eleccion = sc.nextInt();
+
+                    if (eleccion >= 1 && eleccion <= 7) {
+                        Carta carta = mano.get(eleccion - 1);
+                        if (!seleccionadas.contains(carta)) {
+                            seleccionadas.add(carta);
+                        } else {
+                            System.out.println("Ya seleccionaste esa carta, elige otra.");
+                        }
+                    } else {
+                        System.out.println("Índice inválido, intenta de nuevo.");
+                    }
+                }
+
+                int puntaje = evaluarCartas(seleccionadas);
+                System.out.println("Jugador " + jugador.getNombre() + " tiene una mano con puntaje: " + puntaje);
+
+                if (puntaje > mejorPuntaje) {
+                    mejorPuntaje = puntaje;
+                    ganador = jugador;
+                } else if (puntaje == mejorPuntaje && jugador.getNoJugador() < ganador.getNoJugador()) {
+                    ganador = jugador;
+                }
+            }
+
+            System.out.println("\n¡El ganador es el Jugador " + ganador.getNombre());
+        }
     }
 
 }

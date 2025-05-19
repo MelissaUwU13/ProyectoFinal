@@ -41,7 +41,7 @@ public abstract class EvaluarMano implements Jerarquia{
             puntuacion=2;
         }
         else{
-            System.out.println("Carta Alta!!");
+            //System.out.println("Carta Alta!!");
             puntuacion=1;
         }
 

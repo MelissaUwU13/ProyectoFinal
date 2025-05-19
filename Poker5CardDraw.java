@@ -11,7 +11,7 @@ public class Poker5CardDraw extends Poker {
         jugadores = new ArrayList<>();
         for (int i = 0; i < cantidadDeJugadores; i++) {
             String nombre = nombresJugadores.get(i);
-            jugadores.add(new Jugador5CardDraw(nombre, 1000)); // Aquí le pasas el nombre
+            jugadores.add(new Jugador5CardDraw(nombre,i, 1000)); // Aquí le pasas el nombre
         }
         jugar();
     }

@@ -8,9 +8,11 @@ public class Jugador5CardDraw extends Jugador{
     private boolean jugadorDescartoCarta;
     private String nombre;
 
-    public Jugador5CardDraw(String nombre, int fichas) {
-        super(nombre, fichas);
-        this.nombre = nombre;
+    //cambiar
+    public Jugador5CardDraw(String nombre,int noJugador, int fichas) {
+        //cambiar
+        super(nombre,noJugador, fichas);
+        this.nombre=nombre;
     }
 
 
@@ -27,7 +29,7 @@ public class Jugador5CardDraw extends Jugador{
     }
 
     public boolean getJugadorTiroCarta() {
-       return jugadorDescartoCarta;
+        return jugadorDescartoCarta;
     }
 
     public void setApuestaActual(int apuestaActual) {
