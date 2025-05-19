@@ -5,10 +5,12 @@ public class Jugador5CardDraw extends Jugador{
     private boolean retirado = false;
     private ArrayList<Carta> mano = new ArrayList<>();
     private int apuestaActual = 0;
-    private int fichas;
+    private boolean jugadorDescartoCarta;
+    private String nombre;
 
-    public Jugador5CardDraw(int noJugador, int fichas) {
-        super(noJugador, fichas);
+    public Jugador5CardDraw(String nombre, int fichas) {
+        super(nombre, fichas);
+        this.nombre = nombre;
     }
 
 
@@ -20,14 +22,12 @@ public class Jugador5CardDraw extends Jugador{
         this.retirado = true;
     }
 
-    public void tirarCartas(ArrayList<Integer> indices) {
-        // Ordenar índices descendente para eliminar sin romper orden
-        indices.sort(Collections.reverseOrder());
-        for (int i : indices) {
-            if (i >= 0 && i < mano.size()) {
-                mano.remove(i);
-            }
-        }
+    public String getNombre() {
+        return nombre;
+    }
+
+    public boolean getJugadorTiroCarta() {
+       return jugadorDescartoCarta;
     }
 
     public void setApuestaActual(int apuestaActual) {

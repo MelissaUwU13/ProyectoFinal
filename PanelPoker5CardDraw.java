@@ -8,29 +8,41 @@ public class PanelPoker5CardDraw extends JPanel {
     private ArrayList<Boolean> cartasSeleccionadas;
     private Image fondoPantalla;
     private int turnoActualDeJugador = 0;
+    JButton botonCheck, botonBet, botonCall, botonRaise, botonFold, botonCambiarCartas, botonAnalizarCartas, botonTerminarTurno, botonJugar;
+    private JLabel labelTurnoJugador, labelCantidadFichas;
+    private boolean esFaseDeApuesta;
 
-    public PanelPoker5CardDraw(int cantidadDeJugadores) {
+    public PanelPoker5CardDraw(int cantidadDeJugadores, ArrayList<String> nombresJugadores) {
+        esFaseDeApuesta=true;
+
         setLayout(null);
         setPreferredSize(new Dimension(1000, 600));
         fondoPantalla = new ImageIcon("cartas/fondoPantallaPoker.jpg").getImage();
-        juego = new Poker5CardDraw(cantidadDeJugadores);
+        juego = new Poker5CardDraw(cantidadDeJugadores, nombresJugadores);
+        labelTurnoJugador = new JLabel();
+        labelTurnoJugador.setFont(new Font("Arial", Font.BOLD, 24));
+        labelTurnoJugador.setForeground(Color.WHITE);
+        labelTurnoJugador.setBounds(450, 20, 500, 30);
+        labelCantidadFichas = new JLabel();
+        labelCantidadFichas.setFont(new Font("Arial", Font.BOLD, 24));
+        labelCantidadFichas.setForeground(Color.WHITE);
+        labelCantidadFichas.setBounds(20, 50, 500, 30);
+        actualizarLabelTurno(); // Esto pone el nombre del primer jugador
+        add(labelTurnoJugador);
+        add(labelCantidadFichas);
         botonesCartas = new ArrayList<>();
         cartasSeleccionadas = new ArrayList<>();
 
-        inicializarBotonesCartas(juego.getJugadores().get(turnoActualDeJugador).getMano());
-
-        JButton botonCheck, botonBet, botonCall, botonRaise, botonFold;
         ImageIcon imagenBotonTerminarTurno = redimensionarImagen("cartas/botonFinalizarTurno.png", 128, 64);
-        JButton botonSiguienteJugador = new JButton(imagenBotonTerminarTurno);
-        botonSiguienteJugador.setBounds(800, 20, 128, 64);
-        inicializarBotonConImagen(botonSiguienteJugador);
-        botonSiguienteJugador.addActionListener(e -> {
+        botonTerminarTurno = new JButton(imagenBotonTerminarTurno);
+        botonTerminarTurno.setBounds(800, 20, 128, 64);
+        inicializarBotonConImagen(botonTerminarTurno);
+        botonTerminarTurno.addActionListener(e -> {
             pasarAlSiguienteJugador();
-            juego.imprimirFichasJugadores();
         });
         ImageIcon imagenBotonPasar = redimensionarImagen("cartas/botonCheck.png", 128, 64);
         botonCheck = new JButton(imagenBotonPasar);
-        botonCheck.setBounds(50, 50, 128, 64);
+        botonCheck.setBounds(200, 300, 128, 64);
         inicializarBotonConImagen(botonCheck);
         botonCheck.addActionListener(e -> {
             if (juego.getApuestaActual() > 0) {
@@ -41,17 +53,19 @@ public class PanelPoker5CardDraw extends JPanel {
             juego.incrementarChecks();
             System.out.println("Jugador pasó");
 
-            if (juego.getJugadoresQueHicieronCheck() == juego.getJugadoresActivos()) {
+            if (juego.getJugadoresQueHicieronCheck() >= juego.getJugadoresActivos()) {
                 System.out.println("¡Todos los jugadores hicieron check!");
-                // Aquí puedes avanzar a la siguiente ronda
+                esFaseDeApuesta = !esFaseDeApuesta; // ← AQUÍ
                 juego.reiniciarChecks();
+                // avanzar a la siguiente fase aquí
+                mostrarBotonesDeDiferentesFases(esFaseDeApuesta);
             }
 
             pasarAlSiguienteJugador();
         });
         ImageIcon imagenBotonApostar = redimensionarImagen("cartas/botonBet.png", 128, 64);
         botonBet = new JButton(imagenBotonApostar);
-        botonBet.setBounds(200, 50, 128, 64);
+        botonBet.setBounds(350, 300, 128, 64);
         inicializarBotonConImagen(botonBet);
         botonBet.addActionListener(e -> {
             if (juego.getApuestaActual() > 0) {
@@ -71,10 +85,9 @@ public class PanelPoker5CardDraw extends JPanel {
                     return;
                 }
 
-                jugador.restarFichas(cantidad);
+                jugador.apostar(cantidad);
                 juego.setApuestaActual(cantidad);
                 juego.reiniciarChecks(); // Ya no hay checks, se reinicia el conteo
-                System.out.println("Jugador apostó " + cantidad + " fichas");
 
                 pasarAlSiguienteJugador();
 
@@ -85,7 +98,7 @@ public class PanelPoker5CardDraw extends JPanel {
 
         ImageIcon imagenBotonIgualar = redimensionarImagen("cartas/botonCall.png", 128, 64);
         botonCall = new JButton(imagenBotonIgualar);
-        botonCall.setBounds(350, 50, 128, 64);
+        botonCall.setBounds(500, 300, 128, 64);
         inicializarBotonConImagen(botonCall);
         botonCall.addActionListener(e -> {
             Jugador5CardDraw jugador = (Jugador5CardDraw) juego.getJugadores().get(turnoActualDeJugador);
@@ -98,13 +111,15 @@ public class PanelPoker5CardDraw extends JPanel {
                 return;
             }
 
-            jugador.restarFichas(cantidadParaIgualar);
+            jugador.apostar(cantidadParaIgualar);
             System.out.println("Jugador igualó con " + cantidadParaIgualar + " fichas");
             juego.incrementarCalls();
-            if (juego.getJugadoresQueHicieronCall() == juego.getJugadoresActivos()) {
-                System.out.println("¡Todos los jugadores hicieron call!");
-                // Aquí puedes avanzar a la siguiente ronda
+            if (juego.getJugadoresQueHicieronCall() >= juego.getJugadoresActivos() - 1) {
+                System.out.println("¡Todos igualaron la apuesta!");
+                esFaseDeApuesta = !esFaseDeApuesta; // ← AQUÍ
                 juego.reiniciarChecks();
+                // avanzar a la siguiente fase aquí}
+                mostrarBotonesDeDiferentesFases(esFaseDeApuesta);
             }
             // Aquí actualiza el estado de la apuesta si tienes alguna variable para eso
 
@@ -113,13 +128,13 @@ public class PanelPoker5CardDraw extends JPanel {
 
         ImageIcon imagenBotonSubir = redimensionarImagen("cartas/botonRaise.png", 128, 64);
         botonRaise = new JButton(imagenBotonSubir);
-        botonRaise.setBounds(500, 50, 128, 64);
+        botonRaise.setBounds(650, 300, 128, 64);
         inicializarBotonConImagen(botonRaise);
         botonRaise.addActionListener(e -> {
             Jugador5CardDraw jugador = (Jugador5CardDraw) juego.getJugadores().get(turnoActualDeJugador);
             int apuestaActual = juego.getApuestaActual();
 
-            String input = JOptionPane.showInputDialog(this, "¿Cuánto quieres subir (debe ser mayor a " + apuestaActual + ")?", "Subir apuesta", JOptionPane.QUESTION_MESSAGE);
+            String input = JOptionPane.showInputDialog(this, "¿Cuánto quieres subir (La apuesta actual es de " + apuestaActual + ")?", "Subir apuesta", JOptionPane.QUESTION_MESSAGE);
             if (input == null) return;
 
             try {
@@ -134,7 +149,7 @@ public class PanelPoker5CardDraw extends JPanel {
                     return;
                 }
 
-                jugador.restarFichas(cantidad);
+                jugador.apostar(cantidad);
                 juego.setApuestaActual(cantidad);
                 juego.reiniciarChecks(); // se resetean los checks porque hubo subida
                 System.out.println("Jugador subió la apuesta a " + cantidad);
@@ -148,21 +163,136 @@ public class PanelPoker5CardDraw extends JPanel {
         ImageIcon imagenBotonFold = redimensionarImagen("cartas/botonRetirarse.png", 128, 64);
         botonFold = new JButton(imagenBotonFold);
         inicializarBotonConImagen(botonFold);
-        botonFold.setBounds(800, 100, 128, 64); // Mismo tamaño que "Analizar Cartas"
+        botonFold.setBounds(800, 20, 128, 64); // Mismo tamaño que "Analizar Cartas"
         botonFold.addActionListener(e -> {
             System.out.println("Jugador se retiró");
             /* El parentesis con el que iniciamos abajo es parte de un concepto llamado "casting", en este caso, le
             indicamos a Java que queremos obtener los metodos y atributos de Jugador5CardDraw, y esto para hacer que el jugador se retire
             */
             juego.getJugadores().get(turnoActualDeJugador).retirarse();
-            pasarAlSiguienteJugador(); // evitamos que el retirado vuelva a jugar
+            if (juego.getJugadoresActivos() == 1) {
+                // Declarar ganador
+                Jugador ganador = juego.getJugadorActivoRestante();
+                JOptionPane.showMessageDialog(this, "¡" + ganador.getNoJugador() + " gana la ronda por abandono!");
+                // Avanza a la siguiente ronda o termina el juego aquí
+            }
+            pasarAlSiguienteJugador();
         });
+        // Botón para confirmar las cartas seleccionadas, luego vamos a borrar o cambiar esto
+        ImageIcon imagenBotonCambiarCartas = redimensionarImagen("cartas/botonCambiarCartas.png", 200, 128);
+        botonCambiarCartas = new JButton(imagenBotonCambiarCartas);
+        inicializarBotonConImagen(botonCambiarCartas);
+        botonCambiarCartas.setBounds(500, 250, 200, 128);
+        botonCambiarCartas.addActionListener(e -> {
+            ArrayList<Carta> manoActual = juego.getJugadores().get(turnoActualDeJugador).getMano();
+            ArrayList<Integer> indicesSeleccionadosAbajo = new ArrayList<>();
+            Jugador jugadorActual = juego.getJugadores().get(turnoActualDeJugador);
+
+            if (jugadorActual.getHuboCambioDeCartas()) {
+                JOptionPane.showMessageDialog(this, "Ya descartaste. No puedes hacerlo de nuevo.", "Aviso", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            // Solo tomamos las cartas seleccionadas abajo (mano del jugador)
+            for (int i = 0; i < cartasSeleccionadas.size(); i++) {
+                if (cartasSeleccionadas.get(i)) {
+                    indicesSeleccionadosAbajo.add(i);
+                }
+            }
+
+            if (indicesSeleccionadosAbajo.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "No seleccionaste cartas para descartar.", "Aviso", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            // Descartamos las cartas seleccionadas y las reemplazamos por nuevas cartas del mazo
+            for (int i = 0; i < indicesSeleccionadosAbajo.size(); i++) {
+                int idx = indicesSeleccionadosAbajo.get(i);
+
+                // Cartas descartadas podrían guardarse en un montón aparte si quieres
+                Carta cartaDescartada = manoActual.get(idx);
+                // Aquí puedes guardar cartaDescartada en un montón de descarte, si tienes
+
+                // Reemplazar con carta nueva del mazo
+                Carta cartaNueva = juego.sacarCarta();
+                manoActual.set(idx, cartaNueva);
+            }
+
+            // Limpiar selección
+            for (int i : indicesSeleccionadosAbajo) {
+                cartasSeleccionadas.set(i, false);
+            }
+
+            // Actualizar interfaz
+            actualizarMano(manoActual);
+            juego.incrementarDescartes();
+
+            jugadorActual.setHuboCambioDeCartas(true);
+            if (juego.getJugadoresQueDescartaron() >= juego.getJugadoresActivos()) {
+                System.out.println("¡Todos descartaron!");
+                for (Jugador jugador : juego.getJugadores()) {
+                    jugador.setHuboCambioDeCartas(false);
+                }
+                juego.reiniciarDescartes();
+                // aquí cambias la fase
+                esFaseDeApuesta = !esFaseDeApuesta;
+                mostrarBotonesDeDiferentesFases(esFaseDeApuesta);
+            }
+        });
+        botonAnalizarCartas = new JButton("Analizar Cartas");
+        botonAnalizarCartas.setBounds(200, 250, 128, 64);
+        botonAnalizarCartas.addActionListener(e -> {
+            ArrayList<Carta> manoActual = juego.getJugadores().get(turnoActualDeJugador).getMano();
+            ArrayList<Carta> cartasSeleccionadasParaAnalizar = new ArrayList<>();
+            for (int i = 0; i < cartasSeleccionadas.size(); i++) {
+                if (cartasSeleccionadas.get(i)) {
+                    cartasSeleccionadasParaAnalizar.add(manoActual.get(i));
+                }
+            }
+
+            if (cartasSeleccionadasParaAnalizar.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "No seleccionaste ninguna carta", "Aviso", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            String resultado = juego.evaluarMano(cartasSeleccionadasParaAnalizar); // o cartasSeleccionadasParaAnalizar si evalúas solo las seleccionadas
+            System.out.println(cartasSeleccionadasParaAnalizar);
+            JOptionPane.showMessageDialog(this, resultado);
+            mostrarBotonesDeDiferentesFases(esFaseDeApuesta);
+        });
+        botonJugar = new JButton("Jugar");
+        botonJugar.setBounds(200, 300, 128, 64);
+        botonJugar.addActionListener(e -> {
+            ArrayList<Carta> manoActual = juego.getJugadores().get(turnoActualDeJugador).getMano();
+            ArrayList<Carta> cartasSeleccionadasParaAnalizar = new ArrayList<>();
+            for (int i = 0; i < cartasSeleccionadas.size(); i++) {
+                if (cartasSeleccionadas.get(i)) {
+                    cartasSeleccionadasParaAnalizar.add(manoActual.get(i));
+                }
+            }
+
+            if (cartasSeleccionadasParaAnalizar.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "No seleccionaste ninguna carta", "Aviso", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            String resultado = juego.evaluarMano(cartasSeleccionadasParaAnalizar); // o cartasSeleccionadasParaAnalizar si evalúas solo las seleccionadas
+            System.out.println(cartasSeleccionadasParaAnalizar);
+            JOptionPane.showMessageDialog(this, resultado);
+            mostrarBotonesDeDiferentesFases(esFaseDeApuesta);
+        });
+
+
+        inicializarBotonesCartas(juego.getJugadores().get(turnoActualDeJugador).getMano());
         add(botonCheck);
         add(botonBet);
         add(botonCall);
         add(botonRaise);
         add(botonFold);
-        add(botonSiguienteJugador);
+        add(botonCambiarCartas);
+        add(botonTerminarTurno);
+        add(botonAnalizarCartas);
+        add(botonJugar);
+        mostrarBotonesDeDiferentesFases(getEsFaseDeApuesta());
     }
 
     private void pasarAlSiguienteJugador() {
@@ -172,23 +302,18 @@ public class PanelPoker5CardDraw extends JPanel {
         do {
             turnoActualDeJugador = (turnoActualDeJugador + 1) % totalJugadores;
             intentos++;
-        } while (((Jugador5CardDraw) juego.getJugadores().get(turnoActualDeJugador)).estaRetirado() && intentos < totalJugadores);
+        } while (juego.getJugadores().get(turnoActualDeJugador).estaRetirado() && intentos < totalJugadores);
 
-        // Si todos se retiraron menos uno, ahí podrías declarar ganador
+        // Si todos se retiraron excepto uno, se define el ganador
         actualizarMano(juego.getJugadores().get(turnoActualDeJugador).getMano());
+        mostrarBotonesDeDiferentesFases(getEsFaseDeApuesta());
+        actualizarLabelTurno();
     }
 
     private void inicializarBotonesCartas(ArrayList<Carta> manoJugador) {
         for (JButton btn : botonesCartas) {
             remove(btn);
         }
-        // Botón para confirmar las cartas seleccionadas, luego vamos a borrar o cambiar esto
-        ImageIcon imagenBotonCambiarCartas = redimensionarImagen("cartas/botonCambiarCartas.png", 200, 128);
-        JButton botonCambiarCartas = new JButton(imagenBotonCambiarCartas);
-        inicializarBotonConImagen(botonCambiarCartas);
-        botonCambiarCartas.setBounds(500, 250, 200, 128);
-        JButton botonAnalizarCartas = new JButton("Analizar Cartas");
-        botonAnalizarCartas.setBounds(200, 250, 256, 128);
 
         botonesCartas.clear();
         cartasSeleccionadas.clear();
@@ -233,75 +358,51 @@ public class PanelPoker5CardDraw extends JPanel {
             repaint();
         }
 
-        botonAnalizarCartas.addActionListener(e -> {
-            ArrayList<Carta> manoActual = juego.getJugadores().get(turnoActualDeJugador).getMano();
-            ArrayList<Carta> cartasSeleccionadasParaAnalizar = new ArrayList<>();
-            for (int i = 0; i < cartasSeleccionadas.size(); i++) {
-                if (cartasSeleccionadas.get(i)) {
-                    cartasSeleccionadasParaAnalizar.add(manoActual.get(i));
-                }
-            }
 
-            if (cartasSeleccionadasParaAnalizar.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "No seleccionaste ninguna carta", "Aviso", JOptionPane.WARNING_MESSAGE);
-                return;
-            }
+        mostrarBotonesDeDiferentesFases(esFaseDeApuesta);
+    }
 
-            String resultado = juego.evaluarMano(cartasSeleccionadasParaAnalizar); // o cartasSeleccionadasParaAnalizar si evalúas solo las seleccionadas
-            System.out.println(cartasSeleccionadasParaAnalizar);
-            JOptionPane.showMessageDialog(this, resultado);
-        });
-        botonCambiarCartas.addActionListener(e -> {
-            ArrayList<Carta> manoActual = juego.getJugadores().get(turnoActualDeJugador).getMano();
-            ArrayList<Integer> indicesSeleccionadosAbajo = new ArrayList<>();
+    public void mostrarBotonesDeDiferentesFases(boolean esFaseDeApuesta) {
+        botonFold.setVisible(esFaseDeApuesta);
+        botonFold.setEnabled(esFaseDeApuesta);
 
-            // Solo tomamos las cartas seleccionadas abajo (mano del jugador)
-            for (int i = 0; i < cartasSeleccionadas.size(); i++) {
-                if (cartasSeleccionadas.get(i)) {
-                    indicesSeleccionadosAbajo.add(i);
-                }
-            }
+        botonCheck.setVisible(esFaseDeApuesta);
+        botonCheck.setEnabled(esFaseDeApuesta);
 
-            if (indicesSeleccionadosAbajo.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "No seleccionaste cartas para descartar.", "Aviso", JOptionPane.WARNING_MESSAGE);
-                return;
-            }
+        botonBet.setVisible(esFaseDeApuesta);
+        botonBet.setEnabled(esFaseDeApuesta);
 
-            // Descartamos las cartas seleccionadas y las reemplazamos por nuevas cartas del mazo
-            for (int i = 0; i < indicesSeleccionadosAbajo.size(); i++) {
-                int idx = indicesSeleccionadosAbajo.get(i);
+        botonRaise.setVisible(esFaseDeApuesta);
+        botonRaise.setEnabled(esFaseDeApuesta);
 
-                // Cartas descartadas podrían guardarse en un montón aparte si quieres
-                Carta cartaDescartada = manoActual.get(idx);
-                // Aquí puedes guardar cartaDescartada en un montón de descarte, si tienes
+        botonCall.setVisible(esFaseDeApuesta);
+        botonCall.setEnabled(esFaseDeApuesta);
 
-                // Reemplazar con carta nueva del mazo
-                Carta cartaNueva = juego.sacarCarta();
-                manoActual.set(idx, cartaNueva);
-            }
+        botonCambiarCartas.setVisible(!esFaseDeApuesta);
+        botonCambiarCartas.setVisible(!esFaseDeApuesta);
 
-            // Limpiar selección
-            for (int i : indicesSeleccionadosAbajo) {
-                cartasSeleccionadas.set(i, false);
-            }
+        botonAnalizarCartas.setVisible(!esFaseDeApuesta);
+        botonAnalizarCartas.setEnabled(!esFaseDeApuesta);
 
-            // Actualizar interfaz
-            actualizarMano(manoActual);
-            // No cambias las cartas de arriba (mesa)
-        });
+        botonJugar.setVisible(!esFaseDeApuesta);
+        botonJugar.setEnabled(!esFaseDeApuesta);
 
-        add(botonCambiarCartas);
-        add(botonAnalizarCartas);
+        botonTerminarTurno.setVisible(!esFaseDeApuesta);
+        botonTerminarTurno.setEnabled(!esFaseDeApuesta);
     }
 
     private void actualizarMano(ArrayList<Carta> mano) {
         inicializarBotonesCartas(mano);
     }
 
-    private void actualizarIconoCarta(JButton boton, Carta carta, int ancho, int alto) {
-        String ruta = obtenerNombreArchivoCarta(carta);
-        ImageIcon icono = new ImageIcon(new ImageIcon(ruta).getImage().getScaledInstance(100, 150, Image.SCALE_SMOOTH));
-        boton.setIcon(icono);
+    private void actualizarLabelTurno() {
+        Jugador jugador = juego.getJugadores().get(turnoActualDeJugador);
+        labelTurnoJugador.setText("Turno de: " + jugador.getNombre());
+        labelCantidadFichas.setText("Cantidad de Fichas: " + jugador.getFichas());
+    }
+
+    private boolean getEsFaseDeApuesta() {
+        return esFaseDeApuesta;
     }
 
     private ImageIcon redimensionarImagen(String rutaImagen, int ancho, int alto) {

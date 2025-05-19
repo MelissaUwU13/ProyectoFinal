@@ -5,13 +5,20 @@ import java.util.Collections;
 public class Jugador {
     private int noJugador;
     private int fichas;
-    private boolean retirado = false;
+    private boolean retirado = false, huboCambioDeCartas = false;
     private ArrayList<Carta> mano = new ArrayList<>();
+    String nombre;
 
     public Jugador(int noJugador, int fichas) {
         this.noJugador = noJugador;
         this.mano = new ArrayList<>();
         this.fichas = fichas;
+    }
+
+    public Jugador(String nombre, int fichas) {
+       this.nombre = nombre;
+       this.mano = new ArrayList<>();
+       this.fichas = fichas;
     }
 
     public void recibirCarta(Carta c, boolean visible) {
@@ -34,6 +41,12 @@ public class Jugador {
     public void retirarse() {
         this.retirado = true;
     }
+    public String getNombre() {
+        return nombre;
+    }
+    public boolean getHuboCambioDeCartas() {
+        return huboCambioDeCartas;
+    }
 
     public void tirarCarta(){
 
@@ -43,22 +56,16 @@ public class Jugador {
 
     }
 
-    // No se si ocupas esto, pero es para restar las fichas del jugador
-    public void restarFichas(int cantidad) {
-        if (cantidad <= fichas) {
-            fichas -= cantidad;
-        } else {
-            // Puedes decidir si lo dejas en 0 o lanzas un error
-            System.out.println("No tienes suficientes fichas. Se restan todas las que tienes.");
-            fichas = 0;
-        }
-    }
     public int getFichas() {
         return fichas;
     }
 
     public void setFichas(int fichas) {
         this.fichas = fichas;
+    }
+
+    public void setHuboCambioDeCartas(boolean huboCambioDeCartas) {
+        this.huboCambioDeCartas = huboCambioDeCartas;
     }
 
     // Muestra solo las cartas visibles (para otras personas)
@@ -77,14 +84,15 @@ public class Jugador {
     }
 
 
-    //NO NECESITO ESTO, DEREK TU SI??
-    //modificar este apostar
+    //NO NECESITO ESTO, DEREK TU SI?? ahora chi uwu
+    // Modificar este apostar
     public void apostar(int cantidad) {
         if (cantidad <= fichas) {
             fichas -= cantidad;
-            System.out.println(noJugador + " apuesta " + cantidad + " fichas. Fichas restantes: " + fichas);
+            System.out.println("Fichas restantes: " + fichas);
         } else {
             System.out.println(noJugador + " no tiene suficientes fichas para apostar " + cantidad);
+            fichas = 0;
         }
     }
 

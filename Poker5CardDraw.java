@@ -3,15 +3,15 @@ import java.util.ArrayList;
 public class Poker5CardDraw extends Poker {
     private ArrayList<Integer> apuestasRonda;
     private int apuestaActual = 0;
-    private int jugadoresQueHicieronCheck = 0;
-    private int jugadoresQueHicieronCall = 0;
+    private int jugadoresQueHicieronCheck = 0, jugadoresQueDescartaron = 0, jugadoresQueHicieronCall = 0;
 
-    public Poker5CardDraw(int cantJugadores) {
+    public Poker5CardDraw(int cantidadDeJugadores, ArrayList<String> nombresJugadores) {
         super();
         evaluador = new Evaluador5CardDraw();
         jugadores = new ArrayList<>();
-        for (int i = 1; i <= cantJugadores; i++) {
-            jugadores.add(new Jugador5CardDraw( i, 1000));
+        for (int i = 0; i < cantidadDeJugadores; i++) {
+            String nombre = nombresJugadores.get(i);
+            jugadores.add(new Jugador5CardDraw(nombre, 1000)); // Aquí le pasas el nombre
         }
         jugar();
     }
@@ -25,7 +25,6 @@ public class Poker5CardDraw extends Poker {
             System.out.println("Jugador " + (i + 1) + " tiene " + jugador.getFichas() + " fichas.");
         }
     }
-
 
     public Carta sacarCarta() {
         if (!mazo.isEmpty()) {
@@ -61,14 +60,33 @@ public class Poker5CardDraw extends Poker {
         jugadoresQueHicieronCall = 0;
     }
 
+    public void incrementarDescartes() {
+        jugadoresQueDescartaron++;
+    }
+
+    public int getJugadoresQueDescartaron() {
+        return jugadoresQueDescartaron;
+    }
+
+    public void reiniciarDescartes() {
+        jugadoresQueDescartaron = 0;
+    }
+
     public int getJugadoresActivos() {
-        int activos = 0;
-        for (Jugador j : jugadores) {
-            if (!((Jugador5CardDraw) j).estaRetirado()) {
-                activos++;
+        int count = 0;
+        for (Jugador jugador : jugadores) {
+            if (!jugador.estaRetirado()) {
+                count++;
             }
         }
-        return activos;
+        return count;
+    }
+
+    public Jugador getJugadorActivoRestante() {
+        for (Jugador j : jugadores) {
+            if (!j.estaRetirado()) return j;
+        }
+        return null;
     }
 
 

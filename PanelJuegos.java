@@ -4,10 +4,12 @@ import javax.sound.sampled.Clip;
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
+import java.util.ArrayList;
 
 public class PanelJuegos extends JPanel {
     private Image fondoPantalla;
     private Clip musica;
+    ArrayList<String> nombresJugadores = new ArrayList<>();
 
     public PanelJuegos() {
         setPreferredSize(new Dimension(1000, 600));
@@ -57,6 +59,18 @@ public class PanelJuegos extends JPanel {
                 }
             }
 
+
+            for (int i = 1; i <= cantidadDeJugadores; i++) {
+                String nombre;
+                do {
+                    nombre = JOptionPane.showInputDialog(this, "Nombre del jugador " + i + ":", "Nombre de Jugador", JOptionPane.QUESTION_MESSAGE);
+                    if (nombre == null || nombre.trim().isEmpty()) {
+                        JOptionPane.showMessageDialog(this, "Nombre inválido. Intenta de nuevo.");
+                    }
+                } while (nombre == null || nombre.trim().isEmpty());
+                nombresJugadores.add(nombre.trim());
+            }
+
             // Ocultamos botones que ya no se usarán mientras se juega
             botonPoker5Hands.setVisible(false);
             botonPoker7CardStud.setVisible(false);
@@ -66,8 +80,8 @@ public class PanelJuegos extends JPanel {
             revalidate();
             repaint();
 
-            // Agregar el panel especializado para jugar 5 Card Draw (el que tú creaste)
-            PanelPoker5CardDraw panelPoker5 = new PanelPoker5CardDraw(cantidadDeJugadores);
+            // Agregar el panel especializado para jugar 5 Card Draw
+            PanelPoker5CardDraw panelPoker5 = new PanelPoker5CardDraw(cantidadDeJugadores, nombresJugadores);
             panelPoker5.setBounds(0, 0, 1000, 600);
             add(panelPoker5);
 
