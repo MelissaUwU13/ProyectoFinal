@@ -8,13 +8,10 @@ public class Jugador5CardDraw extends Jugador{
     private boolean jugadorDescartoCarta;
     private String nombre;
 
-    //cambiar
     public Jugador5CardDraw(String nombre,int noJugador, int fichas) {
-        //cambiar
         super(nombre,noJugador, fichas);
         this.nombre=nombre;
     }
-
 
     public boolean estaRetirado() {
         return retirado;

@@ -5,6 +5,7 @@ public class Poker extends EvaluarMano{
     protected ArrayList<Jugador> jugadores;
     protected ArrayList<Integer> apuestas;
     protected EvaluarMano evaluador;
+    protected int jugadoresQueHicieronCheck = 0, jugadoresQueDescartaron = 0, jugadoresQueHicieronCall = 0, jugadoresQueYaJugaron = 0;
 
 
     public String evaluarMano(ArrayList<Carta> mano) {
@@ -59,5 +60,43 @@ public class Poker extends EvaluarMano{
         for (int i = 0; i < jugador.getMano().size(); i++) {
             System.out.println(i + ": " + jugador.getMano().get(i));
         }
+    }
+
+    public void incrementarCalls() {
+        jugadoresQueHicieronCall++;
+    }
+
+    public int getJugadoresQueHicieronCall() {
+        return jugadoresQueHicieronCall;
+    }
+
+    public int getJugadoresQueYaJugaron() {
+        return jugadoresQueYaJugaron;
+    }
+
+    public void incrementarJugadas() {
+        jugadoresQueYaJugaron++;
+    }
+
+    public int getJugadoresQueDescartaron() {
+        return jugadoresQueDescartaron;
+    }
+
+    public void reiniciarDescartes() {
+        jugadoresQueDescartaron = 0;
+    }
+
+    public void incrementarDescartes() {
+        jugadoresQueDescartaron++;
+    }
+
+    public int getJugadoresActivos() {
+        int count = 0;
+        for (Jugador jugador : jugadores) {
+            if (!jugador.estaRetirado()) {
+                count++;
+            }
+        }
+        return count;
     }
 }

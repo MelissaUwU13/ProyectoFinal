@@ -5,7 +5,7 @@ import java.util.Map;
 public class Poker5CardDraw extends Poker {
     private ArrayList<Integer> apuestasRonda;
     private int apuestaActual = 0, pozo = 0;
-    private int jugadoresQueHicieronCheck = 0, jugadoresQueDescartaron = 0, jugadoresQueHicieronCall = 0, jugadoresQueYaJugaron = 0;
+    private int jugadoresQueHicieronCheck = 0;
     private Map<Jugador, Integer> puntuaciones = new HashMap<>();
 
     public Poker5CardDraw(int cantidadDeJugadores, ArrayList<String> nombresJugadores) {
@@ -51,17 +51,6 @@ public class Poker5CardDraw extends Poker {
     public void reiniciarChecks() {
         jugadoresQueHicieronCheck = 0;
     }
-    public void incrementarCalls() {
-        jugadoresQueHicieronCall++;
-    }
-
-    public int getJugadoresQueHicieronCall() {
-        return jugadoresQueHicieronCall;
-    }
-
-    public int getJugadoresQueYaJugaron() {
-        return jugadoresQueYaJugaron;
-    }
 
     public void reiniciarPartida() {
         // Limpiar y reiniciar variables del juego
@@ -95,32 +84,6 @@ public class Poker5CardDraw extends Poker {
     public void guardarPuntuacion(Jugador jugador) {
         int puntaje = evaluador.analizarMano(jugador.getMano());
         puntuaciones.put(jugador, puntaje);
-    }
-
-    public void incrementarDescartes() {
-        jugadoresQueDescartaron++;
-    }
-
-    public void incrementarJugadas() {
-        jugadoresQueYaJugaron++;
-    }
-
-    public int getJugadoresQueDescartaron() {
-        return jugadoresQueDescartaron;
-    }
-
-    public void reiniciarDescartes() {
-        jugadoresQueDescartaron = 0;
-    }
-
-    public int getJugadoresActivos() {
-        int count = 0;
-        for (Jugador jugador : jugadores) {
-            if (!jugador.estaRetirado()) {
-                count++;
-            }
-        }
-        return count;
     }
 
     public Jugador compararPuntuaciones() {

@@ -1,16 +1,15 @@
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Scanner;
 
 public class Jugador7CardStud extends Jugador {
-boolean activo=true;
+boolean activo;
 
 public Jugador7CardStud(String nombre,int noJugador, int fichas) {
     super(nombre,noJugador, fichas);
     this.activo = true;  // empieza activo
 }
 
-public boolean isActivo() {
+public boolean esActivo() {
     return activo;
 }
 
@@ -23,6 +22,7 @@ public void pasar() {
     this.activo = false;
     System.out.println("Jugador " + getNombre() + " se retira del juego.");
 }
+
 public void completar(int apuestaMinima) {
     Scanner sc = new Scanner(System.in);
     int cantidad;
@@ -54,6 +54,8 @@ public void igualar(int apuestaMaxima, ArrayList<Integer> apuestasRonda) {
     }
 }
 
+
+//BYE BYE?!
 public void subir(int nuevaApuesta, ArrayList<Integer> apuestasRonda) {
     int actual = apuestasRonda.get(getNoJugador() - 1);
     int diferencia = nuevaApuesta - actual;
@@ -78,10 +80,6 @@ public ArrayList<Carta> getCartasVisibles(int ronda) {
         }
     }
     return visibles;
-}
-
-public boolean esActivo() {
-    return activo;
 }
 
 }

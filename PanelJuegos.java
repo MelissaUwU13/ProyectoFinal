@@ -26,6 +26,8 @@ public class PanelJuegos extends JPanel {
 
         JButton botonPoker5Hands = new JButton(imagenBoton5CardPoker);
         JButton botonPoker7CardStud = new JButton(imagenBoton7CardStud);
+
+
         botonPoker5Hands.addActionListener(e -> {
             int cantidadDeJugadores = 0;
             boolean entradaValida = false;
@@ -93,7 +95,6 @@ public class PanelJuegos extends JPanel {
 
         botonPoker7CardStud.addActionListener(e -> {
             // Aquí puedes mantener o añadir lógica para 7 Card Stud sin afectar el resto
-            System.out.println("7 Card Stud no implementado aún");
             int cantidadDeJugadores = 0;
             int cantidadFichas = 0;
             boolean entradaValida = false;
@@ -175,16 +176,13 @@ public class PanelJuegos extends JPanel {
             repaint();
 
             // Agregar el panel especializado para jugar 5 Card Draw
-            PanelPoker7CardStud panelPoker7 = new PanelPoker7CardStud(cantidadDeJugadores, nombresJugadores, cantidadFichas);
+            PanelPoker7CardStud panelPoker7 = new PanelPoker7CardStud(cantidadDeJugadores, cantidadFichas, nombresJugadores,this);
             panelPoker7.setBounds(0, 0, 1000, 600);
             add(panelPoker7);
 
             revalidate();
             repaint();
         });
-
-
-
 
 
 
@@ -224,6 +222,17 @@ public class PanelJuegos extends JPanel {
         revalidate();
         repaint();
     }
+
+
+
+
+
+
+
+
+
+
+
 
     private ImageIcon redimensionarImagen(String rutaImagen, int ancho, int alto) {
         ImageIcon original = new ImageIcon(rutaImagen);

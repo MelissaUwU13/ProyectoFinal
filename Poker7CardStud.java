@@ -10,14 +10,16 @@ public class Poker7CardStud extends Poker {
 
     int jugadaBring=1;
 
-    public Poker7CardStud(int cantJugadores, int fichasTotales) {
+    public Poker7CardStud(int cantJugadores, int fichasTotales, ArrayList<String> nombresJugadores) {
         super();
         this.jugadores = new ArrayList<>();
         this.apuestasRonda = new ArrayList<>();
         this.mazo=generarBaraja();
 
         for (int i = 1; i <= cantJugadores; i++) {
-            jugadores.add(new Jugador7CardStud("Jugador",i, fichasTotales));  // ejemplo fichas iniciales
+            jugadores.add(new Jugador7CardStud("Jugador",i, fichasTotales));// ejemplo fichas iniciales
+            //ERROR AQUI
+            String nombre = nombresJugadores.get(i);
             apuestasRonda.add(0);
         }
 
@@ -100,7 +102,7 @@ public class Poker7CardStud extends Poker {
 
         for (Jugador j : jugadores) {
             Jugador7CardStud jug = (Jugador7CardStud) j;
-            if (jug.isActivo()) {
+            if (jug.esActivo()) {
                 jugadoresActivos.add(jug);
             }
         }
@@ -117,7 +119,7 @@ public class Poker7CardStud extends Poker {
 
         while (apuestasPendientes) {
             // Limpiar jugadores inactivos
-            jugadoresActivos.removeIf(j -> !j.isActivo());
+            jugadoresActivos.removeIf(j -> !j.esActivo());
 
             if (jugadoresActivos.size() <= 1) {
                 apuestasPendientes = false;
@@ -401,7 +403,7 @@ public class Poker7CardStud extends Poker {
         ArrayList<Jugador7CardStud> jugadoresActivos = new ArrayList<>();
         for (Jugador j : jugadores) {
             Jugador7CardStud jugador = (Jugador7CardStud) j;
-            if (jugador.isActivo()) {
+            if (jugador.esActivo()) {
                 jugadoresActivos.add(jugador);
             }
         }
@@ -475,39 +477,8 @@ public class Poker7CardStud extends Poker {
     public void reiniciarChecks() {
         jugadoresQueHicieronCheck = 0;
     }
-    public void incrementarCalls() {
-        jugadoresQueHicieronCall++;
-    }
 
-    public int getJugadoresQueHicieronCall() {
-        return jugadoresQueHicieronCall;
-    }
-
-    public void reiniciarCalls() {
-        jugadoresQueHicieronCall = 0;
-    }
-
-    public void incrementarDescartes() {
-        jugadoresQueDescartaron++;
-    }
-
-    public int getJugadoresQueDescartaron() {
-        return jugadoresQueDescartaron;
-    }
-
-    public void reiniciarDescartes() {
-        jugadoresQueDescartaron = 0;
-    }
-
-    public int getJugadoresActivos() {
-        int count = 0;
-        for (Jugador jugador : jugadores) {
-            if (!jugador.estaRetirado()) {
-                count++;
-            }
-        }
-        return count;
-    }
+    //VER SI SIRVE
 
     public Jugador getJugadorActivoRestante() {
         for (Jugador j : jugadores) {
@@ -515,7 +486,6 @@ public class Poker7CardStud extends Poker {
         }
         return null;
     }
-
 
     public int getApuestaActual() {
         return apuestaActual;
@@ -525,6 +495,8 @@ public class Poker7CardStud extends Poker {
         this.apuestaActual = apuesta;
     }
 
+
+    //Metodo para poker 5
     public Carta sacarCarta() {
         if (!mazo.isEmpty()) {
             return mazo.remove(0); // Saca la primera carta (el mazo debe estar barajado)

@@ -10,7 +10,5 @@ public class GameFrame extends JFrame {
     }
     public static void main(String[] args) {
         new GameFrame();
-//        Poker5CardDraw juego = new Poker5CardDraw();
-//        juego.jugar();
     }
 }

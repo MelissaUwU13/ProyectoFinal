@@ -47,6 +47,6 @@ public class Main {
         System.out.println("La apuesta inicial es de 5 fichas!");
         fichasTotales=fichasTotales-5;
 
-        Poker7CardStud juego = new Poker7CardStud(cantJugadores, fichasTotales);
+        //Poker7CardStud juego = new Poker7CardStud(cantJugadores, fichasTotales, nombreJu);
     }
 }
