@@ -5,6 +5,7 @@ import java.util.Collections;
 public class Jugador {
     private int noJugador;
     private int fichas;
+    private boolean retirado = false;
     private ArrayList<Carta> mano = new ArrayList<>();
 
     public Jugador(int noJugador, int fichas) {
@@ -26,6 +27,14 @@ public class Jugador {
         return noJugador;
     }
 
+    public boolean estaRetirado() {
+        return retirado;
+    }
+
+    public void retirarse() {
+        this.retirado = true;
+    }
+
     public void tirarCarta(){
 
     }
@@ -34,6 +43,16 @@ public class Jugador {
 
     }
 
+    // No se si ocupas esto, pero es para restar las fichas del jugador
+    public void restarFichas(int cantidad) {
+        if (cantidad <= fichas) {
+            fichas -= cantidad;
+        } else {
+            // Puedes decidir si lo dejas en 0 o lanzas un error
+            System.out.println("No tienes suficientes fichas. Se restan todas las que tienes.");
+            fichas = 0;
+        }
+    }
     public int getFichas() {
         return fichas;
     }

@@ -1,64 +1,10 @@
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Scanner;
+
 public class Poker5CardDraw extends Poker {
     private ArrayList<Integer> apuestasRonda;
-
-    public Poker5CardDraw(){
-        super();
-        evaluador = new Evaluador5CardDraw();
-        Scanner sc = new Scanner(System.in);
-        int cantidadDeJugadores = 0;
-        boolean error=false, ganador=false;
-
-        // Creamos un ciclo en el que haremos que el usuario defina la cantidad de jugadores
-        while(!error) {
-            System.out.println("Ingrese la cantidad de jugadores: ");
-            try { // Usamos un try para evitar que el usuario ponga datos no permitidos
-                cantidadDeJugadores = Integer.parseInt(sc.nextLine());
-                if (cantidadDeJugadores < 2 || cantidadDeJugadores > 7) {
-                    System.out.println("Cantidad erronea, este juego necesita entre 2 a 7 jugadores");
-                }
-                else {
-                    error = true;
-                }
-            }
-            catch (Exception e) {
-                System.out.println("Error: Entrada no valida");
-            }
-        }
-
-        error=false;
-        int fichasTotales=0;
-
-        while(error=false) {
-            System.out.println("Con cuantas fichas quieres iniciar para cada jugador? MAX 50");
-            try {
-                fichasTotales = sc.nextInt();
-                if (fichasTotales < 0 || fichasTotales > 50) {
-                    System.out.println("Cantidad erronea, vuelvelo a intentar ");
-                    error = false;
-                } else {
-                    error = true;
-                }
-            }
-            catch (Exception e) {
-            System.out.println("Error: Entrada no valida");
-        }
-
-        }
-
-        // Creamos la cantidad de jugadores dada por el usuario
-        this.jugadores = new ArrayList<>();
-        this.apuestasRonda = new ArrayList<>();
-        for (int i = 1; i <= cantidadDeJugadores; i++) {
-            super.jugadores.add(new Jugador5CardDraw(i, fichasTotales));
-        }
-
-        generarBaraja();
-        // Repartimos 5 cartas para cada jugador debido a las reglas del juego
-        repartirCartas(5,true);
-    }
+    private int apuestaActual = 0;
+    private int jugadoresQueHicieronCheck = 0;
+    private int jugadoresQueHicieronCall = 0;
 
     public Poker5CardDraw(int cantJugadores) {
         super();
@@ -92,6 +38,47 @@ public class Poker5CardDraw extends Poker {
         return mazo;
     }
 
+    public void incrementarChecks() {
+        jugadoresQueHicieronCheck++;
+    }
+
+    public int getJugadoresQueHicieronCheck() {
+        return jugadoresQueHicieronCheck;
+    }
+
+    public void reiniciarChecks() {
+        jugadoresQueHicieronCheck = 0;
+    }
+    public void incrementarCalls() {
+        jugadoresQueHicieronCall++;
+    }
+
+    public int getJugadoresQueHicieronCall() {
+        return jugadoresQueHicieronCall;
+    }
+
+    public void reiniciarCalls() {
+        jugadoresQueHicieronCall = 0;
+    }
+
+    public int getJugadoresActivos() {
+        int activos = 0;
+        for (Jugador j : jugadores) {
+            if (!((Jugador5CardDraw) j).estaRetirado()) {
+                activos++;
+            }
+        }
+        return activos;
+    }
+
+
+    public int getApuestaActual() {
+        return apuestaActual;
+    }
+
+    public void setApuestaActual(int apuesta) {
+        this.apuestaActual = apuesta;
+    }
 
     public void jugar() {
         generarBaraja();

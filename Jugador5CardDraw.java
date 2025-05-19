@@ -2,15 +2,15 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 public class Jugador5CardDraw extends Jugador{
+    private boolean retirado = false;
     private ArrayList<Carta> mano = new ArrayList<>();
-    int fichas;
+    private int apuestaActual = 0;
+    private int fichas;
 
     public Jugador5CardDraw(int noJugador, int fichas) {
         super(noJugador, fichas);
     }
 
-
-    private boolean retirado = false;
 
     public boolean estaRetirado() {
         return retirado;
@@ -30,17 +30,7 @@ public class Jugador5CardDraw extends Jugador{
         }
     }
 
-
-    public void igualar(ArrayList<Integer> ficha){
-
+    public void setApuestaActual(int apuestaActual) {
+        this.apuestaActual = apuestaActual;
     }
-
-    public void pasar(){
-
-    }
-
-    public void subir(ArrayList<Integer> ficha){
-
-    }
-
 }

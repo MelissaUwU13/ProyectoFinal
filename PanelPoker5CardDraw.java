@@ -28,43 +28,134 @@ public class PanelPoker5CardDraw extends JPanel {
             pasarAlSiguienteJugador();
             juego.imprimirFichasJugadores();
         });
-        botonCheck = new JButton("Pasar");
-        botonCheck.setBounds(50, 50, 100, 40);
+        ImageIcon imagenBotonPasar = redimensionarImagen("cartas/botonCheck.png", 128, 64);
+        botonCheck = new JButton(imagenBotonPasar);
+        botonCheck.setBounds(50, 50, 128, 64);
+        inicializarBotonConImagen(botonCheck);
         botonCheck.addActionListener(e -> {
+            if (juego.getApuestaActual() > 0) {
+                JOptionPane.showMessageDialog(this, "No puedes hacer 'check' porque ya hay una apuesta activa.", "Aviso", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            juego.incrementarChecks();
             System.out.println("Jugador pasó");
-            // Aquí va la lógica de pasar turno sin apostar
-        });
 
-        botonBet = new JButton("Apostar");
-        botonBet.setBounds(160, 50, 100, 40);
+            if (juego.getJugadoresQueHicieronCheck() == juego.getJugadoresActivos()) {
+                System.out.println("¡Todos los jugadores hicieron check!");
+                // Aquí puedes avanzar a la siguiente ronda
+                juego.reiniciarChecks();
+            }
+
+            pasarAlSiguienteJugador();
+        });
+        ImageIcon imagenBotonApostar = redimensionarImagen("cartas/botonBet.png", 128, 64);
+        botonBet = new JButton(imagenBotonApostar);
+        botonBet.setBounds(200, 50, 128, 64);
+        inicializarBotonConImagen(botonBet);
         botonBet.addActionListener(e -> {
-            System.out.println("Jugador apostó");
-            // Aquí va la lógica para iniciar una apuesta
+            if (juego.getApuestaActual() > 0) {
+                JOptionPane.showMessageDialog(this, "Ya hay una apuesta activa. Usa 'Subir' o 'Igualar'.", "Aviso", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            String input = JOptionPane.showInputDialog(this, "¿Cuánto quieres apostar?", "Apuesta", JOptionPane.QUESTION_MESSAGE);
+            if (input == null) return;
+
+            try {
+                int cantidad = Integer.parseInt(input);
+                Jugador5CardDraw jugador = (Jugador5CardDraw) juego.getJugadores().get(turnoActualDeJugador);
+
+                if (cantidad > jugador.getFichas()) {
+                    JOptionPane.showMessageDialog(this, "No tienes suficientes fichas.", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                jugador.restarFichas(cantidad);
+                juego.setApuestaActual(cantidad);
+                juego.reiniciarChecks(); // Ya no hay checks, se reinicia el conteo
+                System.out.println("Jugador apostó " + cantidad + " fichas");
+
+                pasarAlSiguienteJugador();
+
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(this, "Cantidad inválida", "Error", JOptionPane.ERROR_MESSAGE);
+            }
         });
 
-        botonCall = new JButton("Igualar");
-        botonCall.setBounds(270, 50, 100, 40);
+        ImageIcon imagenBotonIgualar = redimensionarImagen("cartas/botonCall.png", 128, 64);
+        botonCall = new JButton(imagenBotonIgualar);
+        botonCall.setBounds(350, 50, 128, 64);
+        inicializarBotonConImagen(botonCall);
         botonCall.addActionListener(e -> {
-            System.out.println("Jugador igualó");
-            // Aquí igualas la apuesta actual
+            Jugador5CardDraw jugador = (Jugador5CardDraw) juego.getJugadores().get(turnoActualDeJugador);
+            int apuestaActual = juego.getApuestaActual();
+            int fichasJugador = jugador.getFichas();
+            int cantidadParaIgualar = apuestaActual; // si guardas cuánto apostó cada jugador, usa la diferencia aquí
+
+            if (cantidadParaIgualar > fichasJugador) {
+                JOptionPane.showMessageDialog(this, "No tienes fichas suficientes para igualar.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            jugador.restarFichas(cantidadParaIgualar);
+            System.out.println("Jugador igualó con " + cantidadParaIgualar + " fichas");
+            juego.incrementarCalls();
+            if (juego.getJugadoresQueHicieronCall() == juego.getJugadoresActivos()) {
+                System.out.println("¡Todos los jugadores hicieron call!");
+                // Aquí puedes avanzar a la siguiente ronda
+                juego.reiniciarChecks();
+            }
+            // Aquí actualiza el estado de la apuesta si tienes alguna variable para eso
+
+            pasarAlSiguienteJugador();
         });
 
-        botonRaise = new JButton("Subir");
-        botonRaise.setBounds(380, 50, 100, 40);
+        ImageIcon imagenBotonSubir = redimensionarImagen("cartas/botonRaise.png", 128, 64);
+        botonRaise = new JButton(imagenBotonSubir);
+        botonRaise.setBounds(500, 50, 128, 64);
+        inicializarBotonConImagen(botonRaise);
         botonRaise.addActionListener(e -> {
-            System.out.println("Jugador subió");
-            // Aquí subes la apuesta actual
+            Jugador5CardDraw jugador = (Jugador5CardDraw) juego.getJugadores().get(turnoActualDeJugador);
+            int apuestaActual = juego.getApuestaActual();
+
+            String input = JOptionPane.showInputDialog(this, "¿Cuánto quieres subir (debe ser mayor a " + apuestaActual + ")?", "Subir apuesta", JOptionPane.QUESTION_MESSAGE);
+            if (input == null) return;
+
+            try {
+                int cantidad = Integer.parseInt(input);
+
+                if (cantidad <= apuestaActual) {
+                    JOptionPane.showMessageDialog(this, "La subida debe ser mayor a la apuesta actual.", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                if (cantidad > jugador.getFichas()) {
+                    JOptionPane.showMessageDialog(this, "No tienes suficientes fichas para subir esa cantidad.", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                jugador.restarFichas(cantidad);
+                juego.setApuestaActual(cantidad);
+                juego.reiniciarChecks(); // se resetean los checks porque hubo subida
+                System.out.println("Jugador subió la apuesta a " + cantidad);
+
+                pasarAlSiguienteJugador();
+
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(this, "Cantidad inválida", "Error", JOptionPane.ERROR_MESSAGE);
+            }
         });
         ImageIcon imagenBotonFold = redimensionarImagen("cartas/botonRetirarse.png", 128, 64);
         botonFold = new JButton(imagenBotonFold);
         inicializarBotonConImagen(botonFold);
         botonFold.setBounds(800, 100, 128, 64); // Mismo tamaño que "Analizar Cartas"
         botonFold.addActionListener(e -> {
-                System.out.println("Jugador se retiró");
-                // otro casting para poder retirar a los jugadores
-            ((Jugador5CardDraw) juego.getJugadores().get(turnoActualDeJugador)).retirarse();
-
-                pasarAlSiguienteJugador(); // evitamos que el retirado vuelva a jugar
+            System.out.println("Jugador se retiró");
+            /* El parentesis con el que iniciamos abajo es parte de un concepto llamado "casting", en este caso, le
+            indicamos a Java que queremos obtener los metodos y atributos de Jugador5CardDraw, y esto para hacer que el jugador se retire
+            */
+            juego.getJugadores().get(turnoActualDeJugador).retirarse();
+            pasarAlSiguienteJugador(); // evitamos que el retirado vuelva a jugar
         });
         add(botonCheck);
         add(botonBet);
