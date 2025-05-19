@@ -30,6 +30,7 @@ public class PanelJuegos extends JPanel {
 
         botonPoker5Hands.addActionListener(e -> {
             int cantidadDeJugadores = 0;
+            int cantidadFichas = 0;
             boolean entradaValida = false;
 
             while (!entradaValida) {
@@ -59,7 +60,6 @@ public class PanelJuegos extends JPanel {
                 }
             }
 
-
             for (int i = 1; i <= cantidadDeJugadores; i++) {
                 String nombre;
                 do {
@@ -71,6 +71,36 @@ public class PanelJuegos extends JPanel {
                 nombresJugadores.add(nombre.trim());
             }
 
+            entradaValida = false;
+
+            while (!entradaValida) {
+                String entrada = JOptionPane.showInputDialog(this, "Introduzca la cantidad de fichas (500-1000)", "Número de fichas", JOptionPane.QUESTION_MESSAGE);
+                if (entrada == null) return;
+
+                try {
+                    cantidadFichas = Integer.parseInt(entrada);
+                    if (cantidadFichas >= 500 && cantidadFichas <= 1000) {
+                        entradaValida = true;
+                        fondoPantalla = new ImageIcon("cartas/fondoPantallaPoker.jpg").getImage();
+                    } else {
+                        JOptionPane.showMessageDialog(
+                                this,
+                                "Cantidad inválida. Debe ser entre 500 y 1000.",
+                                "Error",
+                                JOptionPane.ERROR_MESSAGE
+                        );
+                    }
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(
+                            this,
+                            "Ingrese un número válido.",
+                            "Error",
+                            JOptionPane.ERROR_MESSAGE
+                    );
+                }
+            }
+
+
             // Ocultamos botones que ya no se usarán mientras se juega
             botonPoker5Hands.setVisible(false);
             botonPoker7CardStud.setVisible(false);
@@ -81,7 +111,7 @@ public class PanelJuegos extends JPanel {
             repaint();
 
             // Agregar el panel especializado para jugar 5 Card Draw
-            PanelPoker5CardDraw panelPoker5 = new PanelPoker5CardDraw(cantidadDeJugadores, nombresJugadores, this);
+            PanelPoker5CardDraw panelPoker5 = new PanelPoker5CardDraw(cantidadDeJugadores, cantidadFichas, nombresJugadores, this);
             panelPoker5.setBounds(0, 0, 1000, 600);
             add(panelPoker5);
 
@@ -144,8 +174,8 @@ public class PanelJuegos extends JPanel {
                 if (entrada == null) return;
 
                 try {
-                    cantidadDeJugadores = Integer.parseInt(entrada);
-                    if (cantidadDeJugadores >= 500 && cantidadDeJugadores <= 1000) {
+                    cantidadFichas = Integer.parseInt(entrada);
+                    if (cantidadFichas >= 500 && cantidadFichas <= 1000) {
                         entradaValida = true;
                         fondoPantalla = new ImageIcon("cartas/fondoPantallaPoker.jpg").getImage();
                     } else {

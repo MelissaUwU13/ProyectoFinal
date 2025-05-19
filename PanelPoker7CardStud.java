@@ -10,7 +10,7 @@ public class PanelPoker7CardStud extends JPanel{
     private Image fondoPantalla;
     private int turnoActualDeJugador = 1, faseDeApuestaActual;
     JButton botonPasar, botonApostar, botonIgualar, botonSubir, botonCompletar, botonAnalizarCartas, botonTerminarTurno, botonJugar;
-    private JLabel labelTurnoJugador, labelCantidadFichas;
+    private JLabel labelTurnoJugador, labelCantidadFichas, labelRondaActual, labelApuestaActual;
     private boolean esFaseDeApuesta;
 
 
@@ -37,10 +37,22 @@ public class PanelPoker7CardStud extends JPanel{
         labelCantidadFichas.setForeground(Color.WHITE);
         labelCantidadFichas.setBounds(20, 50, 500, 30);
 
+        labelRondaActual = new JLabel();
+        labelRondaActual.setFont(new Font("Arial", Font.BOLD, 24));
+        labelRondaActual.setForeground(Color.WHITE);
+        labelRondaActual.setBounds(450, 30, 500, 30);
+
+        labelApuestaActual = new JLabel();
+        labelApuestaActual.setFont(new Font("Arial", Font.BOLD, 24));
+        labelApuestaActual.setForeground(Color.WHITE);
+        labelApuestaActual.setBounds(450, 40, 500, 30);
+
         actualizarLabelTurno(); // Esto pone el nombre del primer jugador
 
         add(labelTurnoJugador);
         add(labelCantidadFichas);
+        add(labelRondaActual);
+        add(labelApuestaActual);
         botonesCartas = new ArrayList<>();
         cartasSeleccionadas = new ArrayList<>();
 
@@ -59,7 +71,7 @@ public class PanelPoker7CardStud extends JPanel{
 
 
         //cambiar name de la imagen
-        ImageIcon imagenBotonPasar = redimensionarImagen("cartas/botonCheck.png", 128, 64);
+        ImageIcon imagenBotonPasar = redimensionarImagen("cartas/botonPasar.png", 128, 64);
         botonPasar = new JButton(imagenBotonPasar);
         botonPasar.setBounds(200, 300, 128, 64);
         inicializarBotonConImagen(botonPasar);
@@ -84,7 +96,7 @@ public class PanelPoker7CardStud extends JPanel{
 
 
         //cambiar name foto
-        ImageIcon imagenBotonApostar = redimensionarImagen("cartas/botonBet.png", 128, 64);
+        ImageIcon imagenBotonApostar = redimensionarImagen("cartas/botonApostar.png", 128, 64);
         botonApostar = new JButton(imagenBotonApostar);
         botonApostar.setBounds(350, 300, 128, 64);
         inicializarBotonConImagen(botonApostar);
@@ -125,7 +137,7 @@ public class PanelPoker7CardStud extends JPanel{
 
 
         //cambiar name foto
-        ImageIcon imagenBotonIgualar = redimensionarImagen("cartas/botonCall.png", 128, 64);
+        ImageIcon imagenBotonIgualar = redimensionarImagen("cartas/botonIgualar.png", 128, 64);
         botonIgualar = new JButton(imagenBotonIgualar);
         botonIgualar.setBounds(500, 300, 128, 64);
         inicializarBotonConImagen(botonIgualar);
@@ -170,7 +182,7 @@ public class PanelPoker7CardStud extends JPanel{
 
 
         //cambiar foto name
-        ImageIcon imagenBotonSubir = redimensionarImagen("cartas/botonRaise.png", 128, 64);
+        ImageIcon imagenBotonSubir = redimensionarImagen("cartas/botonSubir.png", 128, 64);
         botonSubir = new JButton(imagenBotonSubir);
         botonSubir.setBounds(650, 300, 128, 64);
         inicializarBotonConImagen(botonSubir);
@@ -213,7 +225,7 @@ public class PanelPoker7CardStud extends JPanel{
         });
 
         //cambiar name foto
-        ImageIcon imagenBotonCompletar = redimensionarImagen("cartas/botonRetirarse.png", 128, 64);
+        ImageIcon imagenBotonCompletar = redimensionarImagen("cartas/botonCompletar.png", 128, 64);
         botonCompletar = new JButton(imagenBotonCompletar);
         inicializarBotonConImagen(botonCompletar);
         botonCompletar.setBounds(800, 20, 128, 64); // Mismo tamaño que "Analizar Cartas"

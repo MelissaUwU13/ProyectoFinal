@@ -10,11 +10,11 @@ public class PanelPoker5CardDraw extends JPanel {
     private Image fondoPantalla;
     private int turnoActualDeJugador = 1, faseDeApuestaActual;
     JButton botonPasar, botonApostar, botonIgualar, botonSubir, botonRetirarse, botonCambiarCartas, botonAnalizarCartas, botonTerminarTurno, botonJugar;
-    private JLabel labelTurnoJugador, labelCantidadFichas;
+    private JLabel labelTurnoJugador, labelCantidadFichas,labelApuestaActual;
     private boolean esFaseDeApuesta;
 
     //AGREGAR FICHAS
-    public PanelPoker5CardDraw(int cantidadDeJugadores, ArrayList<String> nombresJugadores, PanelJuegos panelPrincipal) {
+    public PanelPoker5CardDraw(int cantidadDeJugadores, int cantidadFichas, ArrayList<String> nombresJugadores, PanelJuegos panelPrincipal) {
         this.panelPrincipal = panelPrincipal;
         esFaseDeApuesta=true;
 
@@ -34,10 +34,16 @@ public class PanelPoker5CardDraw extends JPanel {
         labelCantidadFichas.setForeground(Color.WHITE);
         labelCantidadFichas.setBounds(20, 50, 500, 30);
 
+        labelApuestaActual = new JLabel();
+        labelApuestaActual.setFont(new Font("Arial", Font.BOLD, 24));
+        labelApuestaActual.setForeground(Color.WHITE);
+        labelApuestaActual.setBounds(450, 40, 500, 30);
+
         actualizarLabelTurno(); // Esto pone el nombre del primer jugador
 
         add(labelTurnoJugador);
         add(labelCantidadFichas);
+        add(labelApuestaActual);
         botonesCartas = new ArrayList<>();
         cartasSeleccionadas = new ArrayList<>();
 
@@ -75,7 +81,7 @@ public class PanelPoker5CardDraw extends JPanel {
         });
 
         //cambiar name de la imagen
-        ImageIcon imagenBotonPasar = redimensionarImagen("cartas/botonCheck.png", 128, 64);
+        ImageIcon imagenBotonPasar = redimensionarImagen("cartas/botonPasar.png", 128, 64);
         botonPasar = new JButton(imagenBotonPasar);
         botonPasar.setBounds(200, 300, 128, 64);
         inicializarBotonConImagen(botonPasar);
@@ -106,7 +112,7 @@ public class PanelPoker5CardDraw extends JPanel {
         });
 
 
-        ImageIcon imagenBotonApostar = redimensionarImagen("cartas/botonBet.png", 128, 64);
+        ImageIcon imagenBotonApostar = redimensionarImagen("cartas/botonApostar.png", 128, 64);
         botonApostar = new JButton(imagenBotonApostar);
         botonApostar.setBounds(350, 300, 128, 64);
         inicializarBotonConImagen(botonApostar);
@@ -143,7 +149,7 @@ public class PanelPoker5CardDraw extends JPanel {
 
 
         //cambiar name foto
-        ImageIcon imagenBotonIgualar = redimensionarImagen("cartas/botonCall.png", 128, 64);
+        ImageIcon imagenBotonIgualar = redimensionarImagen("cartas/botonIgualar.png", 128, 64);
         botonIgualar = new JButton(imagenBotonIgualar);
         botonIgualar.setBounds(500, 300, 128, 64);
         inicializarBotonConImagen(botonIgualar);
@@ -186,7 +192,7 @@ public class PanelPoker5CardDraw extends JPanel {
 
 
         //cambiar name de foto
-        ImageIcon imagenBotonSubir = redimensionarImagen("cartas/botonRaise.png", 128, 64);
+        ImageIcon imagenBotonSubir = redimensionarImagen("cartas/botonSubir.png", 128, 64);
         botonSubir = new JButton(imagenBotonSubir);
         botonSubir.setBounds(650, 300, 128, 64);
         inicializarBotonConImagen(botonSubir);
