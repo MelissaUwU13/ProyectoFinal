@@ -19,7 +19,7 @@ public class PanelJuegos extends JPanel {
         setFocusable(true);
         // Reproducimos la música, en este caso lo volví una clase porque si volvía al menu principal, la canción vuelve a sonar por encima de la primera vez que se reprodujo
         ReproductorMusica reproductorDeMusica = new ReproductorMusica();
-        // reproductorDeMusica.reproducir("cartas/musica.wav");
+        reproductorDeMusica.reproducir("cartas/musica.wav");
 
         // Asignamos el fondo de pantalla
         fondoPantalla = new ImageIcon("cartas/Portada.png").getImage();
@@ -235,6 +235,7 @@ public class PanelJuegos extends JPanel {
         return new ImageIcon(escalada);
     }
 
+    // Esto sirve para adaptar los botones que tengan una imagen, aqui removemos sus esquinas, los recuadros que se iluminen al seleccionarlos y los volvemos visibles
     private void inicializarBotonConImagen(JButton boton) {
         boton.setContentAreaFilled(false);
         boton.setFocusPainted(false);
