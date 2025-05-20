@@ -8,15 +8,14 @@ public class PanelPoker7CardStud extends JPanel {
     private ArrayList<JButton> botonesCartas;
     private ArrayList<Boolean> cartasSeleccionadas;
     private Image fondoPantalla;
-    private int turnoActualDeJugador = 1, ronda = 1, faseDeApuestaActual;
-    JButton botonPasar, botonApostar, botonIgualar, botonSubir, botonCompletar, botonJugar;
-    private JLabel labelTurnoJugador, labelCantidadFichas, labelRondaActual, labelApuestaActual;
-    private boolean esFaseDeApuesta;
+    private int turnoActualDeJugador, ronda = 1;
+    JButton botonPasar, botonIgualar, botonSubir, botonCompletar, botonJugar;
+    private JLabel labelTurnoJugador, labelCantidadFichas, labelRondaActual, labelApuestaActual, labelApuestasTotales;
+    private boolean faseStreet, bringIn=true;
 
 
     public PanelPoker7CardStud(int cantidadDeJugadores, int cantidadFichas, ArrayList<String> nombresJugadores, PanelJuegos panelPrincipal) {
-        this.panelPrincipal = panelPrincipal;
-        esFaseDeApuesta = true;
+        faseStreet = true;
 
         setLayout(null);
         setPreferredSize(new Dimension(1000, 600));
@@ -25,10 +24,9 @@ public class PanelPoker7CardStud extends JPanel {
         JOptionPane.showMessageDialog(this, "Antes de iniciar tenemos nuestra primera apuesta obligatoria!", "Ante", JOptionPane.INFORMATION_MESSAGE);
         JOptionPane.showMessageDialog(this, "La apuesta inicial es de 5 fichas!", "Ante", JOptionPane.INFORMATION_MESSAGE);
 
-
         juego = new Poker7CardStud(cantidadDeJugadores, cantidadFichas, nombresJugadores);
-        new Thread(() -> juego.IniciarJuego()).start();  // inicia en segundo hilo
 
+        //CREACION DE TITULOS
         labelTurnoJugador = new JLabel();
         labelTurnoJugador.setFont(new Font("Arial", Font.BOLD, 24));
         labelTurnoJugador.setForeground(Color.WHITE);
@@ -47,7 +45,14 @@ public class PanelPoker7CardStud extends JPanel {
         labelApuestaActual = new JLabel();
         labelApuestaActual.setFont(new Font("Arial", Font.BOLD, 24));
         labelApuestaActual.setForeground(Color.WHITE);
-        labelApuestaActual.setBounds(450, 80, 500, 30);
+        labelApuestaActual.setBounds(20, 120, 500, 30);
+
+        labelApuestasTotales = new JLabel();
+        labelApuestasTotales.setFont(new Font("Arial", Font.BOLD, 24));
+        labelApuestasTotales.setForeground(Color.WHITE);
+        labelApuestasTotales.setBounds(20, 160, 500, 30);
+
+        turnoActualDeJugador=juego.obtenerNUMEROJugadorInicial(ronda);
 
         actualizarLabelTurno(); // Esto pone el nombre del primer jugador
 
@@ -55,8 +60,10 @@ public class PanelPoker7CardStud extends JPanel {
         add(labelCantidadFichas);
         add(labelRondaActual);
         add(labelApuestaActual);
+        add(labelApuestasTotales);
         botonesCartas = new ArrayList<>();
         cartasSeleccionadas = new ArrayList<>();
+
 
 
         ImageIcon imagenBotonPasar = redimensionarImagen("cartas/botonPasar.png", 128, 64);
@@ -97,49 +104,9 @@ public class PanelPoker7CardStud extends JPanel {
         });
 
 
-        ImageIcon imagenBotonApostar = redimensionarImagen("cartas/botonApostar.png", 128, 64);
-        botonApostar = new JButton(imagenBotonApostar);
-        botonApostar.setBounds(248, 300, 128, 64);
-        inicializarBotonConImagen(botonApostar);
-
-        //SI FUNCIONA BIEN, PONERSELO AL CODIGO DE DEREK
-        botonApostar.addActionListener(e -> {
-            boolean apuestaRealizada = false;
-
-            while (!apuestaRealizada) {
-                String input = JOptionPane.showInputDialog(this, "¿Cuánto quieres apostar?", "Apuesta", JOptionPane.QUESTION_MESSAGE);
-
-                if (input == null || input.trim().isEmpty()) {
-                    int opcion = JOptionPane.showConfirmDialog(this, "¿Quieres intentar apostar de nuevo?", "Cancelar apuesta", JOptionPane.YES_NO_OPTION);
-                    if (opcion == JOptionPane.NO_OPTION) {
-                        apuestaRealizada = true; // Salir del ciclo sin hacer nada
-                    }
-                } else {
-                    try {
-                        int cantidad = Integer.parseInt(input);
-                        Jugador7CardStud jugador = (Jugador7CardStud) juego.getJugadores().get(turnoActualDeJugador);
-
-                        if (cantidad > jugador.getFichas()) {
-                            JOptionPane.showMessageDialog(this, "No tienes suficientes fichas.", "Error", JOptionPane.ERROR_MESSAGE);
-                        } else {
-                            jugador.apostar(cantidad);
-                            juego.setApuestaActual(cantidad);
-                            pasarAlSiguienteJugador();
-                            apuestaRealizada = true; // Salir del ciclo después de apostar
-                        }
-
-                    } catch (NumberFormatException ex) {
-                        JOptionPane.showMessageDialog(this, "Cantidad inválida", "Error", JOptionPane.ERROR_MESSAGE);
-                    }
-                }
-            }
-
-        });
-
-
         ImageIcon imagenBotonIgualar = redimensionarImagen("cartas/botonIgualar.png", 128, 64);
         botonIgualar = new JButton(imagenBotonIgualar);
-        botonIgualar.setBounds(396, 300, 128, 64);
+        botonIgualar.setBounds(248, 300, 128, 64);
         inicializarBotonConImagen(botonIgualar);
 
         botonIgualar.addActionListener(e -> {
@@ -163,18 +130,16 @@ public class PanelPoker7CardStud extends JPanel {
                 jugador.subirYApostar(cantidadParaIgualar);
                 juego.agregarAlPozo(cantidadParaIgualar);
 
-                JOptionPane.showMessageDialog(this, jugador.getNombre() + " igualó con " + cantidadParaIgualar + " fichas", "Error", JOptionPane.ERROR_MESSAGE);
-                //System.out.println(jugador.getNombre() + " igualó con " + cantidadParaIgualar + " fichas");
-                //System.out.println("Fichas restantes: " + jugador.getFichas());
+                JOptionPane.showMessageDialog(this, jugador.getNombre() + " igualó con " + cantidadParaIgualar + " fichas", "Igualar", JOptionPane.INFORMATION_MESSAGE);
 
-                juego.incrementarIgualadas();
+                juego.incrementarCalls();
 
-                if (juego.getJugadoresQueIgualaron() >= juego.getJugadoresActivos() - 1) {
-                    //System.out.println("¡Todos igualaron la apuesta!");
-                    esFaseDeApuesta = !esFaseDeApuesta;
-                    juego.reiniciarChecks();
-                    mostrarBotonesDeDiferentesFases();
-                    faseDeApuestaActual++;
+                if (juego.getJugadoresQueHicieronCall() >= juego.getJugadoresActivos() - 1) {
+
+                    verificarFinDeRonda();
+                    //ronda++;
+                    //juego.reiniciarChecks();
+                    //mostrarBotonesDeDiferentesFases(faseStreet);
                 }
 
                 actualizarLabelTurno();
@@ -186,7 +151,7 @@ public class PanelPoker7CardStud extends JPanel {
 
         ImageIcon imagenBotonSubir = redimensionarImagen("cartas/botonSubir.png", 128, 64);
         botonSubir = new JButton(imagenBotonSubir);
-        botonSubir.setBounds(544, 300, 128, 64);
+        botonSubir.setBounds(396, 300, 128, 64);
         inicializarBotonConImagen(botonSubir);
 
         botonSubir.addActionListener(e -> {
@@ -213,8 +178,10 @@ public class PanelPoker7CardStud extends JPanel {
                         } else {
                             jugador.apostar(cantidad);
                             juego.setApuestaActual(cantidad);
-                            juego.reiniciarChecks(); // se resetean los checks porque hubo subida
-                            JOptionPane.showMessageDialog(this, "Jugador subio la apuesta a "+cantidad, "Subir", JOptionPane.ERROR_MESSAGE);
+                            juego.reiniciarChecks();
+                            juego.reiniciarCalls();
+                            // se resetean los checks porque hubo subida
+                            JOptionPane.showMessageDialog(this, "Jugador subio la apuesta a "+cantidad, "Subir", JOptionPane.INFORMATION_MESSAGE);
                             //System.out.println("Jugador subió la apuesta a " + cantidad);
                             pasarAlSiguienteJugador();
                             subidaRealizada = true; // salida exitosa
@@ -228,11 +195,10 @@ public class PanelPoker7CardStud extends JPanel {
         });
 
 
-
         ImageIcon imagenBotonCompletar = redimensionarImagen("cartas/botonCompletar.png", 128, 64);
         botonCompletar = new JButton(imagenBotonCompletar);
         inicializarBotonConImagen(botonCompletar);
-        botonCompletar.setBounds(692, 300, 128, 64); // Mismo tamaño que "Analizar Cartas"
+        botonCompletar.setBounds(544, 300, 128, 64); // Mismo tamaño que "Analizar Cartas"
 
         //comprobar que funciona
         botonCompletar.addActionListener(e -> {
@@ -250,10 +216,7 @@ public class PanelPoker7CardStud extends JPanel {
             if (puedeCompletar) {
                 jugador.subirYApostar(cantidadParaCompletar);
                 juego.agregarAlPozo(cantidadParaCompletar);
-
                 JOptionPane.showMessageDialog(this, jugador.getNombre() + " completo con " + cantidadParaCompletar + " fichas", "Completar", JOptionPane.INFORMATION_MESSAGE);
-                //System.out.println(jugador.getNombre() + " completo con " + cantidadParaCompletar + " fichas");
-                //System.out.println("Fichas restantes: " + jugador.getFichas());
 
                 actualizarLabelTurno();
                 pasarAlSiguienteJugador();
@@ -261,8 +224,14 @@ public class PanelPoker7CardStud extends JPanel {
         });
 
 
+
+
+
         //ESTE BOTON PUEDE SERVIR PARA LA ULTIMA RONDA
-        botonJugar = new JButton("Jugar");
+        //EDITAR PQ LE COPIE A DEREK QWQ
+        ImageIcon imagenBotonJugar = redimensionarImagen("cartas/botonJugar.png", 128, 64);
+        botonJugar = new JButton(imagenBotonJugar);
+        inicializarBotonConImagen(botonJugar);
         botonJugar.setBounds(200, 300, 128, 64);
 
         botonJugar.addActionListener(e -> {
@@ -279,21 +248,42 @@ public class PanelPoker7CardStud extends JPanel {
                 return;
             }
 
-            String resultado = juego.evaluarMano(cartasSeleccionadasParaAnalizar); // o cartasSeleccionadasParaAnalizar si evalúas solo las seleccionadas
-            System.out.println(cartasSeleccionadasParaAnalizar);
+            String resultado = juego.evaluarMano(cartasSeleccionadasParaAnalizar);
             JOptionPane.showMessageDialog(this, resultado);
-            mostrarBotonesDeDiferentesFases();
+
+            //juego.guardarPuntuacion(juego.getJugadores().get(turnoActualDeJugador));
+            juego.incrementarJugadas();
+
+            //if (juego.getJugadoresQueYaJugaron() >= juego.getJugadoresActivos()) {
+               // Jugador ganador = juego.compararPuntuaciones();
+                //juego.setJugadoresQueYaJugaron(0);
+               // int opcion = JOptionPane.showOptionDialog(this,"¡" + ganador.getNombre() + " gana la ronda usando " + resultado + "!\n¿Qué quieres hacer ahora?","Fin de la Ronda",JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE,null, new String[]{"Volver a jugar", "Menú principal"}, "Volver a jugar");
+
+                //if (opcion == JOptionPane.YES_OPTION) {
+                    // Reiniciar el juego
+                  //  reiniciarJuego();
+                //} else {
+                    // Volver al menú principal (esto dependerá de cómo lo tengas estructurado)
+                    //irAlMenuPrincipal();
+                //}
+            //}
+
+            //jugadorYaJugo = true; // Marcamos que este jugador ya jugó
+            //mostrarBotonesDeDiferentesFases(faseStreet);
         });
+
+
+
+
 
         inicializarBotonesCartas(juego.getJugadores().get(turnoActualDeJugador).getMano());
         add(botonPasar);
-        add(botonApostar);
         add(botonIgualar);
         add(botonSubir);
         add(botonCompletar);
         add(botonJugar);
 
-        mostrarBotonesDeDiferentesFases();
+        mostrarBotonesDeDiferentesFases(faseStreet);
     }
 
 
@@ -304,11 +294,11 @@ public class PanelPoker7CardStud extends JPanel {
         do {
             turnoActualDeJugador = (turnoActualDeJugador + 1) % totalJugadores;
             intentos++;
-        } while (juego.getJugadores().get(turnoActualDeJugador).getRetirado() && intentos < totalJugadores);
+        } while (juego.getJugadores().get(turnoActualDeJugador).estaRetirado() && intentos < totalJugadores);
 
         // Si todos se retiraron excepto uno, se define el ganador
         actualizarMano(juego.getJugadores().get(turnoActualDeJugador).getMano());
-        mostrarBotonesDeDiferentesFases();
+        mostrarBotonesDeDiferentesFases(faseStreet);
         actualizarLabelTurno();
     }
 
@@ -361,27 +351,27 @@ public class PanelPoker7CardStud extends JPanel {
             repaint();
         }
 
-        mostrarBotonesDeDiferentesFases();
+        mostrarBotonesDeDiferentesFases(faseStreet);
     }
 
-    public void mostrarBotonesDeDiferentesFases() {
-        botonCompletar.setVisible(true);
-        botonCompletar.setEnabled(true);
+    public void mostrarBotonesDeDiferentesFases(boolean faseStreet){
+        if (ronda == 1 & turnoActualDeJugador == juego.obtenerNUMEROJugadorInicial(1)) {
+            botonCompletar.setVisible(true);
+        } else {
+            botonCompletar.setVisible(false);
+        }
 
-        botonPasar.setVisible(true);
-        botonPasar.setEnabled(true);
+        botonPasar.setVisible(faseStreet);
+        botonPasar.setEnabled(faseStreet);
 
-        botonApostar.setVisible(true);
-        botonApostar.setEnabled(true);
+        botonIgualar.setVisible(faseStreet);
+        botonIgualar.setEnabled(faseStreet);
 
-        botonIgualar.setVisible(true);
-        botonIgualar.setEnabled(true);
+        botonSubir.setVisible(faseStreet);
+        botonSubir.setEnabled(faseStreet);
 
-        botonSubir.setVisible(true);
-        botonSubir.setEnabled(true);
-
-        botonJugar.setVisible(false);
-        botonJugar.setEnabled(false);
+        botonJugar.setVisible(!faseStreet);
+        botonJugar.setEnabled(!faseStreet);
     }
 
 
@@ -395,17 +385,10 @@ public class PanelPoker7CardStud extends JPanel {
         boton.setIcon(icono);
     }
 
-    private void actualizarLabelTurno() {
-        this.ronda=ronda;
-        Jugador jugador = juego.getJugadores().get(turnoActualDeJugador);
-        labelTurnoJugador.setText("Turno de: " + jugador.getNombre());
-        labelCantidadFichas.setText("Cantidad de Fichas: " + jugador.getFichas());
-        labelRondaActual.setText("Ronda "+ ronda);
-    }
 
-    private boolean getEsFaseDeApuesta() {
-        return esFaseDeApuesta;
-    }
+
+
+
 
 
     //SUS??
@@ -423,17 +406,58 @@ public class PanelPoker7CardStud extends JPanel {
         boton.setVisible(true);
     }
 
-
     //si me sirve, falta que derek lo pase bien
     private void reiniciarJuego() {
-        // Lógica para reiniciar el juego (barajar, repartir, resetear variables, etc.)
-        //juego.reiniciarPartida(); // si tienes un m3todo así
-        turnoActualDeJugador = 1;
-        faseDeApuestaActual = 0;
-        esFaseDeApuesta = true;
-        mostrarBotonesDeDiferentesFases();
+        // Guardar configuración completa
+        ArrayList<String> nombres = new ArrayList<>();
+        ArrayList<Integer> fichasIndividuales = new ArrayList<>();
+
+        for (Jugador j : juego.getJugadores()) {
+            nombres.add(j.getNombre());
+            fichasIndividuales.add(j.getFichas());
+        }
+
+        // Crear nueva instancia
+        //MODIFICAR DESPUES
+        //juego = new Poker7CardStud(nombres.size(), nombres, 0); // Valor base no relevante
+
+        // Asignar fichas individuales manualmente
+        for (int i = 0; i < juego.getJugadores().size(); i++) {
+            juego.getJugadores().get(i).setFichas(fichasIndividuales.get(i));
+        }
+        // Resetear variables de estado
+        turnoActualDeJugador = 0;
+        faseStreet = true;
+
+        //MODIFICAR DESPUES
+        //jugadorYaJugo = false;
+
+        // Actualizar UI
+        inicializarBotonesCartas(juego.getJugadores().get(turnoActualDeJugador).getMano());
         actualizarLabelTurno();
-        actualizarMano(juego.getJugadores().get(turnoActualDeJugador).getMano());
+        mostrarBotonesDeDiferentesFases(faseStreet);
+    }
+
+
+
+
+
+
+
+    private void actualizarLabelTurno() {
+        Jugador jugadorActual = juego.getJugadores().get(turnoActualDeJugador);
+
+        // Verificar que el jugador no está retirado
+        if (jugadorActual.estaRetirado()) {
+            pasarAlSiguienteJugador();
+            return;
+        }
+
+        labelTurnoJugador.setText("Turno de: " + jugadorActual.getNombre());
+        labelCantidadFichas.setText("Cantidad de Fichas: " + jugadorActual.getFichas());
+        labelRondaActual.setText("Ronda "+ ronda);
+        labelApuestaActual.setText("Apuesta actual: "+juego.getApuestaActual());
+        labelApuestasTotales.setText("Fichas apostadas: "+juego.getPozo());
     }
 
     private ImageIcon redimensionarImagen(String rutaImagen, int ancho, int alto) {
@@ -461,5 +485,31 @@ public class PanelPoker7CardStud extends JPanel {
         }
         String figura = carta.getFigura().toLowerCase();
         return "cartas/" + valorStr + figura + ".png";
+    }
+
+    private void verificarFinDeRonda() {
+        if (juego.getJugadoresQueHicieronCall() >= juego.getJugadoresActivos() - 1) {
+            ronda++;
+            reiniciarApuestasDeJugadores();
+            if(ronda==6) {
+                faseStreet = false; // O alterna si estás usando esto como control
+            }
+            else{
+                faseStreet= true;
+            }
+            juego.reiniciarChecks();
+            juego.reiniciarCalls();
+
+            turnoActualDeJugador = juego.obtenerNUMEROJugadorInicial(ronda);
+            JOptionPane.showMessageDialog(this, "¡Inicia la ronda " + ronda + "!", "Nueva Ronda", JOptionPane.INFORMATION_MESSAGE);
+            mostrarBotonesDeDiferentesFases(faseStreet);
+            actualizarLabelTurno(); // refresca el turno
+        }
+    }
+
+    public void reiniciarApuestasDeJugadores() {
+        for (Jugador jugador : juego.getJugadores()) {
+            jugador.setApuestaActual(0); // o lo que sea el metodo que tienes para resetear
+        }
     }
 }

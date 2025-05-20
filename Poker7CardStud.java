@@ -1,12 +1,20 @@
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Scanner;
+import javax.swing.*;
+import java.awt.*;
 
-public class Poker7CardStud extends Poker {
+public class Poker7CardStud extends Poker{
     private ArrayList<Integer> apuestasRonda;
     private int apuestaActual=5, pozo = 0;
     private int jugadoresQueHicieronCheck = 0, jugadoresQueDescartaron = 0, jugadoresQueHicieronCall = 0;
     int jugadaBring=1;
+    private ArrayList<JButton> botonesCartas;
+    private ArrayList<Boolean> cartasSeleccionadas;
+    private Image fondoPantalla;
+    JButton botonPasar, botonApostar, botonIgualar, botonSubir, botonCompletar, botonJugar;
+    private JLabel labelTurnoJugador, labelCantidadFichas, labelRondaActual, labelApuestaActual;
 
     public Poker7CardStud(int cantJugadores, int fichasTotales, ArrayList<String> nombresJugadores) {
         super();
@@ -348,6 +356,30 @@ public class Poker7CardStud extends Poker {
         return mejor;
     }
 
+    public int obtenerNUMEROJugadorInicial(int ronda) {
+        int mejor = 0;
+        int mejorPuntuacion = -1;
+
+        for (Jugador j : jugadores) {
+            Jugador7CardStud jugador = (Jugador7CardStud) j; // cast aquí
+
+            ArrayList<Carta> visibles = jugador.getCartasVisibles(ronda);
+            int puntuacion = evaluarCartas(visibles); // tú debes definir esta función según reglas de póker
+            if (puntuacion > mejorPuntuacion) {
+                mejorPuntuacion = puntuacion;
+                mejor = jugador.getNoJugador();
+            } else if (puntuacion == mejorPuntuacion) {
+                // desempate: gana jugador de menor número
+                if (j.getNoJugador() < mejor) {
+                    mejor = jugador.getNoJugador();
+                }
+            }
+        }
+
+        return mejor;
+    }
+
+
     //cambiar name
     public Jugador7CardStud obtenerJugadorConCartaVisibleMasBaja(){
         Jugador7CardStud peor = null;
@@ -480,11 +512,15 @@ public class Poker7CardStud extends Poker {
         jugadoresQueHicieronCheck = 0;
     }
 
+    public void reiniciarCalls(){
+        jugadoresQueHicieronCall=0;
+    }
+
     //VER SI SIRVE
 
     public Jugador getJugadorActivoRestante() {
         for (Jugador j : jugadores) {
-            if (!j.getRetirado()) return j;
+            if (!j.estaRetirado()) return j;
         }
         return null;
     }
@@ -509,10 +545,6 @@ public class Poker7CardStud extends Poker {
 
     public void agregarAlPozo(int cantidad) {
         this.pozo += cantidad;
-    }
-
-    public void reiniciarPozo() {
-        pozo = 0;
     }
 
     public int getPozo() {
