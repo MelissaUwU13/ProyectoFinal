@@ -11,11 +11,12 @@ public class Poker extends EvaluadorDeMano {
     public void repartirCartas(int N, boolean visible) {
         for (Jugador j : jugadores) {
             for (int i = 0; i < N; i++) {
-                Carta c = mazo.remove(0);
+                Carta c =  mazo.remove(0);
                 j.recibirCarta(c, visible);
             }
         }
     }
+
     // Con esto, generamos el mazo y lo barajeamos
     public ArrayList<Carta> generarBaraja(){
         mazo= new ArrayList<>();
@@ -56,6 +57,10 @@ public class Poker extends EvaluadorDeMano {
     // Esto se usa para cuando se acaba la fase de descarte, para evitar problemas al pasar la fase del descarte
     public void reiniciarDescartes() {
         jugadoresQueDescartaron = 0;
+    }
+
+    public void reiniciarIgualadas() {
+        jugadoresQueIgualaron = 0;
     }
 
     // Getters

@@ -70,16 +70,6 @@ public void subir(int nuevaApuesta, ArrayList<Integer> apuestasRonda) {
 }
 
 
-public ArrayList<Carta> getCartasVisibles(int ronda) {
-    ArrayList<Carta> visibles = new ArrayList<>();
-    ArrayList<Carta> mano = getMano();
-    for (int i = 0; i < mano.size() && i < ronda; i++) {
-        Carta c = mano.get(i);
-        if (c.isVisible()) {
-            visibles.add(c);
-        }
-    }
-    return visibles;
-}
+
 
 }

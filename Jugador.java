@@ -5,6 +5,7 @@ public class Jugador {
     private String nombre;
     private boolean retirado = false, huboCambioDeCartas = false;
     private ArrayList<Carta> mano;
+    private String jugadaFinal; // ej. "Full House", "Color", etc.
 
     public Jugador(String nombre,int noJugador, int fichas) {
         this.nombre = nombre;
@@ -17,7 +18,6 @@ public class Jugador {
         c.setVisible(visible);
         mano.add(c);
     }
-
 
     // Con esto podemos poner las fichas en el pozo de fichas
     public void apostar(int cantidad) {
@@ -48,6 +48,10 @@ public class Jugador {
     // Getters y setters
     public ArrayList<Carta> getMano() {
         return mano;
+    }
+
+    public void setMano(ArrayList<Carta> mano) {
+        this.mano = mano;
     }
 
     public String getNombre() {
@@ -92,6 +96,26 @@ public class Jugador {
 
     public void setApuestaActual(int cantidad) {
         this.apuestaActual = cantidad;
+    }
+
+    public boolean sinFichas() {
+        return fichas <= 0;
+    }
+
+    public ArrayList<Carta> getCartasVisibles(int ronda) {
+        ArrayList<Carta> visibles = new ArrayList<>();
+        ArrayList<Carta> mano = getMano();
+        for (int i = 0; i < mano.size() && i < ronda; i++) {
+            Carta c = mano.get(i);
+            if (c.isVisible()) {
+                visibles.add(c);
+            }
+        }
+        return visibles;
+    }
+
+    public String getJugadaFinal() {
+        return jugadaFinal;
     }
 
 }

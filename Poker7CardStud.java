@@ -1,26 +1,20 @@
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Scanner;
+import java.util.*;
 import javax.swing.*;
 import java.awt.*;
 
 public class Poker7CardStud extends Poker{
     private ArrayList<Integer> apuestasRonda;
-    private int apuestaActual=5, pozo = 0;
-    private int jugadoresQueHicieronCheck = 0, jugadoresQueDescartaron = 0, jugadoresQueHicieronCall = 0;
+    private int apuestaActual=5, pozo = 0, jugadoresQuePasaronTurno = 0;
+    private int jugadoresQueHicieronCheck = 0, jugadoresQueHicieronCall = 0;
     int jugadaBring=1;
-    private ArrayList<JButton> botonesCartas;
-    private ArrayList<Boolean> cartasSeleccionadas;
-    private Image fondoPantalla;
-    JButton botonPasar, botonApostar, botonIgualar, botonSubir, botonCompletar, botonJugar;
-    private JLabel labelTurnoJugador, labelCantidadFichas, labelRondaActual, labelApuestaActual;
+    private Map<Jugador, Integer> puntuaciones = new HashMap<>();
 
     public Poker7CardStud(int cantJugadores, int fichasTotales, ArrayList<String> nombresJugadores) {
         super();
         jugadores = new ArrayList<>();
+        evaluador = new Evaluador7CardStud();
         this.apuestasRonda = new ArrayList<>();
-        this.mazo=generarBaraja();
+        this.mazo= generarBaraja();
         fichasTotales=fichasTotales-5;
 
         for (int i = 0; i < cantJugadores; i++) {
@@ -30,8 +24,8 @@ public class Poker7CardStud extends Poker{
         }
 
         //repartir las primeras cartas
-        repartirNCartas(2,false);
-        repartirNCartas(1,true);
+        //repartirNCartas(2,false);
+        //repartirNCartas(1,true);
 
         //IniciarJuego();
     }
@@ -65,38 +59,6 @@ public class Poker7CardStud extends Poker{
                     js.recibirCarta(c, visible);
                 }
             }
-        }
-    }
-
-    public void turnoCalles(int ronda){
-        switch (ronda){
-            //Third Street
-            case 1:
-                Jugador7CardStud jugadorBringIn = obtenerJugadorConCartaVisibleMasBaja(); // ronda 3
-                reorganizarOrdenDesde(jugadorBringIn);
-                break;
-            //Fourth Street
-            case 2:
-                Jugador7CardStud inicial2 = obtenerJugadorInicial(2);
-                reorganizarOrdenDesde(inicial2);
-                break;
-
-            //Fifth Street
-            case 3:
-                Jugador7CardStud inicial3 = obtenerJugadorInicial(3);
-                reorganizarOrdenDesde(inicial3);
-                break;
-
-            //Sixth Street
-            case 4:
-                Jugador7CardStud inicial4 = obtenerJugadorInicial(4);
-                reorganizarOrdenDesde(inicial4);
-                break;
-            //Seventh Street
-            case 5:
-                Jugador7CardStud inicial5 = obtenerJugadorInicial(5);
-                reorganizarOrdenDesde(inicial5);
-                break;
         }
     }
 
@@ -240,7 +202,6 @@ public class Poker7CardStud extends Poker{
         switch (ronda) {
             //Third Street
             case 1:
-                turnoCalles(1);
                 apuestaActual=5;
                 faseApuestas(apuestaActual,1);// apuesta mínima de 5 (bring-in)
 
@@ -257,7 +218,6 @@ public class Poker7CardStud extends Poker{
             //Fourth Street
             case 2:
                 repartirNCartas(1,true);
-                turnoCalles(2);
                 faseApuestas(apuestaActual,2);
 
                 System.out.println("\nEstado tras la calle 2 :");
@@ -273,7 +233,6 @@ public class Poker7CardStud extends Poker{
             //Fifth Street
             case 3:
                 repartirNCartas(1,true);
-                turnoCalles(3);
                 faseApuestas(apuestaActual,3);
 
                 System.out.println("\nEstado tras la calle 3 :");
@@ -289,7 +248,6 @@ public class Poker7CardStud extends Poker{
             //Sixth Street
             case 4:
                 repartirNCartas(1,true);
-                turnoCalles(4);
                 faseApuestas(apuestaActual,4);
 
                 System.out.println("\nEstado tras la calle 4 :");
@@ -306,7 +264,6 @@ public class Poker7CardStud extends Poker{
             case 5:
                 //debe estar boca abajo
                 repartirNCartas(1,false);
-                turnoCalles(5);
                 faseApuestas(apuestaActual,5);
 
                 System.out.println("\nEstado tras la calle 5 :");
@@ -322,7 +279,7 @@ public class Poker7CardStud extends Poker{
             //The Showdown
             case 6:
                 if(jugadores.size()>1){
-                    determinarGanador();
+                    //determinarGanador();
                 }
                 else{
                     System.out.println("Gana el jugador "+jugadores.getFirst().getNombre());
@@ -331,29 +288,6 @@ public class Poker7CardStud extends Poker{
             default:
                 System.out.println("Ronda inválida");
         }
-    }
-
-    public Jugador7CardStud obtenerJugadorInicial(int ronda) {
-        Jugador7CardStud mejor = null;
-        int mejorPuntuacion = -1;
-
-        for (Jugador j : jugadores) {
-            Jugador7CardStud jugador = (Jugador7CardStud) j; // cast aquí
-
-            ArrayList<Carta> visibles = jugador.getCartasVisibles(ronda);
-            int puntuacion = evaluarCartas(visibles); // tú debes definir esta función según reglas de póker
-            if (puntuacion > mejorPuntuacion) {
-                mejorPuntuacion = puntuacion;
-                mejor = jugador;
-            } else if (puntuacion == mejorPuntuacion) {
-                // desempate: gana jugador de menor número
-                if (j.getNoJugador() < mejor.getNoJugador()) {
-                    mejor = jugador;
-                }
-            }
-        }
-
-        return mejor;
     }
 
     public int obtenerNUMEROJugadorInicial(int ronda) {
@@ -430,97 +364,86 @@ public class Poker7CardStud extends Poker{
         }
     }
 
-    public void determinarGanador() {
-        Scanner sc = new Scanner(System.in);
-
-        // Filtrar jugadores activos
-        ArrayList<Jugador7CardStud> jugadoresActivos = new ArrayList<>();
-        for (Jugador j : jugadores) {
-            Jugador7CardStud jugador = (Jugador7CardStud) j;
-            if (jugador.esActivo()) {
-                jugadoresActivos.add(jugador);
-            }
-        }
-
-        if (jugadoresActivos.size() == 0) {
-            System.out.println("\nNingún jugador llegó al final... ");
-            return;
-        } else if (jugadoresActivos.size() == 1) {
-            Jugador7CardStud ganadorUnico = jugadoresActivos.get(0);
-            System.out.println("\n¡El único jugador activo es el Jugador " + ganadorUnico.getNombre() + ", gana automáticamente!");
-            return;
-        }
-        else {
-
-            // Comparación entre jugadores activos
-            int mejorPuntaje = -1;
-            Jugador7CardStud ganador = null;
-
-            for (Jugador7CardStud jugador : jugadoresActivos) {
-                ArrayList<Carta> mano = jugador.getMano();
-                System.out.println("\nJugador " + jugador.getNombre() + ", estas son tus 7 cartas:");
-
-                for (int i = 0; i < mano.size(); i++) {
-                    System.out.println((i + 1) + ". " + mano.get(i));
-                }
-
-                ArrayList<Carta> seleccionadas = new ArrayList<>();
-                while (seleccionadas.size() < 5) {
-                    System.out.println("Elige la carta #" + (seleccionadas.size() + 1) + " (1-7):");
-                    int eleccion = sc.nextInt();
-
-                    if (eleccion >= 1 && eleccion <= 7) {
-                        Carta carta = mano.get(eleccion - 1);
-                        if (!seleccionadas.contains(carta)) {
-                            seleccionadas.add(carta);
-                        } else {
-                            System.out.println("Ya seleccionaste esa carta, elige otra.");
-                        }
-                    } else {
-                        System.out.println("Índice inválido, intenta de nuevo.");
-                    }
-                }
-
-                int puntaje = evaluarCartas(seleccionadas);
-                System.out.println("Jugador " + jugador.getNombre() + " tiene una mano con puntaje: " + puntaje);
-
-                if (puntaje > mejorPuntaje) {
-                    mejorPuntaje = puntaje;
-                    ganador = jugador;
-                } else if (puntaje == mejorPuntaje && jugador.getNoJugador() < ganador.getNoJugador()) {
-                    ganador = jugador;
-                }
-            }
-
-            System.out.println("\n¡El ganador es el Jugador " + ganador.getNombre());
-        }
-    }
 
 
 
     //GRAFICOS
 
-    public void incrementarChecks() {
-        jugadoresQueHicieronCheck++;
+    // Con esto, sacamos la primera carta del mazo
+    public Carta sacarCarta() {
+        if (!mazo.isEmpty()) {
+            return mazo.remove(0); // Saca la primera carta (el mazo debe estar barajado)
+        } else {
+            throw new IllegalStateException("El mazo está vacío");
+        }
     }
 
-    public int getJugadoresQueHicieronCheck() {
-        return jugadoresQueHicieronCheck;
+    // Aquí guardamos la puntuación del jugador en un hashmap
+    public void guardarPuntuacion(Jugador jugador) {
+        int puntaje = evaluador.analizarMano(jugador.getMano());
+        puntuaciones.put(jugador, puntaje);
     }
 
-    public void reiniciarChecks() {
-        jugadoresQueHicieronCheck = 0;
+    // Aquí revisamos la puntuación del jugador sacando este valor del hashmap en donde guardamos su nombre y puntaje
+    public Jugador compararPuntuaciones() {
+        Jugador ganador = null;
+        int mejorPuntuacion = -1;
+
+        // Primero encontramos al ganador
+        for (Map.Entry<Jugador, Integer> entry : puntuaciones.entrySet()) {
+            Jugador j = entry.getKey();
+            int puntaje = entry.getValue();
+
+            if (puntaje > mejorPuntuacion && !j.getRetirado()) {
+                mejorPuntuacion = puntaje;
+                ganador = j;
+            }
+        }
+
+        // Si hubo un ganador, le damos las fichas del pozo a el
+        if (ganador != null) {
+            ganador.sumarFichas(pozo);
+
+            // Reseteamos el pozo después de distribuirlo
+            reiniciarPozo();
+        }
+
+        puntuaciones.clear();
+        return ganador;
     }
 
-    public void reiniciarCalls(){
-        jugadoresQueHicieronCall=0;
+    // Con esto, agregamos una cantidad de fichas al pozo
+    public void agregarAlPozo(int cantidad) {
+        this.pozo += cantidad;
     }
 
-    //VER SI SIRVE
+    // Esto vuelve a poner la cantidad de fichas en el pozo a 0
+    public void reiniciarPozo() {
+        pozo = 0;
+    }
+
+    public int getPozo(){
+        return pozo;
+    }
+
+    // Con esto reiniciamos el número de veces que los jugadores pasaron turno
+    public void reiniciarPases() {
+        jugadoresQuePasaronTurno = 0;
+    }
+
+    // Con esto incrementamos el contador de los jugadores que pasaron turno, lo cual nos sirve para pasar de la fase de apuestas al descarte
+    public void incrementarPases() {
+        jugadoresQuePasaronTurno++;
+    }
+
+    // Getters y setters
+    public int getJugadoresQuePasaronTurno() {
+        return jugadoresQuePasaronTurno;
+    }
 
     public Jugador getJugadorActivoRestante() {
         for (Jugador j : jugadores) {
-            if (!j.estaRetirado()) return j;
+            if (!j.getRetirado()) return j;
         }
         return null;
     }
@@ -533,22 +456,7 @@ public class Poker7CardStud extends Poker{
         this.apuestaActual = apuesta;
     }
 
-
-    //Metodo para poker 5
-    public Carta sacarCarta() {
-        if (!mazo.isEmpty()) {
-            return mazo.remove(0); // Saca la primera carta (el mazo debe estar barajado)
-        } else {
-            throw new IllegalStateException("El mazo está vacío");
-        }
+    public void setJugadoresQueYaJugaron(int jugador) {
+        this.jugadoresQueYaJugaron = jugador;
     }
-
-    public void agregarAlPozo(int cantidad) {
-        this.pozo += cantidad;
-    }
-
-    public int getPozo() {
-        return pozo;
-    }
-
 }
