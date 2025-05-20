@@ -603,17 +603,22 @@ public class PanelPoker5CardDraw extends JPanel {
     }
 
     public void reiniciarJuego() {
-        // Guardar configuración inicial
+        // Guardar configuración completa
         ArrayList<String> nombres = new ArrayList<>();
-        int fichasIniciales = juego.getJugadores().get(0).getFichas(); // Asumimos misma cantidad inicial
+        ArrayList<Integer> fichasIndividuales = new ArrayList<>();
 
         for (Jugador j : juego.getJugadores()) {
             nombres.add(j.getNombre());
+            fichasIndividuales.add(j.getFichas());
         }
 
-        // Crear nueva instancia del juego
-        juego = new Poker5CardDraw(nombres.size(), nombres, fichasIniciales);
+        // Crear nueva instancia
+        juego = new Poker5CardDraw(nombres.size(), nombres, 0); // Valor base no relevante
 
+        // Asignar fichas individuales manualmente
+        for (int i = 0; i < juego.getJugadores().size(); i++) {
+            juego.getJugadores().get(i).setFichas(fichasIndividuales.get(i));
+        }
         // Resetear variables de estado
         turnoActualDeJugador = 0;
         faseDeApuestaActual = 0;
