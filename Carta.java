@@ -39,5 +39,4 @@ public class Carta {
     public void setVisible(boolean visible) {
         this.visible = visible;
     }
-
 }

@@ -360,7 +360,7 @@ public class PanelPoker5CardDraw extends JPanel {
                 JOptionPane.showMessageDialog(this, "No seleccionaste ninguna carta", "Aviso", JOptionPane.WARNING_MESSAGE);
                 return;
             }
-            // Aqui obtenemos el resultado de la jugada que usó el ganador
+            // Aquí obtenemos el resultado de la jugada que usó el ganador
             String resultado = juego.evaluarMano(cartasSeleccionadasParaAnalizar);
 
             juego.guardarPuntuacion(juego.getJugadores().get(turnoActualDeJugador));
@@ -373,7 +373,7 @@ public class PanelPoker5CardDraw extends JPanel {
                 juego.setJugadoresQueYaJugaron(0);
                 int opcion = JOptionPane.showOptionDialog(
                         this,
-                        "¡" + ganador.getNombre() + " gana la ronda usando " + resultado + "!\n¿Qué quieres hacer ahora?",
+                        "¡" + ganador.getNombre() + " gana la ronda!\n¿Qué quieres hacer ahora?",
                         "Fin de la Ronda",
                         JOptionPane.YES_NO_OPTION,
                         JOptionPane.QUESTION_MESSAGE,

@@ -45,7 +45,7 @@ public class Poker extends EvaluadorDeMano {
     public int evaluarCartas(ArrayList<Carta> cartas) {
         return analizarMano(cartas);
     }
-    // Nos sirve para incrementar el numero de jugadores que igualaron la apuesta
+    // Nos sirve para incrementar el número de jugadores que igualaron la apuesta
     public void incrementarIgualadas() {
         jugadoresQueIgualaron++;
     }
@@ -53,7 +53,7 @@ public class Poker extends EvaluadorDeMano {
     public void incrementarJugadas() {
         jugadoresQueYaJugaron++;
     }
-    // Esto tambien lo usamos para incrementar el número de jugadores que hicieron descarte, todas importantes para el panel del 5 Card Draw
+    // Esto también lo usamos para incrementar el número de jugadores que hicieron descarte, todas importantes para el panel del 5 Card Draw
     public void incrementarDescartes() {
         jugadoresQueDescartaron++;
     }
