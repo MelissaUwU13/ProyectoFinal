@@ -1,18 +1,13 @@
 import java.util.*;
 
-public class Poker extends EvaluarMano{
+public class Poker extends EvaluadorDeMano {
     protected ArrayList<Carta> mazo;
     protected ArrayList<Jugador> jugadores;
     protected ArrayList<Integer> apuestas;
-    protected EvaluarMano evaluador;
-    protected int jugadoresQueHicieronCheck = 0, jugadoresQueDescartaron = 0, jugadoresQueHicieronCall = 0, jugadoresQueYaJugaron = 0;
+    protected EvaluadorDeMano evaluador;
+    protected int jugadoresQueDescartaron = 0, jugadoresQueIgualaron = 0, jugadoresQueYaJugaron = 0;
 
-
-    public String evaluarMano(ArrayList<Carta> mano) {
-        int puntuacion = evaluador.analizarMano(mano);
-        return evaluador.interpretarPuntuación(puntuacion);
-    }
-
+    // Le repartimos cartas a los jugadores con esto
     public void repartirCartas(int N, boolean visible) {
         for (Jugador j : jugadores) {
             for (int i = 0; i < N; i++) {
@@ -21,11 +16,7 @@ public class Poker extends EvaluarMano{
             }
         }
     }
-
-    public List<Jugador> getJugadores() {
-        return jugadores;
-    }
-
+    // Con esto, generamos el mazo y lo barajeamos
     public ArrayList<Carta> generarBaraja(){
         mazo= new ArrayList<>();
 
@@ -40,60 +31,56 @@ public class Poker extends EvaluarMano{
         return mazo;
     }
 
+    // Con esto, llamamos a la clase que evalúa las manos y lo usamos para revisar las puntuaciones
+    public String evaluarMano(ArrayList<Carta> mano) {
+        int puntuacion = evaluador.analizarMano(mano);
+        return evaluador.interpretarPuntuacion(puntuacion);
+    }
+
+    // Con esto, simplemente evaluamos la mano dada, pero no interpretamos su puntuación, solo obtenemos está en enteros
     public int evaluarCartas(ArrayList<Carta> cartas) {
-        return analizarMano(cartas); // Usa su propio metodo interno
+        return analizarMano(cartas);
+    }
+    // Nos sirve para incrementar el numero de jugadores que igualaron la apuesta
+    public void incrementarIgualadas() {
+        jugadoresQueIgualaron++;
+    }
+    //Lo usamos para incrementar el número de jugadores que ya jugaron su mano
+    public void incrementarJugadas() {
+        jugadoresQueYaJugaron++;
+    }
+    // Esto tambien lo usamos para incrementar el número de jugadores que hicieron descarte, todas importantes para el panel del 5 Card Draw
+    public void incrementarDescartes() {
+        jugadoresQueDescartaron++;
+    }
+    // Esto se usa para cuando se acaba la fase de descarte, para evitar problemas al pasar la fase del descarte
+    public void reiniciarDescartes() {
+        jugadoresQueDescartaron = 0;
     }
 
-    public void mostrarManos() {
-        int num = 1;
-        for (Jugador j : jugadores) {
-            System.out.println("Mano del " + j.getNoJugador() + ":");
-            for (Carta c : j.getMano()) {
-                System.out.println("- " + c); // Asegúrate de que Carta tenga un buen toString()
-            }
-            System.out.println(); // Espacio entre jugadores
-            num++;
-        }
+    // Getters
+    public int getJugadoresQueIgualaron() {
+        return jugadoresQueIgualaron;
     }
 
-    public void mostrarMano(Jugador jugador) {
-        for (int i = 0; i < jugador.getMano().size(); i++) {
-            System.out.println(i + ": " + jugador.getMano().get(i));
-        }
+    public List<Jugador> getJugadores() {
+        return jugadores;
     }
 
-    public void incrementarCalls() {
-        jugadoresQueHicieronCall++;
-    }
-
-    public int getJugadoresQueHicieronCall() {
-        return jugadoresQueHicieronCall;
-    }
 
     public int getJugadoresQueYaJugaron() {
         return jugadoresQueYaJugaron;
     }
 
-    public void incrementarJugadas() {
-        jugadoresQueYaJugaron++;
-    }
 
     public int getJugadoresQueDescartaron() {
         return jugadoresQueDescartaron;
     }
 
-    public void reiniciarDescartes() {
-        jugadoresQueDescartaron = 0;
-    }
-
-    public void incrementarDescartes() {
-        jugadoresQueDescartaron++;
-    }
-
     public int getJugadoresActivos() {
         int count = 0;
         for (Jugador jugador : jugadores) {
-            if (!jugador.estaRetirado()) {
+            if (!jugador.getRetirado()) {
                 count++;
             }
         }

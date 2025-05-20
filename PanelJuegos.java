@@ -12,28 +12,30 @@ public class PanelJuegos extends JPanel {
     ArrayList<String> nombresJugadores = new ArrayList<>();
 
     public PanelJuegos() {
+        // Creamos la ventana
         setPreferredSize(new Dimension(1000, 600));
         setLayout(null);
         setBackground(Color.WHITE);
         setFocusable(true);
+        // Reproducimos la música, en este caso lo volví una clase porque si volvía al menu principal, la canción vuelve a sonar por encima de la primera vez que se reprodujo
         ReproductorMusica reproductorDeMusica = new ReproductorMusica();
         // reproductorDeMusica.reproducir("cartas/musica.wav");
 
-        ImageIcon imagenBoton5CardPoker = redimensionarImagen("cartas/boton5CardPoker.png", 256, 128);
-        ImageIcon imagenBoton7CardStud = redimensionarImagen("cartas/boton7CardStud.png", 256, 128);
-
-        // Fondo de la pantalla
+        // Asignamos el fondo de pantalla
         fondoPantalla = new ImageIcon("cartas/Portada.png").getImage();
 
+        // Creamos las imágenes para los botones, junto con estos
+        ImageIcon imagenBoton5CardPoker = redimensionarImagen("cartas/boton5CardPoker.png", 256, 128);
+        ImageIcon imagenBoton7CardStud = redimensionarImagen("cartas/boton7CardStud.png", 256, 128);
         JButton botonPoker5Hands = new JButton(imagenBoton5CardPoker);
         JButton botonPoker7CardStud = new JButton(imagenBoton7CardStud);
 
-
+        // Añadimos las acciones que va a hacer cada uno
         botonPoker5Hands.addActionListener(e -> {
             int cantidadDeJugadores = 0;
             int cantidadFichas = 0;
             boolean entradaValida = false;
-
+            // Le pedimos al usuario la cantidad y nombre de los jugadores
             while (!entradaValida) {
                 String entrada = JOptionPane.showInputDialog(this, "Introduzca la cantidad de jugadores (2-7)", "Número de Jugadores", JOptionPane.QUESTION_MESSAGE);
                 if (entrada == null) return;
@@ -73,9 +75,9 @@ public class PanelJuegos extends JPanel {
             }
 
             entradaValida = false;
-
+            // Luego le pedimos la cantidad de fichas que va a tener cada jugador
             while (!entradaValida) {
-                String entrada = JOptionPane.showInputDialog(this, "Introduzca la cantidad de fichas por jugador (500-1000):", "Número de fichas", JOptionPane.QUESTION_MESSAGE);
+                String entrada = JOptionPane.showInputDialog(this, "Introduzca la cantidad de fichas por jugador (debe ser una cantidad entre 500 y 1000):", "Número de fichas", JOptionPane.QUESTION_MESSAGE);
                 if (entrada == null) return;
 
                 try {
@@ -101,17 +103,16 @@ public class PanelJuegos extends JPanel {
                 }
             }
 
-
             // Ocultamos botones que ya no se usarán mientras se juega
             botonPoker5Hands.setVisible(false);
             botonPoker7CardStud.setVisible(false);
 
-            // Quitamos los componentes actuales (botones, etc) para poner el panel del póker
+            // Quitamos los componentes actuales (botones, etc.) para poner el panel del póker
             removeAll();
             revalidate();
             repaint();
 
-            // Agregar el panel especializado para jugar 5 Card Draw
+            // Agregamos un panel dedicado para jugar 5 Card Draw
             PanelPoker5CardDraw panelPoker5 = new PanelPoker5CardDraw(cantidadDeJugadores, cantidadFichas, nombresJugadores, this);
             panelPoker5.setBounds(0, 0, 1000, 600);
             add(panelPoker5);
@@ -125,11 +126,10 @@ public class PanelJuegos extends JPanel {
 
 
         botonPoker7CardStud.addActionListener(e -> {
-            // Aquí puedes mantener o añadir lógica para 7 Card Stud sin afectar el resto
             int cantidadDeJugadores = 0;
             int cantidadFichas = 0;
             boolean entradaValida = false;
-
+            // Igual que en el anterior botón, le pedimos al usuario una cantidad y los nombres de los jugadores
             while (!entradaValida) {
                 String entrada = JOptionPane.showInputDialog(this, "Introduzca la cantidad de jugadores (2-8)", "Número de Jugadores", JOptionPane.QUESTION_MESSAGE);
                 if (entrada == null) return;
@@ -169,9 +169,9 @@ public class PanelJuegos extends JPanel {
             }
 
             entradaValida = false;
-
+            // Ahora le pedimos una cantidad de fichas que van a tener todos los jugadores al usuario
             while (!entradaValida) {
-                String entrada = JOptionPane.showInputDialog(this, "Introduzca la cantidad de fichas (500-1000)", "Número de fichas", JOptionPane.QUESTION_MESSAGE);
+                String entrada = JOptionPane.showInputDialog(this, "Introduzca la cantidad de fichas por jugador (debe ser una cantidad entre 500 y 1000):", "Número de fichas", JOptionPane.QUESTION_MESSAGE);
                 if (entrada == null) return;
 
                 try {
@@ -201,12 +201,12 @@ public class PanelJuegos extends JPanel {
             botonPoker5Hands.setVisible(false);
             botonPoker7CardStud.setVisible(false);
 
-            // Quitamos los componentes actuales (botones, etc) para poner el panel del póker
+            // Quitamos los componentes actuales (botones, etc.) para poner el panel del póker
             removeAll();
             revalidate();
             repaint();
 
-            // Agregar el panel especializado para jugar 5 Card Draw
+            // Agregamos ahora el panel dedicado a jugar nuestro Poker de 7 Card Stud
             PanelPoker7CardStud panelPoker7 = new PanelPoker7CardStud(cantidadDeJugadores, cantidadFichas, nombresJugadores,this);
             panelPoker7.setBounds(0, 0, 1000, 600);
             add(panelPoker7);
@@ -216,7 +216,7 @@ public class PanelJuegos extends JPanel {
         });
 
 
-
+        // Adaptamos las imágenes a los botones, removiendo sus esquinas, recuadros que se iluminen al seleccionarlos y volviendolos visibles
         inicializarBotonConImagen(botonPoker5Hands);
         botonPoker5Hands.setBounds(200, 400, 256, 128);
 
@@ -227,35 +227,10 @@ public class PanelJuegos extends JPanel {
         add(botonPoker7CardStud);
     }
 
-    public void regresarAlMenuPrincipal() {
-        removeAll(); // Quitar panel de juego actual
-
-        // Restaurar fondo
-        fondoPantalla = new ImageIcon("cartas/Portada.png").getImage();
-
-        // Restaurar botones
-        ImageIcon imagenBoton5CardPoker = redimensionarImagen("cartas/boton5CardPoker.png", 256, 128);
-        ImageIcon imagenBoton7CardStud = redimensionarImagen("cartas/boton7CardStud.png", 256, 128);
-
-        JButton botonPoker5Hands = new JButton(imagenBoton5CardPoker);
-        JButton botonPoker7CardStud = new JButton(imagenBoton7CardStud);
-
-        botonPoker5Hands.setBounds(200, 400, 256, 128);
-        botonPoker7CardStud.setBounds(500, 400, 256, 128);
-
-        inicializarBotonConImagen(botonPoker5Hands);
-        inicializarBotonConImagen(botonPoker7CardStud);
-
-        // Reagregar listeners si es necesario, o puedes mover los botones originales a atributos de clase si prefieres.
-        add(botonPoker5Hands);
-        add(botonPoker7CardStud);
-
-        revalidate();
-        repaint();
-    }
-
+    // Esto nos sirve para adaptar el tamaño de la imagen al botón, la cual puede resultar muy grande o pequeña
     private ImageIcon redimensionarImagen(String rutaImagen, int ancho, int alto) {
         ImageIcon original = new ImageIcon(rutaImagen);
+        // Usamos este comando para escalar la imagen al ancho y alto seleccionado, procurando que no se vea rara o estirada
         Image escalada = original.getImage().getScaledInstance(ancho, alto, Image.SCALE_SMOOTH);
         return new ImageIcon(escalada);
     }
@@ -273,20 +248,4 @@ public class PanelJuegos extends JPanel {
         g.drawImage(fondoPantalla, 0, 0, getWidth(), getHeight(), this);
     }
 
-    private void reproducirMusica(String rutaArchivo) {
-        try {
-            if (musica != null) {
-                if (musica.isRunning()) {
-                    musica.stop();  // Para la música si está sonando
-                }
-                musica.close();  // Libera recursos del clip anterior
-            }
-            AudioInputStream audio = AudioSystem.getAudioInputStream(new File(rutaArchivo));
-            musica = AudioSystem.getClip();
-            musica.open(audio);
-            musica.loop(Clip.LOOP_CONTINUOUSLY);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 }

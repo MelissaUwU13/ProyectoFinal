@@ -95,12 +95,12 @@ public class PanelPoker5CardDraw extends JPanel {
             }
 
             if (puedePasar) {
-                juego.incrementarChecks();
+                juego.incrementarPases();
 
-                if (juego.getJugadoresQueHicieronCheck() >= juego.getJugadoresActivos()) {
+                if (juego.getJugadoresQuePasaronTurno() >= juego.getJugadoresActivos()) {
                     esFaseDeApuesta = !esFaseDeApuesta; // ← AQUÍ cambia la fase
                     faseDeApuestaActual++;
-                    juego.reiniciarChecks();
+                    juego.reiniciarPases();
                     mostrarBotonesDeDiferentesFases(esFaseDeApuesta);
                 }
 
@@ -139,7 +139,7 @@ public class PanelPoker5CardDraw extends JPanel {
                 jugador.apostar(cantidad);
                 juego.setApuestaActual(cantidad);
                 juego.agregarAlPozo(cantidad);
-                juego.reiniciarChecks(); // Ya no hay checks, se reinicia el conteo
+                juego.reiniciarPases(); // Ya no hay checks, se reinicia el conteo
 
                 pasarAlSiguienteJugador();
 
@@ -178,11 +178,11 @@ public class PanelPoker5CardDraw extends JPanel {
                 System.out.println(jugador.getNombre() + " igualó con " + cantidadReal + " fichas");
                 System.out.println("Fichas restantes: " + jugador.getFichas());
 
-                juego.incrementarCalls();
+                juego.incrementarIgualadas();
 
-                if (juego.getJugadoresQueHicieronCall() >= juego.getJugadoresActivos() - 1) {
+                if (juego.getJugadoresQueIgualaron() >= juego.getJugadoresActivos() - 1) {
                     esFaseDeApuesta = !esFaseDeApuesta;
-                    juego.reiniciarChecks();
+                    juego.reiniciarPases();
                     mostrarBotonesDeDiferentesFases(esFaseDeApuesta);
                     faseDeApuestaActual++;
 
@@ -234,7 +234,7 @@ public class PanelPoker5CardDraw extends JPanel {
                             jugador.apostar(cantidadReal);
                             juego.agregarAlPozo(cantidadReal);
                             juego.setApuestaActual(cantidadReal);
-                            juego.reiniciarChecks();
+                            juego.reiniciarPases();
 
                             System.out.println("Jugador subió la apuesta a " + cantidadReal);
 
@@ -466,7 +466,7 @@ public class PanelPoker5CardDraw extends JPanel {
         do {
             turnoActualDeJugador = (turnoActualDeJugador + 1) % totalJugadores;
             intentos++;
-        } while (juego.getJugadores().get(turnoActualDeJugador).estaRetirado() && intentos < totalJugadores);
+        } while (juego.getJugadores().get(turnoActualDeJugador).getRetirado() && intentos < totalJugadores);
 
         jugadorYaJugo = false;
 
@@ -576,7 +576,7 @@ public class PanelPoker5CardDraw extends JPanel {
         Jugador jugadorActual = juego.getJugadores().get(turnoActualDeJugador);
 
         // Verificar que el jugador no está retirado
-        if (jugadorActual.estaRetirado()) {
+        if (jugadorActual.getRetirado()) {
             pasarAlSiguienteJugador();
             return;
         }

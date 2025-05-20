@@ -1,2 +1,2 @@
-public class Evaluador5CardDraw extends EvaluarMano{
+public class Evaluador5CardDraw extends EvaluadorDeMano {
 }

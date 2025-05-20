@@ -18,6 +18,34 @@ public class Jugador {
         mano.add(c);
     }
 
+
+    // Con esto podemos poner las fichas en el pozo de fichas
+    public void apostar(int cantidad) {
+        if (cantidad <= fichas) {
+            fichas -= cantidad;
+        }
+    }
+
+    // Esto es para igualar o subir la cantidad de fichas apostadas en la parte gráfica de mi juego
+
+    public void subirYApostar(int cantidadParaIgualar) {
+        // Nos permite igualar incluso si ya no tenemos fichas
+        if (cantidadParaIgualar > 0) {
+            int cantidadReal = Math.min(cantidadParaIgualar, fichas);
+            fichas -= cantidadReal;
+            apuestaActual += cantidadReal;
+        }
+    }
+
+    // Esto lo usamos para que se le transfieran las fichas al ganador del juego
+    public void sumarFichas(int cantidad) {
+        if (cantidad > 0) {
+            this.fichas += cantidad;
+            System.out.println("Jugador " + nombre + " recibe " + cantidad + " fichas. Total ahora: " + this.fichas);
+        }
+    }
+
+    // Getters y setters
     public ArrayList<Carta> getMano() {
         return mano;
     }
@@ -34,12 +62,20 @@ public class Jugador {
         return huboCambioDeCartas;
     }
 
+    public int getApuestaActual() {
+        return this.apuestaActual;
+    }
+
+    public boolean getRetirado() {
+        return retirado;
+    }
+
     public void setHuboCambioDeCartas(boolean huboCambioDeCartas) {
         this.huboCambioDeCartas = huboCambioDeCartas;
     }
 
-    public boolean estaRetirado() {
-        return retirado;
+    public int getFichas() {
+        return fichas;
     }
 
     public void setRetirado(boolean retirado) {
@@ -50,64 +86,12 @@ public class Jugador {
         this.retirado = true;
     }
 
-    public int getFichas() {
-        return fichas;
-    }
-
     public void setFichas(int fichas) {
         this.fichas = fichas;
     }
 
-
-    //Muestra solo las cartas visibles (para otras personas)
-    public void mostrarCartasVisibles() {
-        System.out.print(nombre + " muestra: ");
-        for (Carta c : mano) {
-            if (c.isVisible()) {
-                System.out.print(c + " ");
-            }
-        }
-        System.out.println();
-    }
-
-    public void setMano(ArrayList<Carta> manoActual) {
-        this.mano = manoActual;
-    }
-
-    //si me sirve qwq
-    public void apostar(int cantidad) {
-        if (cantidad <= fichas) {
-            fichas -= cantidad;
-            //System.out.println("Jugador "+nombre + " apuesta " + cantidad + " fichas. Fichas restantes: " + fichas);
-        }
-        //else{
-        //System.out.println("Jugador "+nombre + " no tiene suficientes fichas para apostar " + cantidad);
-        //}
-    }
-
-    //cambios validos??
-    public void subirYApostar(int cantidadParaIgualar) {
-        if (cantidadParaIgualar <= fichas) {
-            fichas -= cantidadParaIgualar;
-            apuestaActual += cantidadParaIgualar;
-        }
-    }
-
     public void setApuestaActual(int cantidad) {
         this.apuestaActual = cantidad;
-    }
-
-    public int getApuestaActual() {
-        return this.apuestaActual;
-    }
-
-    public void sumarFichas(int cantidad) {
-        if (cantidad > 0) {
-            fichas += cantidad;
-            System.out.println("Jugador " + nombre + " recibe " + cantidad + " fichas. Total ahora: " + fichas);
-        } else {
-            System.out.println("No se puede sumar una cantidad negativa o cero de fichas.");
-        }
     }
 
 }

@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Scanner;
 
@@ -485,7 +484,7 @@ public class Poker7CardStud extends Poker {
 
     public Jugador getJugadorActivoRestante() {
         for (Jugador j : jugadores) {
-            if (!j.estaRetirado()) return j;
+            if (!j.getRetirado()) return j;
         }
         return null;
     }

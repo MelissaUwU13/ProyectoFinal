@@ -5,7 +5,7 @@ import java.util.Map;
 public class Poker5CardDraw extends Poker {
     private ArrayList<Integer> apuestasRonda;
     private int apuestaActual = 0, pozo = 0;
-    private int jugadoresQueHicieronCheck = 0;
+    private int jugadoresQuePasaronTurno = 0;
     private Map<Jugador, Integer> puntuaciones = new HashMap<>();
 
     public Poker5CardDraw(int cantidadDeJugadores, ArrayList<String> nombresJugadores, int fichas) {
@@ -19,16 +19,12 @@ public class Poker5CardDraw extends Poker {
         jugar();
     }
 
-    public void imprimirFichasJugadores() {
-        for (int i = 0; i < jugadores.size(); i++) {
-            /* El parentesis es para algo llamado "casting", en este caso, le indicamos a Java que queremos obtener
-               los metodos y atributos de Jugador5CardDraw, y esto para verificar que todos los jugadores tengan la cantidad de fichas correctas
-             */
-            Jugador5CardDraw jugador =  (Jugador5CardDraw) jugadores.get(i);
-            System.out.println("Jugador " + (i + 1) + " tiene " + jugador.getFichas() + " fichas.");
-        }
+    public void jugar() {
+        generarBaraja();
+        repartirCartas(5,true);
     }
 
+    // Con esto, sacamos la primera carta del mazo
     public Carta sacarCarta() {
         if (!mazo.isEmpty()) {
             return mazo.remove(0); // Saca la primera carta (el mazo debe estar barajado)
@@ -36,101 +32,71 @@ public class Poker5CardDraw extends Poker {
             throw new IllegalStateException("El mazo está vacío");
         }
     }
-    public ArrayList<Carta> getMazo() {
-        return mazo;
-    }
 
-    public void incrementarChecks() {
-        jugadoresQueHicieronCheck++;
-    }
-
-    public int getJugadoresQueHicieronCheck() {
-        return jugadoresQueHicieronCheck;
-    }
-
-    public void reiniciarChecks() {
-        jugadoresQueHicieronCheck = 0;
-    }
-
-    public void reiniciarPartida() {
-        // Limpiar y reiniciar variables del juego
-        apuestaActual = 0;
-        pozo = 0;
-        jugadoresQueHicieronCheck = 0;
-        jugadoresQueDescartaron = 0;
-        jugadoresQueHicieronCall = 0;
-        jugadoresQueYaJugaron = 0;
-        puntuaciones.clear();
-
-        // Reiniciar estado de cada jugador
-        for (Jugador jugador : jugadores) {
-            jugador.setRetirado(false);
-            jugador.getMano().clear();  // limpia la mano actual
-            System.out.println("Reiniciando estado de " + jugador.getNombre());
-            System.out.println("¿Está retirado?: " + jugador.estaRetirado());
-        }
-        System.out.println("Mano del jugador b (desde lista): " + jugadores.get(1).getMano());
-        System.out.println("¿Retirado b desde lista?: " + jugadores.get(1).estaRetirado());
-
-        // Volver a barajar y repartir nuevas cartas
-        generarBaraja();
-        repartirCartas(5, true);
-    }
-
-    public void reiniciarCalls() {
-        jugadoresQueHicieronCall = 0;
-    }
-
+    // Aquí guardamos la puntuación del jugador en un hashmap
     public void guardarPuntuacion(Jugador jugador) {
         int puntaje = evaluador.analizarMano(jugador.getMano());
         puntuaciones.put(jugador, puntaje);
     }
 
+    // Aquí revisamos la puntuación del jugador sacando este valor del hashmap en donde guardamos su nombre y puntaje
     public Jugador compararPuntuaciones() {
         Jugador ganador = null;
         int mejorPuntuacion = -1;
 
+        // Primero encontramos al ganador
         for (Map.Entry<Jugador, Integer> entry : puntuaciones.entrySet()) {
             Jugador j = entry.getKey();
             int puntaje = entry.getValue();
 
-            if (puntaje > mejorPuntuacion) {
+            if (puntaje > mejorPuntuacion && !j.getRetirado()) {
                 mejorPuntuacion = puntaje;
                 ganador = j;
             }
         }
 
+        // Si hubo un ganador, le damos las fichas del pozo a el
         if (ganador != null) {
-            // Sumar el pozo a sus fichas
-            ((Jugador) ganador).sumarFichas(pozo);
-            return ganador;
+            ganador.sumarFichas(pozo);
+
+            // Reseteamos el pozo después de distribuirlo
+            reiniciarPozo();
         }
 
-        puntuaciones.clear(); // limpio el mapa después de usarlo
+        puntuaciones.clear();
         return ganador;
     }
 
-
-    public Jugador getJugadorActivoRestante() {
-        for (Jugador j : jugadores) {
-            if (!j.estaRetirado()) return j;
-        }
-        return null;
-    }
-
+    // Con esto, agregamos una cantidad de fichas al pozo
     public void agregarAlPozo(int cantidad) {
         this.pozo += cantidad;
     }
 
+    // Esto vuelve a poner la cantidad de fichas en el pozo a 0
     public void reiniciarPozo() {
         pozo = 0;
     }
-
-    public int getPozo() {
-        return pozo;
+    // Con esto reiniciamos el número de veces que los jugadores pasaron turno
+    public void reiniciarPases() {
+        jugadoresQuePasaronTurno = 0;
     }
 
+    // Con esto incrementamos el contador de los jugadores que pasaron turno, lo cual nos sirve para pasar de la fase de apuestas al descarte
+    public void incrementarPases() {
+        jugadoresQuePasaronTurno++;
+    }
 
+    // Getters y setters
+    public int getJugadoresQuePasaronTurno() {
+        return jugadoresQuePasaronTurno;
+    }
+
+    public Jugador getJugadorActivoRestante() {
+        for (Jugador j : jugadores) {
+            if (!j.getRetirado()) return j;
+        }
+        return null;
+    }
 
     public int getApuestaActual() {
         return apuestaActual;
@@ -143,8 +109,5 @@ public class Poker5CardDraw extends Poker {
     public void setJugadoresQueYaJugaron(int jugador) {
         this.jugadoresQueYaJugaron = jugador;
     }
-    public void jugar() {
-        generarBaraja();
-        repartirCartas(5,true);
-    }
+
 }

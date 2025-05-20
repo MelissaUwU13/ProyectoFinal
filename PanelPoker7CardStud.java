@@ -167,9 +167,9 @@ public class PanelPoker7CardStud extends JPanel {
                 //System.out.println(jugador.getNombre() + " igualó con " + cantidadParaIgualar + " fichas");
                 //System.out.println("Fichas restantes: " + jugador.getFichas());
 
-                juego.incrementarCalls();
+                juego.incrementarIgualadas();
 
-                if (juego.getJugadoresQueHicieronCall() >= juego.getJugadoresActivos() - 1) {
+                if (juego.getJugadoresQueIgualaron() >= juego.getJugadoresActivos() - 1) {
                     //System.out.println("¡Todos igualaron la apuesta!");
                     esFaseDeApuesta = !esFaseDeApuesta;
                     juego.reiniciarChecks();
@@ -304,7 +304,7 @@ public class PanelPoker7CardStud extends JPanel {
         do {
             turnoActualDeJugador = (turnoActualDeJugador + 1) % totalJugadores;
             intentos++;
-        } while (juego.getJugadores().get(turnoActualDeJugador).estaRetirado() && intentos < totalJugadores);
+        } while (juego.getJugadores().get(turnoActualDeJugador).getRetirado() && intentos < totalJugadores);
 
         // Si todos se retiraron excepto uno, se define el ganador
         actualizarMano(juego.getJugadores().get(turnoActualDeJugador).getMano());

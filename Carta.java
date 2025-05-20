@@ -6,25 +6,6 @@ public class Carta {
     private String nombreArchivo;
     private boolean visible;
 
-    private void figuraRandom() {
-        Random rnd = new Random();
-        int numberFigure = rnd.nextInt(4);
-        switch (numberFigure) {
-            case 0:
-                figura = "corazón";
-                break;
-            case 1:
-                figura = "trebol";
-                break;
-            case 2:
-                figura = "diamante";
-                break;
-            case 3:
-                figura = "pica";
-                break;
-        }
-
-    }
 
     public Carta(int valor, String figura, boolean visible){
         this.valor = valor;
@@ -33,7 +14,7 @@ public class Carta {
     }
 
     public String toString() {
-        String nombre = switch (valor) {
+        String nombre = switch (valor) { // Expresión avanzada para el switch, esto me lo dio IntelliJ para ahorrar para optimizar el código
             case 1 -> "As";
             case 11 -> "J";
             case 12 -> "Q";
@@ -57,10 +38,6 @@ public class Carta {
 
     public void setVisible(boolean visible) {
         this.visible = visible;
-    }
-
-    public void voltearCarta(){
-        this.visible = !this.visible;
     }
 
 }

@@ -2,9 +2,7 @@ import java.util.ArrayList;
 
 public class Jugador5CardDraw extends Jugador{
     private boolean retirado = false;
-    private ArrayList<Carta> mano = new ArrayList<>();
     private int fichas;
-    private boolean jugadorDescartoCarta;
     private String nombre;
 
     public Jugador5CardDraw(String nombre,int noJugador, int fichas) {
@@ -13,7 +11,8 @@ public class Jugador5CardDraw extends Jugador{
         this.fichas = fichas;
     }
 
-    public boolean estaRetirado() {
+    // Algunos getters y setters
+    public boolean getRetirado() {
         return retirado;
     }
 
@@ -23,10 +22,6 @@ public class Jugador5CardDraw extends Jugador{
 
     public String getNombre() {
         return nombre;
-    }
-
-    public void restarFichas(int cantidad) {
-        this.fichas -= cantidad;
     }
 
 }
