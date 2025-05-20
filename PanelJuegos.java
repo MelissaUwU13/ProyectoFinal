@@ -17,7 +17,7 @@ public class PanelJuegos extends JPanel {
         setBackground(Color.WHITE);
         setFocusable(true);
         ReproductorMusica reproductorDeMusica = new ReproductorMusica();
-        reproductorDeMusica.reproducir("cartas/musica.wav");
+        // reproductorDeMusica.reproducir("cartas/musica.wav");
 
         ImageIcon imagenBoton5CardPoker = redimensionarImagen("cartas/boton5CardPoker.png", 256, 128);
         ImageIcon imagenBoton7CardStud = redimensionarImagen("cartas/boton7CardStud.png", 256, 128);
@@ -119,6 +119,10 @@ public class PanelJuegos extends JPanel {
             revalidate();
             repaint();
         });
+
+
+
+
 
         botonPoker7CardStud.addActionListener(e -> {
             // Aquí puedes mantener o añadir lógica para 7 Card Stud sin afectar el resto
@@ -268,7 +272,6 @@ public class PanelJuegos extends JPanel {
         super.paintComponent(g);
         g.drawImage(fondoPantalla, 0, 0, getWidth(), getHeight(), this);
     }
-
 
     private void reproducirMusica(String rutaArchivo) {
         try {

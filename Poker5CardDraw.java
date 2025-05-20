@@ -90,27 +90,23 @@ public class Poker5CardDraw extends Poker {
         Jugador ganador = null;
         int mejorPuntuacion = -1;
 
-        // Primero encontrar al ganador
         for (Map.Entry<Jugador, Integer> entry : puntuaciones.entrySet()) {
             Jugador j = entry.getKey();
             int puntaje = entry.getValue();
 
-            if (puntaje > mejorPuntuacion && !j.estaRetirado()) {
+            if (puntaje > mejorPuntuacion) {
                 mejorPuntuacion = puntaje;
                 ganador = j;
             }
         }
 
         if (ganador != null) {
-            // Sumar el pozo al ganador
-            ganador.sumarFichas(pozo);
-            System.out.println(ganador.getNombre() + " gana " + pozo + " fichas del pozo");
-
-            // Resetear el pozo después de distribuirlo
-            reiniciarPozo();
+            // Sumar el pozo a sus fichas
+            ((Jugador) ganador).sumarFichas(pozo);
+            return ganador;
         }
 
-        puntuaciones.clear();
+        puntuaciones.clear(); // limpio el mapa después de usarlo
         return ganador;
     }
 
@@ -133,7 +129,6 @@ public class Poker5CardDraw extends Poker {
     public int getPozo() {
         return pozo;
     }
-
 
 
 

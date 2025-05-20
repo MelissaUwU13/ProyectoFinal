@@ -5,21 +5,20 @@ import java.util.Scanner;
 
 public class Poker7CardStud extends Poker {
     private ArrayList<Integer> apuestasRonda;
-    private int apuestaActual, apuestaMinima = 5;
+    private int apuestaActual=5, pozo = 0;
     private int jugadoresQueHicieronCheck = 0, jugadoresQueDescartaron = 0, jugadoresQueHicieronCall = 0;
-
     int jugadaBring=1;
 
     public Poker7CardStud(int cantJugadores, int fichasTotales, ArrayList<String> nombresJugadores) {
         super();
-        this.jugadores = new ArrayList<>();
+        jugadores = new ArrayList<>();
         this.apuestasRonda = new ArrayList<>();
         this.mazo=generarBaraja();
+        fichasTotales=fichasTotales-5;
 
-        for (int i = 1; i <= cantJugadores; i++) {
-            jugadores.add(new Jugador7CardStud("Jugador",i, fichasTotales));// ejemplo fichas iniciales
-            //ERROR AQUI
+        for (int i = 0; i < cantJugadores; i++) {
             String nombre = nombresJugadores.get(i);
+            jugadores.add(new Jugador7CardStud(nombre,i+1, fichasTotales));// ejemplo fichas iniciales
             apuestasRonda.add(0);
         }
 
@@ -27,7 +26,7 @@ public class Poker7CardStud extends Poker {
         repartirNCartas(2,false);
         repartirNCartas(1,true);
 
-        IniciarJuego();
+        //IniciarJuego();
     }
 
     public void IniciarJuego() {
@@ -159,6 +158,8 @@ public class Poker7CardStud extends Poker {
 
                             case 2: // Igualar
                                 jugador.igualar(apuestaActual, apuestasRonda);
+                                int cantidadIgualada = apuestasRonda.get(jugador.getNoJugador() - 1);
+                                pozo += cantidadIgualada;
                                 yaIgualo.put(jugador, true);
                                 accionValida = true;
                                 break;
@@ -172,6 +173,7 @@ public class Poker7CardStud extends Poker {
                                 if (nuevaApuesta > apuestaActual && jugador.getFichas() >= diferencia) {
                                     jugador.subir(nuevaApuesta, apuestasRonda); // <-- este metodo no debe modificar el mapa
                                     apuestaActual = nuevaApuesta;
+                                    pozo += diferencia;
 
                                     // Reiniciar el HashMap
                                     for (Jugador7CardStud j : jugadoresActivos) {
@@ -193,6 +195,7 @@ public class Poker7CardStud extends Poker {
                                 if (puedeCompletar) {
                                     jugador.completar(apuestaMinima);
                                     apuestasRonda.set(jugador.getNoJugador() - 1, apuestaMinima);
+                                    pozo += apuestaMinima;
                                     yaIgualo.put(jugador, true);
                                     accionValida = true;
                                 } else {
@@ -504,4 +507,17 @@ public class Poker7CardStud extends Poker {
             throw new IllegalStateException("El mazo está vacío");
         }
     }
+
+    public void agregarAlPozo(int cantidad) {
+        this.pozo += cantidad;
+    }
+
+    public void reiniciarPozo() {
+        pozo = 0;
+    }
+
+    public int getPozo() {
+        return pozo;
+    }
+
 }
