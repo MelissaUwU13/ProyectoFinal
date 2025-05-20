@@ -17,7 +17,7 @@ public class PanelJuegos extends JPanel {
         setBackground(Color.WHITE);
         setFocusable(true);
         ReproductorMusica reproductorDeMusica = new ReproductorMusica();
-        // reproductorDeMusica.reproducir("cartas/musica.wav");
+        reproductorDeMusica.reproducir("cartas/musica.wav");
 
         ImageIcon imagenBoton5CardPoker = redimensionarImagen("cartas/boton5CardPoker.png", 256, 128);
         ImageIcon imagenBoton7CardStud = redimensionarImagen("cartas/boton7CardStud.png", 256, 128);

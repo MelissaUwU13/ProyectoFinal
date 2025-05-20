@@ -37,7 +37,7 @@ public class PanelPoker5CardDraw extends JPanel {
         labelApuestaActual = new JLabel();
         labelApuestaActual.setFont(new Font("Arial", Font.BOLD, 24));
         labelApuestaActual.setForeground(Color.WHITE);
-        labelApuestaActual.setBounds(450, 40, 500, 30);
+        labelApuestaActual.setBounds(20, 70, 500, 30);
 
         actualizarLabelTurno(); // Esto pone el nombre del primer jugador
 
@@ -70,7 +70,6 @@ public class PanelPoker5CardDraw extends JPanel {
                 juego.incrementarDescartes();
 
                 if (juego.getJugadoresQueDescartaron() >= juego.getJugadoresActivos()) {
-                    System.out.println("¡Todos terminaron la fase de descarte!");
                     faseDeApuestaActual++;
                     for (Jugador jugador : juego.getJugadores()) {
                         jugador.setHuboCambioDeCartas(false);
@@ -102,10 +101,8 @@ public class PanelPoker5CardDraw extends JPanel {
 
             if (puedePasar) {
                 juego.incrementarChecks();
-                System.out.println("Jugador pasó");
 
                 if (juego.getJugadoresQueHicieronCheck() >= juego.getJugadoresActivos()) {
-                    System.out.println("¡Todos los jugadores hicieron check!");
                     esFaseDeApuesta = !esFaseDeApuesta; // ← AQUÍ cambia la fase
                     faseDeApuestaActual++;
                     juego.reiniciarChecks();
@@ -134,6 +131,9 @@ public class PanelPoker5CardDraw extends JPanel {
 
             try {
                 int cantidad = Integer.parseInt(input);
+                /* El parentesis con el que iniciamos abajo es parte de un concepto llamado "casting", en este caso, le
+            indicamos a Java que queremos obtener los metodos y atributos de Jugador5CardDraw
+            */
                 Jugador5CardDraw jugador = (Jugador5CardDraw) juego.getJugadores().get(turnoActualDeJugador);
 
                 if (cantidad > jugador.getFichas()) {
@@ -143,6 +143,7 @@ public class PanelPoker5CardDraw extends JPanel {
 
                 jugador.apostar(cantidad);
                 juego.setApuestaActual(cantidad);
+                juego.agregarAlPozo(cantidad);
                 juego.reiniciarChecks(); // Ya no hay checks, se reinicia el conteo
 
                 pasarAlSiguienteJugador();
@@ -172,26 +173,29 @@ public class PanelPoker5CardDraw extends JPanel {
             int apuestaGlobal = juego.getApuestaActual();
             int cantidadParaIgualar = apuestaGlobal - jugador.getApuestaActual();
 
-            if (puedeIgualar && cantidadParaIgualar > jugador.getFichas()) {
-                JOptionPane.showMessageDialog(this, "No tienes fichas suficientes para igualar.", "Error", JOptionPane.ERROR_MESSAGE);
-                puedeIgualar = false;
-            }
-
             if (puedeIgualar) {
-                jugador.subirYApostar(cantidadParaIgualar);
-                juego.agregarAlPozo(cantidadParaIgualar);
+                // Permitir igualar incluso si no tiene fichas suficientes (all-in)
+                int cantidadReal = Math.min(cantidadParaIgualar, jugador.getFichas());
 
-                System.out.println(jugador.getNombre() + " igualó con " + cantidadParaIgualar + " fichas");
+                jugador.subirYApostar(cantidadParaIgualar);
+                juego.agregarAlPozo(cantidadReal);
+
+                System.out.println(jugador.getNombre() + " igualó con " + cantidadReal + " fichas");
                 System.out.println("Fichas restantes: " + jugador.getFichas());
 
                 juego.incrementarCalls();
 
                 if (juego.getJugadoresQueHicieronCall() >= juego.getJugadoresActivos() - 1) {
-                    System.out.println("¡Todos igualaron la apuesta!");
                     esFaseDeApuesta = !esFaseDeApuesta;
                     juego.reiniciarChecks();
                     mostrarBotonesDeDiferentesFases(esFaseDeApuesta);
                     faseDeApuestaActual++;
+
+                    // Resetear apuesta actual al cambiar de fase
+                    juego.setApuestaActual(0);
+                    for (Jugador j : juego.getJugadores()) {
+                        j.setApuestaActual(0);
+                    }
                 }
 
                 actualizarLabelTurno();
@@ -207,35 +211,41 @@ public class PanelPoker5CardDraw extends JPanel {
 
         //LO CAMBIE PARA NO USAR RETURN
         botonSubir.addActionListener(e -> {
-            Jugador5CardDraw jugador = (Jugador5CardDraw) juego.getJugadores().get(turnoActualDeJugador);
+            Jugador jugador = juego.getJugadores().get(turnoActualDeJugador);
             int apuestaActual = juego.getApuestaActual();
             boolean subidaRealizada = false;
 
             while (!subidaRealizada) {
-                String input = JOptionPane.showInputDialog(this, "¿Cuánto quieres subir? (La apuesta actual es de " + apuestaActual + ")", "Subir apuesta", JOptionPane.QUESTION_MESSAGE);
+                String input = JOptionPane.showInputDialog(this,
+                        "¿Cuánto quieres subir? (Apuesta actual: " + apuestaActual +
+                                "\nTus fichas: " + jugador.getFichas() + ")",
+                        "Subir apuesta", JOptionPane.QUESTION_MESSAGE);
 
                 if (input == null || input.trim().isEmpty()) {
                     int opcion = JOptionPane.showConfirmDialog(this, "¿Cancelar subida?", "Subir apuesta", JOptionPane.YES_NO_OPTION);
                     if (opcion == JOptionPane.YES_OPTION) {
-                        subidaRealizada = true; // salir sin subir
+                        subidaRealizada = true;
                     }
                 } else {
                     try {
                         int cantidad = Integer.parseInt(input);
 
                         if (cantidad <= apuestaActual) {
-                            JOptionPane.showMessageDialog(this, "La nueva apuesta debe ser mayor a la apuesta actual.", "Error", JOptionPane.ERROR_MESSAGE);
-                        } else if (cantidad > jugador.getFichas()) {
-                            JOptionPane.showMessageDialog(this, "No tienes suficientes fichas para subir esa cantidad.", "Error", JOptionPane.ERROR_MESSAGE);
+                            JOptionPane.showMessageDialog(this, "La nueva apuesta debe ser mayor a la actual.", "Error", JOptionPane.ERROR_MESSAGE);
                         } else {
-                            jugador.apostar(cantidad);
-                            juego.setApuestaActual(cantidad);
-                            juego.reiniciarChecks(); // se resetean los checks porque hubo subida
-                            System.out.println("Jugador subió la apuesta a " + cantidad);
-                            pasarAlSiguienteJugador();
-                            subidaRealizada = true; // salida exitosa
-                        }
+                            // Permitir all-in
+                            int cantidadReal = Math.min(cantidad, jugador.getFichas());
 
+                            jugador.apostar(cantidadReal);
+                            juego.agregarAlPozo(cantidadReal);
+                            juego.setApuestaActual(cantidadReal);
+                            juego.reiniciarChecks();
+
+                            System.out.println("Jugador subió la apuesta a " + cantidadReal);
+
+                            pasarAlSiguienteJugador();
+                            subidaRealizada = true;
+                        }
                     } catch (NumberFormatException ex) {
                         JOptionPane.showMessageDialog(this, "Cantidad inválida", "Error", JOptionPane.ERROR_MESSAGE);
                     }
@@ -251,34 +261,38 @@ public class PanelPoker5CardDraw extends JPanel {
         botonRetirarse.setBounds(800, 20, 128, 64); // Mismo tamaño que "Analizar Cartas"
 
         botonRetirarse.addActionListener(e -> {
-            System.out.println("Jugador se retiró");
-            /* El parentesis con el que iniciamos abajo es parte de un concepto llamado "casting", en este caso, le
-            indicamos a Java que queremos obtener los metodos y atributos de Jugador5CardDraw, y esto para hacer que el jugador se retire
-            */
-            juego.getJugadores().get(turnoActualDeJugador).retirarse();
-            if (juego.getJugadoresActivos() == 1) {
-                // Declarar ganador
-                Jugador ganador = juego.getJugadorActivoRestante();
-                int opcion = JOptionPane.showOptionDialog(
-                        this,
-                        "¡" + ganador.getNombre() + " gana la ronda!\n¿Qué quieres hacer?",
-                        "Fin de la Ronda",
-                        JOptionPane.YES_NO_OPTION,
-                        JOptionPane.QUESTION_MESSAGE,
-                        null,
-                        new String[]{"Volver a jugar", "Menú principal"},
-                        "Volver a jugar"
-                );
-
-                if (opcion == JOptionPane.YES_OPTION) {
-                    // Reiniciar el juego
-                    reiniciarJuego();
-                } else {
-                    // Volver al menú principal (esto dependerá de cómo lo tengas estructurado)
-                    irAlMenuPrincipal();
+            Jugador jugadorActual = juego.getJugadores().get(turnoActualDeJugador);
+            int confirmacion = JOptionPane.showConfirmDialog(
+                    this,
+                    "¿Seguro que quieres retirarte?",
+                    "Confirmar retiro",
+                    JOptionPane.YES_NO_OPTION
+            );
+            if (confirmacion == JOptionPane.YES_OPTION) {
+                jugadorActual.retirarse();
+                if(juego.getJugadoresActivos() == 1) {
+                    Jugador ganador = juego.getJugadorActivoRestante();
+                    int confirmarOpcion = JOptionPane.showOptionDialog(
+                            this,
+                            "¡" + ganador.getNombre() + " gana la ronda!\n¿Qué quieres hacer?",
+                            "Fin de la Ronda",
+                            JOptionPane.YES_NO_OPTION,
+                            JOptionPane.QUESTION_MESSAGE,
+                            null,
+                            new String[]{"Volver a jugar", "Menú principal"},
+                            "Volver a jugar"
+                    );
+                    if (confirmarOpcion == JOptionPane.YES_OPTION) {
+                        // Reiniciar el juego
+                        reiniciarJuego();
+                    } else {
+                        // Volver al menú principal (esto dependerá de cómo lo tengas estructurado)
+                        irAlMenuPrincipal();
+                    }
                 }
+            }else {
+                pasarAlSiguienteJugador();
             }
-            pasarAlSiguienteJugador();
         });
         // Botón para confirmar las cartas seleccionadas, luego vamos a borrar o cambiar esto
         ImageIcon imagenBotonCambiarCartas = redimensionarImagen("cartas/botonCambiarCartas.png", 200, 128);
@@ -340,7 +354,6 @@ public class PanelPoker5CardDraw extends JPanel {
             }
 
             String resultado = juego.evaluarMano(cartasSeleccionadasParaAnalizar); // o cartasSeleccionadasParaAnalizar si evalúas solo las seleccionadas
-            System.out.println(cartasSeleccionadasParaAnalizar);
             JOptionPane.showMessageDialog(this, resultado);
             mostrarBotonesDeDiferentesFases(esFaseDeApuesta);
         });
@@ -392,7 +405,23 @@ public class PanelPoker5CardDraw extends JPanel {
             jugadorYaJugo = true; // Marcamos que este jugador ya jugó
             mostrarBotonesDeDiferentesFases(esFaseDeApuesta);
         });
-
+        JButton botonSalirDelJuego = new JButton("Salir del juego");
+        botonSalirDelJuego.setBounds(800, 100, 128, 64);
+        botonSalirDelJuego.addActionListener(e -> {
+            int opcion = JOptionPane.showOptionDialog(
+                    this,
+                    "¿Seguro que quieres salir del juego?",
+                    "Aviso",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.QUESTION_MESSAGE,
+                    null,
+                    new String[]{"Si", "No"},
+                    "No"
+            );
+            if (opcion == JOptionPane.YES_OPTION) {
+                irAlMenuPrincipal();
+            }
+        });
 
         inicializarBotonesCartas(juego.getJugadores().get(turnoActualDeJugador).getMano());
         add(botonPasar);
@@ -404,13 +433,32 @@ public class PanelPoker5CardDraw extends JPanel {
         add(botonTerminarTurno);
         add(botonAnalizarCartas);
         add(botonJugar);
+        add(botonSalirDelJuego);
         mostrarBotonesDeDiferentesFases(getEsFaseDeApuesta());
     }
 
-
-
-
     private void pasarAlSiguienteJugador() {
+        int jugadoresActivos = juego.getJugadoresActivos();
+        if (jugadoresActivos == 1) {
+            Jugador ganador = juego.getJugadorActivoRestante();
+            int opcion = JOptionPane.showOptionDialog(
+                    this,
+                    "¡" + ganador.getNombre() + " gana la ronda!\n¿Qué quieres hacer?",
+                    "Fin de la Ronda",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.QUESTION_MESSAGE,
+                    null,
+                    new String[]{"Volver a jugar", "Menú principal"},
+                    "Volver a jugar"
+            );
+
+            if (opcion == JOptionPane.YES_OPTION) {
+                reiniciarJuego();
+            } else {
+                irAlMenuPrincipal();
+            }
+            return;
+        }
         int totalJugadores = juego.getJugadores().size();
         int intentos = 0;
 
@@ -438,8 +486,8 @@ public class PanelPoker5CardDraw extends JPanel {
             Carta carta = manoJugador.get(i);
             String nombreArchivo = obtenerNombreArchivoCarta(carta);
 
-            ImageIcon iconoCarta = new ImageIcon(nombreArchivo);
-            Image imagenCartaEscalada = iconoCarta.getImage().getScaledInstance(100, 150, Image.SCALE_SMOOTH);
+            ImageIcon imagenCarta = new ImageIcon(nombreArchivo);
+            Image imagenCartaEscalada = imagenCarta.getImage().getScaledInstance(100, 150, Image.SCALE_SMOOTH);
             ImageIcon iconoCartaEscalado = new ImageIcon(imagenCartaEscalada);
 
             JButton cartaBtn = new JButton(iconoCartaEscalado);
@@ -457,6 +505,12 @@ public class PanelPoker5CardDraw extends JPanel {
             cartaBtn.addActionListener(e -> {
                 boolean seleccionado = !cartasSeleccionadas.get(finalI);
                 cartasSeleccionadas.set(finalI, seleccionado);
+
+                // 1. Cambiar la imagen (voltear boca abajo)
+                String nombreImagen = seleccionado ? "cartas/reversoCarta.jpeg" : obtenerNombreArchivoCarta(manoJugador.get(finalI));
+                ImageIcon nuevaImagen = new ImageIcon(new ImageIcon(nombreImagen).getImage()
+                        .getScaledInstance(100, 150, Image.SCALE_SMOOTH));
+                cartaBtn.setIcon(nuevaImagen);
 
                 if (seleccionado) {
                     cartaBtn.setBorder(BorderFactory.createLineBorder(Color.GREEN, 3));
@@ -517,16 +571,18 @@ public class PanelPoker5CardDraw extends JPanel {
         inicializarBotonesCartas(mano);
     }
 
-    private void actualizarIconoCarta(JButton boton, Carta carta, int ancho, int alto) {
-        String ruta = obtenerNombreArchivoCarta(carta);
-        ImageIcon icono = new ImageIcon(new ImageIcon(ruta).getImage().getScaledInstance(100, 150, Image.SCALE_SMOOTH));
-        boton.setIcon(icono);
-    }
-
     private void actualizarLabelTurno() {
-        Jugador jugador = juego.getJugadores().get(turnoActualDeJugador);
-        labelTurnoJugador.setText("Turno de: " + jugador.getNombre());
-        labelCantidadFichas.setText("Cantidad de Fichas: " + jugador.getFichas());
+        Jugador jugadorActual = juego.getJugadores().get(turnoActualDeJugador);
+
+        // Verificar que el jugador no está retirado
+        if (jugadorActual.estaRetirado()) {
+            pasarAlSiguienteJugador();
+            return;
+        }
+
+        labelTurnoJugador.setText("Turno: " + jugadorActual.getNombre());
+        labelCantidadFichas.setText("Fichas: " + jugadorActual.getFichas());
+        labelApuestaActual.setText("Apuesta actual: " + juego.getApuestaActual());
     }
 
     private boolean getEsFaseDeApuesta() {
@@ -546,15 +602,28 @@ public class PanelPoker5CardDraw extends JPanel {
         boton.setVisible(true);
     }
 
-    private void reiniciarJuego() {
-        // Lógica para reiniciar el juego (barajar, repartir, resetear variables, etc.)
-        juego.reiniciarPartida(); // si tienes un metodo así
-        turnoActualDeJugador = 1;
+    public void reiniciarJuego() {
+        // Guardar configuración inicial
+        ArrayList<String> nombres = new ArrayList<>();
+        int fichasIniciales = juego.getJugadores().get(0).getFichas(); // Asumimos misma cantidad inicial
+
+        for (Jugador j : juego.getJugadores()) {
+            nombres.add(j.getNombre());
+        }
+
+        // Crear nueva instancia del juego
+        juego = new Poker5CardDraw(nombres.size(), nombres, fichasIniciales);
+
+        // Resetear variables de estado
+        turnoActualDeJugador = 0;
         faseDeApuestaActual = 0;
         esFaseDeApuesta = true;
-        mostrarBotonesDeDiferentesFases(true);
+        jugadorYaJugo = false;
+
+        // Actualizar UI
+        inicializarBotonesCartas(juego.getJugadores().get(turnoActualDeJugador).getMano());
         actualizarLabelTurno();
-        actualizarMano(juego.getJugadores().get(turnoActualDeJugador).getMano());
+        mostrarBotonesDeDiferentesFases(true);
     }
 
     private void irAlMenuPrincipal() {

@@ -87,9 +87,11 @@ public class Jugador {
 
     //cambios validos??
     public void subirYApostar(int cantidadParaIgualar) {
-        if (cantidadParaIgualar <= fichas) {
-            fichas -= cantidadParaIgualar;
-            apuestaActual += cantidadParaIgualar;
+        // Permite igualar incluso si no tiene fichas suficientes (all-in)
+        if (cantidadParaIgualar > 0) {
+            int cantidadReal = Math.min(cantidadParaIgualar, fichas);
+            fichas -= cantidadReal;
+            apuestaActual += cantidadReal;
         }
     }
 
@@ -103,10 +105,8 @@ public class Jugador {
 
     public void sumarFichas(int cantidad) {
         if (cantidad > 0) {
-            fichas += cantidad;
-            System.out.println("Jugador " + nombre + " recibe " + cantidad + " fichas. Total ahora: " + fichas);
-        } else {
-            System.out.println("No se puede sumar una cantidad negativa o cero de fichas.");
+            this.fichas += cantidad;
+            System.out.println("Jugador " + nombre + " recibe " + cantidad + " fichas. Total ahora: " + this.fichas);
         }
     }
 
