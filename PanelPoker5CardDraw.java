@@ -13,6 +13,7 @@ public class PanelPoker5CardDraw extends JPanel {
     private JLabel labelTurnoJugador, labelCantidadFichas;
     private boolean esFaseDeApuesta, jugadorYaJugo;
 
+    //Constructor de la parte grafica de poker 5
     public PanelPoker5CardDraw(int cantidadDeJugadores, int cantidadFichas, ArrayList<String> nombresJugadores, PanelJuegos panelPrincipal) {
         this.panelPrincipal = panelPrincipal;
         esFaseDeApuesta=true;

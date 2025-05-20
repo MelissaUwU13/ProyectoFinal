@@ -2,12 +2,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+//clase poker5 que hereda de poker
 public class Poker5CardDraw extends Poker {
     private ArrayList<Integer> apuestasRonda;
-    private int apuestaActual = 0, pozo = 0;
-    private int jugadoresQuePasaronTurno = 0;
     private Map<Jugador, Integer> puntuaciones = new HashMap<>();
 
+    //Constructor de clase Poker5 que revise los jugadores, nombres y cantidad de fichas
     public Poker5CardDraw(int cantidadDeJugadores, ArrayList<String> nombresJugadores, int fichas) {
         super();
         jugadores = new ArrayList<>();
@@ -19,6 +19,7 @@ public class Poker5CardDraw extends Poker {
         jugar();
     }
 
+    //repartir cartas y barajear
     public void jugar() {
         generarBaraja();
         repartirCartas(5,true);
@@ -67,47 +68,18 @@ public class Poker5CardDraw extends Poker {
         return ganador;
     }
 
-    // Con esto, agregamos una cantidad de fichas al pozo
-    public void agregarAlPozo(int cantidad) {
-        this.pozo += cantidad;
-    }
-
-    // Esto vuelve a poner la cantidad de fichas en el pozo a 0
-    public void reiniciarPozo() {
-        pozo = 0;
-    }
-    // Con esto reiniciamos el número de veces que los jugadores pasaron turno
-    public void reiniciarPases() {
-        jugadoresQuePasaronTurno = 0;
-    }
-
-    // Con esto incrementamos el contador de los jugadores que pasaron turno, lo cual nos sirve para pasar de la fase de apuestas al descarte
-    public void incrementarPases() {
-        jugadoresQuePasaronTurno++;
-    }
-
-    // Getters y setters
-    public int getJugadoresQuePasaronTurno() {
-        return jugadoresQuePasaronTurno;
-    }
-
-    public Jugador getJugadorActivoRestante() {
-        for (Jugador j : jugadores) {
-            if (!j.getRetirado()) return j;
-        }
-        return null;
-    }
-
+    //nos devuelve la apuesta actual
     public int getApuestaActual() {
         return apuestaActual;
     }
 
+    //cambiamos la apuesta actual
     public void setApuestaActual(int apuesta) {
         this.apuestaActual = apuesta;
     }
 
+    //nos devuelve los jugadores que ya jugaron
     public void setJugadoresQueYaJugaron(int jugador) {
         this.jugadoresQueYaJugaron = jugador;
     }
-
 }

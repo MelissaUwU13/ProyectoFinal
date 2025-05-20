@@ -122,9 +122,7 @@ public class PanelJuegos extends JPanel {
         });
 
 
-
-
-
+        //acciones del boton poker 7, iguales a las de poker 5
         botonPoker7CardStud.addActionListener(e -> {
             int cantidadDeJugadores = 0;
             int cantidadFichas = 0;

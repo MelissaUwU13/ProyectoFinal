@@ -14,6 +14,7 @@ public class PanelPoker7CardStud extends JPanel {
     private boolean faseStreet, jugadorYaJugo;
     private int jugadorQueSubioUltimo = -1;
 
+    //Constructor de la parte grafica de poker 7
     public PanelPoker7CardStud(int cantidadDeJugadores, int cantidadFichas, ArrayList<String> nombresJugadores, PanelJuegos panelPrincipal) {
         this.panelPrincipal = panelPrincipal;
         faseStreet = true;
@@ -66,6 +67,7 @@ public class PanelPoker7CardStud extends JPanel {
         cartasSeleccionadas = new ArrayList<>();
 
 
+        //Con este boton actua igual que el boton de salir de la ronda, pero te saca del juego y si todos los jugadores se salen, nos da el ganador de forma automatica y nos devuelve al menu
 
         ImageIcon imagenBotonPasar = redimensionarImagen("cartas/botonPasar.png", 128, 64);
         botonPasar = new JButton(imagenBotonPasar);
@@ -87,6 +89,7 @@ public class PanelPoker7CardStud extends JPanel {
             pasarAlSiguienteJugador();
         });
 
+        //Este boton sirve para igualar la apuesta y es la bandera o base que nos permite cambiar de ronda una vez todos los jugadores hayan igualado la apuesta
 
         ImageIcon imagenBotonIgualar = redimensionarImagen("cartas/botonIgualar.png", 128, 64);
         botonIgualar = new JButton(imagenBotonIgualar);
@@ -119,7 +122,7 @@ public class PanelPoker7CardStud extends JPanel {
 
         });
 
-
+        //boton para subir la apuesta actual
 
         ImageIcon imagenBotonSubir = redimensionarImagen("cartas/botonSubir.png", 128, 64);
         botonSubir = new JButton(imagenBotonSubir);
@@ -171,6 +174,8 @@ public class PanelPoker7CardStud extends JPanel {
         });
 
 
+        //boton para el jugadro bring in que actua de forma igual que el boton igualar
+
         ImageIcon imagenBotonCompletar = redimensionarImagen("cartas/botonCompletar.png", 128, 64);
         botonCompletar = new JButton(imagenBotonCompletar);
         inicializarBotonConImagen(botonCompletar);
@@ -201,11 +206,8 @@ public class PanelPoker7CardStud extends JPanel {
         });
 
 
+        //boton jugar que sirve para determinar el ganador de una serie de cartas que los jugadores usaran para ganar, una vez analizadas da un ganador y nos devuelve al menu
 
-
-
-        //ESTE BOTON PUEDE SERVIR PARA LA ULTIMA RONDA
-        //EDITAR PQ LE COPIE A DEREK QWQ
         ImageIcon imagenBotonJugar = redimensionarImagen("cartas/botonJugar.png", 128, 64);
         botonJugar = new JButton(imagenBotonJugar);
         inicializarBotonConImagen(botonJugar);
@@ -253,8 +255,6 @@ public class PanelPoker7CardStud extends JPanel {
 
 
 
-
-
         inicializarBotonesCartas(juego.getJugadores().get(turnoActualDeJugador).getMano());
         add(botonPasar);
         add(botonIgualar);
@@ -265,6 +265,7 @@ public class PanelPoker7CardStud extends JPanel {
         mostrarBotonesDeDiferentesFases(faseStreet);
     }
 
+    //reparte cartas y les da la vuelta segun la ronda
     public void repartirCartasRondas(int ronda){
         switch (ronda){
             case 1:
@@ -300,6 +301,7 @@ public class PanelPoker7CardStud extends JPanel {
     }
 
 
+    //Revisa que todos los jugadores hayan pasado, pasa al siguiente jugador, siguiente ronda y actualiza los botones, y analiza que no se repita el turno de la ultima persona que subio la apuesta
     private void pasarAlSiguienteJugador() {
         int jugadoresTotales = juego.getJugadores().size();
         int contador = 0;
@@ -352,6 +354,7 @@ public class PanelPoker7CardStud extends JPanel {
     }
 
 
+    //Sirve para crear los botones de carta, si son false los muestra volteados, si son true los muestra boca arriba
     private void inicializarBotonesCartas(ArrayList<Carta> manoJugador) {
         for (JButton btn : botonesCartas) {
             remove(btn);
@@ -406,6 +409,7 @@ public class PanelPoker7CardStud extends JPanel {
         mostrarBotonesDeDiferentesFases(faseStreet);
     }
 
+    //nos sirve para saber que botones se deben mostrar en X ronda, por ejemplo el boton completar y jugar
     public void mostrarBotonesDeDiferentesFases(boolean faseStreet){
         if (ronda == 1 & turnoActualDeJugador == juego.obtenerNUMEROJugadorInicial(1)) {
             botonCompletar.setVisible(true);
@@ -426,22 +430,10 @@ public class PanelPoker7CardStud extends JPanel {
         botonJugar.setEnabled(!faseStreet);
     }
 
-
+    //sirve para actualizar la mano de cada jugador
     private void actualizarMano(ArrayList<Carta> mano) {
         inicializarBotonesCartas(mano);
     }
-
-    private void actualizarIconoCarta(JButton boton, Carta carta, int ancho, int alto) {
-        String ruta = obtenerNombreArchivoCarta(carta);
-        ImageIcon icono = new ImageIcon(new ImageIcon(ruta).getImage().getScaledInstance(100, 150, Image.SCALE_SMOOTH));
-        boton.setIcon(icono);
-    }
-
-
-
-
-
-
 
     @Override
     protected void paintComponent(Graphics g) {
@@ -449,7 +441,7 @@ public class PanelPoker7CardStud extends JPanel {
         g.drawImage(fondoPantalla, 0, 0, getWidth(), getHeight(), this);
     }
 
-    //SUS???
+    //sirve para lo grafico de cada boton sea visible
     private void inicializarBotonConImagen(JButton boton) {
         boton.setContentAreaFilled(false);
         boton.setFocusPainted(false);
@@ -457,6 +449,7 @@ public class PanelPoker7CardStud extends JPanel {
         boton.setVisible(true);
     }
 
+    //actualiza todos los labels del juego
     private void actualizarLabelTurno() {
         Jugador jugadorActual = juego.getJugadores().get(turnoActualDeJugador);
 
@@ -473,12 +466,14 @@ public class PanelPoker7CardStud extends JPanel {
         labelApuestasTotales.setText("Fichas apostadas: "+juego.getPozo());
     }
 
+    //ayuda a cambiar el tamaño de una imagen, util para los botones
     private ImageIcon redimensionarImagen(String rutaImagen, int ancho, int alto) {
         ImageIcon original = new ImageIcon(rutaImagen);
         Image escalada = original.getImage().getScaledInstance(ancho, alto, Image.SCALE_SMOOTH);
         return new ImageIcon(escalada);
     }
 
+    //nos devuelve al menu principal
     private void irAlMenuPrincipal() {
         // Cambia de panel o ventana, según tu arquitectura
         JFrame topFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
@@ -486,6 +481,7 @@ public class PanelPoker7CardStud extends JPanel {
         topFrame.revalidate();
     }
 
+    //obtiene el nombre de las cartas segun su tipo y valor
     private String obtenerNombreArchivoCarta(Carta carta) {
         int valor = carta.getValor();
         String valorStr;
