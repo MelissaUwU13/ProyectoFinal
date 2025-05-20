@@ -162,7 +162,8 @@ public class PanelPoker7CardStud extends JPanel{
             }
 
             if (puedeIgualar) {
-                jugador.subirYApostar(apuestaActual, juego.getApuestaActual());
+                // Te lo comente por que necesito checar algo
+                // jugador.subirYApostar(apuestaActual, juego.getApuestaActual());
                 System.out.println("Jugador igualó con " + cantidadParaIgualar + " fichas");
                 juego.incrementarCalls();
 

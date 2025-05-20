@@ -1,16 +1,16 @@
 import java.util.ArrayList;
-import java.util.Collections;
 
 public class Jugador5CardDraw extends Jugador{
     private boolean retirado = false;
     private ArrayList<Carta> mano = new ArrayList<>();
-    private int apuestaActual = 0;
+    private int fichas;
     private boolean jugadorDescartoCarta;
     private String nombre;
 
     public Jugador5CardDraw(String nombre,int noJugador, int fichas) {
         super(nombre,noJugador, fichas);
         this.nombre=nombre;
+        this.fichas = fichas;
     }
 
     public boolean estaRetirado() {
@@ -23,6 +23,10 @@ public class Jugador5CardDraw extends Jugador{
 
     public String getNombre() {
         return nombre;
+    }
+
+    public void restarFichas(int cantidad) {
+        this.fichas -= cantidad;
     }
 
 }

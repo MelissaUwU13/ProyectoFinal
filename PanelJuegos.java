@@ -16,10 +16,11 @@ public class PanelJuegos extends JPanel {
         setLayout(null);
         setBackground(Color.WHITE);
         setFocusable(true);
+        ReproductorMusica reproductorDeMusica = new ReproductorMusica();
+        // reproductorDeMusica.reproducir("cartas/musica.wav");
 
         ImageIcon imagenBoton5CardPoker = redimensionarImagen("cartas/boton5CardPoker.png", 256, 128);
         ImageIcon imagenBoton7CardStud = redimensionarImagen("cartas/boton7CardStud.png", 256, 128);
-        reproducirMusica("cartas/musica.wav");
 
         // Fondo de la pantalla
         fondoPantalla = new ImageIcon("cartas/Portada.png").getImage();
@@ -74,7 +75,7 @@ public class PanelJuegos extends JPanel {
             entradaValida = false;
 
             while (!entradaValida) {
-                String entrada = JOptionPane.showInputDialog(this, "Introduzca la cantidad de fichas (500-1000)", "Número de fichas", JOptionPane.QUESTION_MESSAGE);
+                String entrada = JOptionPane.showInputDialog(this, "Introduzca la cantidad de fichas por jugador (500-1000):", "Número de fichas", JOptionPane.QUESTION_MESSAGE);
                 if (entrada == null) return;
 
                 try {
@@ -118,10 +119,6 @@ public class PanelJuegos extends JPanel {
             revalidate();
             repaint();
         });
-
-
-
-
 
         botonPoker7CardStud.addActionListener(e -> {
             // Aquí puedes mantener o añadir lógica para 7 Card Stud sin afectar el resto
@@ -252,17 +249,6 @@ public class PanelJuegos extends JPanel {
         revalidate();
         repaint();
     }
-
-
-
-
-
-
-
-
-
-
-
 
     private ImageIcon redimensionarImagen(String rutaImagen, int ancho, int alto) {
         ImageIcon original = new ImageIcon(rutaImagen);

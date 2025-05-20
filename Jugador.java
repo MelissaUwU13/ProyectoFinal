@@ -74,18 +74,6 @@ public class Jugador {
         this.mano = manoActual;
     }
 
-    public int getApuestaRondaActual() {
-        return apuestaActual;
-    }
-
-    public void setApuestaRondaActual(int cantidad) {
-        this.apuestaActual = cantidad;
-    }
-
-    public void reiniciarApuestaRonda() {
-        this.apuestaActual = 0;
-    }
-
     //si me sirve qwq
     public void apostar(int cantidad) {
         if (cantidad <= fichas) {
@@ -98,13 +86,19 @@ public class Jugador {
     }
 
     //cambios validos??
-    public void subirYApostar(int nuevaApuesta, int apuestaActual) {
-        this.apuestaActual=apuestaActual; //solo agregue esto
-        int diferencia = nuevaApuesta - apuestaActual;
-        if (diferencia > 0 && diferencia <= fichas) {
-            this.fichas -= diferencia;
-            this.apuestaActual += diferencia;
+    public void subirYApostar(int cantidadParaIgualar) {
+        if (cantidadParaIgualar <= fichas) {
+            fichas -= cantidadParaIgualar;
+            apuestaActual += cantidadParaIgualar;
         }
+    }
+
+    public void setApuestaActual(int cantidad) {
+        this.apuestaActual = cantidad;
+    }
+
+    public int getApuestaActual() {
+        return this.apuestaActual;
     }
 
     public void sumarFichas(int cantidad) {

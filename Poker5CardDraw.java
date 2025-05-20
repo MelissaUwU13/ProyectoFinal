@@ -8,13 +8,13 @@ public class Poker5CardDraw extends Poker {
     private int jugadoresQueHicieronCheck = 0;
     private Map<Jugador, Integer> puntuaciones = new HashMap<>();
 
-    public Poker5CardDraw(int cantidadDeJugadores, ArrayList<String> nombresJugadores) {
+    public Poker5CardDraw(int cantidadDeJugadores, ArrayList<String> nombresJugadores, int fichas) {
         super();
         evaluador = new Evaluador5CardDraw();
         jugadores = new ArrayList<>();
         for (int i = 0; i < cantidadDeJugadores; i++) {
             String nombre = nombresJugadores.get(i);
-            jugadores.add(new Jugador5CardDraw(nombre,i, 500)); // Aquí le pasas el nombre
+            jugadores.add(new Jugador5CardDraw(nombre,i, fichas)); // Aquí le pasas el nombre
         }
         jugar();
     }
@@ -119,7 +119,7 @@ public class Poker5CardDraw extends Poker {
     }
 
     public void agregarAlPozo(int cantidad) {
-        pozo += cantidad;
+        this.pozo += cantidad;
     }
 
     public void reiniciarPozo() {
@@ -129,6 +129,8 @@ public class Poker5CardDraw extends Poker {
     public int getPozo() {
         return pozo;
     }
+
+
 
 
     public int getApuestaActual() {
