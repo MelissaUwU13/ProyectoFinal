@@ -21,7 +21,7 @@ public class PanelPoker7CardStud extends JPanel {
 
         setLayout(null);
         setPreferredSize(new Dimension(1000, 600));
-        fondoPantalla = new ImageIcon("cartas/fondoPantallaPoker.jpg").getImage();
+        fondoPantalla = new ImageIcon("Recursos/fondoPantallaPoker.jpg").getImage();
 
         JOptionPane.showMessageDialog(this, "Antes de iniciar tenemos nuestra primera apuesta obligatoria!", "Ante", JOptionPane.INFORMATION_MESSAGE);
         JOptionPane.showMessageDialog(this, "La apuesta inicial es de 5 fichas!", "Ante", JOptionPane.INFORMATION_MESSAGE);
@@ -69,7 +69,7 @@ public class PanelPoker7CardStud extends JPanel {
 
         //Con este boton actua igual que el boton de salir de la ronda, pero te saca del juego y si todos los jugadores se salen, nos da el ganador de forma automatica y nos devuelve al menu
 
-        ImageIcon imagenBotonPasar = redimensionarImagen("cartas/botonPasar.png", 128, 64);
+        ImageIcon imagenBotonPasar = redimensionarImagen("Recursos/botonPasar.png", 128, 64);
         botonPasar = new JButton(imagenBotonPasar);
         botonPasar.setBounds(100, 300, 128, 64);
         inicializarBotonConImagen(botonPasar);
@@ -91,7 +91,7 @@ public class PanelPoker7CardStud extends JPanel {
 
         //Este boton sirve para igualar la apuesta y es la bandera o base que nos permite cambiar de ronda una vez todos los jugadores hayan igualado la apuesta
 
-        ImageIcon imagenBotonIgualar = redimensionarImagen("cartas/botonIgualar.png", 128, 64);
+        ImageIcon imagenBotonIgualar = redimensionarImagen("Recursos/botonIgualar.png", 128, 64);
         botonIgualar = new JButton(imagenBotonIgualar);
         botonIgualar.setBounds(248, 300, 128, 64);
         inicializarBotonConImagen(botonIgualar);
@@ -124,7 +124,7 @@ public class PanelPoker7CardStud extends JPanel {
 
         //boton para subir la apuesta actual
 
-        ImageIcon imagenBotonSubir = redimensionarImagen("cartas/botonSubir.png", 128, 64);
+        ImageIcon imagenBotonSubir = redimensionarImagen("Recursos/botonSubir.png", 128, 64);
         botonSubir = new JButton(imagenBotonSubir);
         botonSubir.setBounds(396, 300, 128, 64);
         inicializarBotonConImagen(botonSubir);
@@ -176,7 +176,7 @@ public class PanelPoker7CardStud extends JPanel {
 
         //boton para el jugadro bring in que actua de forma igual que el boton igualar
 
-        ImageIcon imagenBotonCompletar = redimensionarImagen("cartas/botonCompletar.png", 128, 64);
+        ImageIcon imagenBotonCompletar = redimensionarImagen("Recursos/botonCompletar.png", 128, 64);
         botonCompletar = new JButton(imagenBotonCompletar);
         inicializarBotonConImagen(botonCompletar);
         botonCompletar.setBounds(544, 300, 128, 64); // Mismo tamaño que "Analizar Cartas"
@@ -208,7 +208,7 @@ public class PanelPoker7CardStud extends JPanel {
 
         //boton jugar que sirve para determinar el ganador de una serie de cartas que los jugadores usaran para ganar, una vez analizadas da un ganador y nos devuelve al menu
 
-        ImageIcon imagenBotonJugar = redimensionarImagen("cartas/botonJugar.png", 128, 64);
+        ImageIcon imagenBotonJugar = redimensionarImagen("Recursos/botonJugar.png", 128, 64);
         botonJugar = new JButton(imagenBotonJugar);
         inicializarBotonConImagen(botonJugar);
         botonJugar.setBounds(200, 300, 128, 64);
@@ -368,7 +368,7 @@ public class PanelPoker7CardStud extends JPanel {
 
             ImageIcon iconoCarta = new ImageIcon(nombreArchivo);
             if(carta.isVisible()==false){
-                iconoCarta = new ImageIcon("cartas/reversoCarta.jpeg");
+                iconoCarta = new ImageIcon("Recursos/reversoCarta.jpeg");
             }
             Image imagenCartaEscalada = iconoCarta.getImage().getScaledInstance(100, 150, Image.SCALE_SMOOTH);
             ImageIcon iconoCartaEscalado = new ImageIcon(imagenCartaEscalada);
@@ -493,7 +493,7 @@ public class PanelPoker7CardStud extends JPanel {
             default: valorStr = String.valueOf(valor); break;
         }
         String figura = carta.getFigura().toLowerCase();
-        return "cartas/" + valorStr + figura + ".png";
+        return "Recursos/" + valorStr + figura + ".png";
     }
 
 }

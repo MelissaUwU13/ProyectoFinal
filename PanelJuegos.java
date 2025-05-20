@@ -1,9 +1,6 @@
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.swing.*;
 import java.awt.*;
-import java.io.File;
 import java.util.ArrayList;
 
 public class PanelJuegos extends JPanel {
@@ -19,14 +16,14 @@ public class PanelJuegos extends JPanel {
         setFocusable(true);
         // Reproducimos la música, en este caso lo volví una clase porque si volvía al menu principal, la canción vuelve a sonar por encima de la primera vez que se reprodujo
         ReproductorMusica reproductorDeMusica = new ReproductorMusica();
-        reproductorDeMusica.reproducir("cartas/musica.wav");
+        reproductorDeMusica.reproducir("Recursos/musica.wav");
 
         // Asignamos el fondo de pantalla
-        fondoPantalla = new ImageIcon("cartas/Portada.png").getImage();
+        fondoPantalla = new ImageIcon("Recursos/Portada.png").getImage();
 
         // Creamos las imágenes para los botones, junto con estos
-        ImageIcon imagenBoton5CardPoker = redimensionarImagen("cartas/boton5CardPoker.png", 256, 128);
-        ImageIcon imagenBoton7CardStud = redimensionarImagen("cartas/boton7CardStud.png", 256, 128);
+        ImageIcon imagenBoton5CardPoker = redimensionarImagen("Recursos/boton5CardPoker.png", 256, 128);
+        ImageIcon imagenBoton7CardStud = redimensionarImagen("Recursos/boton7CardStud.png", 256, 128);
         JButton botonPoker5Hands = new JButton(imagenBoton5CardPoker);
         JButton botonPoker7CardStud = new JButton(imagenBoton7CardStud);
 
@@ -44,7 +41,7 @@ public class PanelJuegos extends JPanel {
                     cantidadDeJugadores = Integer.parseInt(entrada);
                     if (cantidadDeJugadores >= 2 && cantidadDeJugadores <= 7) {
                         entradaValida = true;
-                        fondoPantalla = new ImageIcon("cartas/fondoPantallaPoker.jpg").getImage();
+                        fondoPantalla = new ImageIcon("Recursos/fondoPantallaPoker.jpg").getImage();
                     } else {
                         JOptionPane.showMessageDialog(
                                 this,
@@ -84,7 +81,7 @@ public class PanelJuegos extends JPanel {
                     cantidadFichas = Integer.parseInt(entrada);
                     if (cantidadFichas >= 500 && cantidadFichas <= 1000) {
                         entradaValida = true;
-                        fondoPantalla = new ImageIcon("cartas/fondoPantallaPoker.jpg").getImage();
+                        fondoPantalla = new ImageIcon("Recursos/fondoPantallaPoker.jpg").getImage();
                     } else {
                         JOptionPane.showMessageDialog(
                                 this,
@@ -136,7 +133,7 @@ public class PanelJuegos extends JPanel {
                     cantidadDeJugadores = Integer.parseInt(entrada);
                     if (cantidadDeJugadores >= 2 && cantidadDeJugadores <= 8) {
                         entradaValida = true;
-                        fondoPantalla = new ImageIcon("cartas/fondoPantallaPoker.jpg").getImage();
+                        fondoPantalla = new ImageIcon("Recursos/fondoPantallaPoker.jpg").getImage();
                     } else {
                         JOptionPane.showMessageDialog(
                                 this,
@@ -176,7 +173,7 @@ public class PanelJuegos extends JPanel {
                     cantidadFichas = Integer.parseInt(entrada);
                     if (cantidadFichas >= 500 && cantidadFichas <= 1000) {
                         entradaValida = true;
-                        fondoPantalla = new ImageIcon("cartas/fondoPantallaPoker.jpg").getImage();
+                        fondoPantalla = new ImageIcon("Recursos/fondoPantallaPoker.jpg").getImage();
                     } else {
                         JOptionPane.showMessageDialog(
                                 this,
