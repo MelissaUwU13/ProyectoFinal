@@ -10,7 +10,7 @@ public class PanelPoker5CardDraw extends JPanel {
     private Image fondoPantalla;
     private int turnoActualDeJugador = 0, faseDeApuestaActual;
     JButton botonPasar, botonApostar, botonIgualar, botonSubir, botonRetirarse, botonCambiarCartas, botonAnalizarCartas, botonTerminarTurno, botonJugar;
-    private JLabel labelTurnoJugador, labelCantidadFichas,labelApuestaActual;
+    private JLabel labelTurnoJugador, labelCantidadFichas;
     private boolean esFaseDeApuesta, jugadorYaJugo;
 
     //AGREGAR FICHAS
@@ -34,16 +34,11 @@ public class PanelPoker5CardDraw extends JPanel {
         labelCantidadFichas.setForeground(Color.WHITE);
         labelCantidadFichas.setBounds(20, 50, 500, 30);
 
-        labelApuestaActual = new JLabel();
-        labelApuestaActual.setFont(new Font("Arial", Font.BOLD, 24));
-        labelApuestaActual.setForeground(Color.WHITE);
-        labelApuestaActual.setBounds(20, 70, 500, 30);
 
         actualizarLabelTurno(); // Esto pone el nombre del primer jugador
 
         add(labelTurnoJugador);
         add(labelCantidadFichas);
-        add(labelApuestaActual);
         botonesCartas = new ArrayList<>();
         cartasSeleccionadas = new ArrayList<>();
 
@@ -337,8 +332,10 @@ public class PanelPoker5CardDraw extends JPanel {
             actualizarMano(manoActual);
 
         });
-        botonAnalizarCartas = new JButton("Analizar Cartas");
-        botonAnalizarCartas.setBounds(200, 250, 128, 64);
+        ImageIcon imagenBotonAnalizarCartas = redimensionarImagen("cartas/botonAnalizarCartas.png", 200, 128);
+        botonAnalizarCartas = new JButton(imagenBotonAnalizarCartas);
+        botonAnalizarCartas.setBounds(275, 250, 200, 128);
+        inicializarBotonConImagen(botonAnalizarCartas);
         botonAnalizarCartas.addActionListener(e -> {
             ArrayList<Carta> manoActual = juego.getJugadores().get(turnoActualDeJugador).getMano();
             ArrayList<Carta> cartasSeleccionadasParaAnalizar = new ArrayList<>();
@@ -357,7 +354,9 @@ public class PanelPoker5CardDraw extends JPanel {
             JOptionPane.showMessageDialog(this, resultado);
             mostrarBotonesDeDiferentesFases(esFaseDeApuesta);
         });
-        botonJugar = new JButton("Jugar");
+        ImageIcon imagenBotonJugar = redimensionarImagen("cartas/botonJugar.png", 200, 128);
+        botonJugar = new JButton(imagenBotonJugar);
+        inicializarBotonConImagen(botonJugar);
         botonJugar.setBounds(500, 250, 200, 128);
         botonJugar.addActionListener(e -> {
             ArrayList<Carta> manoActual = juego.getJugadores().get(turnoActualDeJugador).getMano();
@@ -405,7 +404,9 @@ public class PanelPoker5CardDraw extends JPanel {
             jugadorYaJugo = true; // Marcamos que este jugador ya jugó
             mostrarBotonesDeDiferentesFases(esFaseDeApuesta);
         });
-        JButton botonSalirDelJuego = new JButton("Salir del juego");
+        ImageIcon imagenbotonSalirDelJuego = redimensionarImagen("cartas/botonSalirDelJuego.png", 128, 64);
+        JButton botonSalirDelJuego = new JButton(imagenbotonSalirDelJuego);
+        inicializarBotonConImagen(botonSalirDelJuego);
         botonSalirDelJuego.setBounds(800, 100, 128, 64);
         botonSalirDelJuego.addActionListener(e -> {
             int opcion = JOptionPane.showOptionDialog(
@@ -582,7 +583,6 @@ public class PanelPoker5CardDraw extends JPanel {
 
         labelTurnoJugador.setText("Turno: " + jugadorActual.getNombre());
         labelCantidadFichas.setText("Fichas: " + jugadorActual.getFichas());
-        labelApuestaActual.setText("Apuesta actual: " + juego.getApuestaActual());
     }
 
     private boolean getEsFaseDeApuesta() {
